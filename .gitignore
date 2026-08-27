@@ -1,0 +1,13 @@
+# Eclipse workspace metadata (kişisel ayarlar, paylaşılmaz)
+.metadata/
+
+# Derlenmiş .class dosyaları
+bin/
+apcsa/bin/
+*.class
+
+# Paylaşılmayan ders klasörleri
+apcsa/src/Doruk/
+
+# macOS
+.DS_Store
