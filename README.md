@@ -1,28 +1,28 @@
 # AP CS-A Grup 2 — Ders Notları
 
-Bu depoda derste işlediğimiz Java kodları ve not satırları bulunur.
-Her ders, çalıştırılabilir tek bir `.java` dosyasıdır; anlatımlar kodun içinde
-yorum satırı (`//`) olarak yer alır.
+### 📘 [Notları okumak için tıklayın → mcandiri.github.io/AP-CS-A-Grup-2](https://mcandiri.github.io/AP-CS-A-Grup-2/)
 
-## Dersler
+Konu anlatımı, derste çalıştırdığımız örnekler, her örneğin çıktısı ve
+bölüm sonu alıştırmaları bu sayfada. Kurulum gerekmez, telefondan da açılır.
 
-| Ders | Konu | Dosya |
-|------|------|-------|
-| 1 | Değişkenler ve veri tipleri (`int`, `double`, `boolean`, `String`), primitive tipler | [Lesson1.java](apcsa/src/Grup1/Lesson1.java) |
-| 2 | Operatörler, işlem önceliği, `%` (mod), casting, round-off error, String karşılaştırma | [Lesson2.java](apcsa/src/Grup1/Lesson2.java) |
-| 3 | Mantıksal operatörler (`&&`, `||`, `!`), short-circuit, De Morgan kuralı | [Lesson3.java](apcsa/src/Grup1/Lesson3.java) |
+---
 
-> Yeni dersler eklendikçe bu tablo güncellenecektir.
+## Lesson 1 — Types, Operators & Logic
 
-## Notları okumak
+İlk dersimizi üç dosyaya bölerek işledik:
 
-Hiçbir kurulum yapmadan yukarıdaki tablodaki dosya adlarına tıklayarak
-kodu ve açıklamaları doğrudan tarayıcıdan okuyabilirsiniz.
+| Bölüm | Konu | Dosya |
+|-------|------|-------|
+| Part 1 | Değişkenler ve veri tipleri (`int`, `double`, `boolean`, `String`), primitive tipler | [Lesson1.java](apcsa/src/Grup1/Lesson1.java) |
+| Part 2 | Operatörler, işlem önceliği, `%` (mod), casting, round-off error, String karşılaştırma | [Lesson2.java](apcsa/src/Grup1/Lesson2.java) |
+| Part 3 | Mantıksal operatörler (`&&`, `\|\|`, `!`), short-circuit, De Morgan kuralı | [Lesson3.java](apcsa/src/Grup1/Lesson3.java) |
+
+Yeni dersler eklendikçe bu liste büyüyecek.
 
 ## Kodu bilgisayarınıza indirmek
 
 **Yol 1 — ZIP olarak (en kolay):**
-Deponun ana sayfasındaki yeşil **Code** düğmesi → **Download ZIP**.
+Bu sayfadaki yeşil **Code** düğmesi → **Download ZIP**.
 
 **Yol 2 — Git ile (güncellemeleri kolayca almak için):**
 
@@ -43,15 +43,15 @@ git pull
 3. **Select root directory** → indirdiğiniz klasörün içindeki `apcsa` klasörünü seçin.
 4. **Finish**
 
-Dersler `src` klasörü altında paket olarak görünür. Bir dersi çalıştırmak için
-dosyaya sağ tıklayın → **Run As → Java Application**.
+Dersler `src` klasörü altında paket olarak görünür. Bir dosyayı çalıştırmak için
+üzerine sağ tıklayın → **Run As → Java Application**.
 
-## Ödev / soru
+## Ödev
 
-Ders dosyalarında zaman zaman şu şekilde görevler bırakılır:
+Ders dosyalarında ve web sayfasındaki **Try it** kutusunda şu görev duruyor:
 
 ```java
 /// İki double değeri doğru bir şekilde kontrol eden kodu yazın!!!
 ```
 
-Bunları kendi dosyanızda deneyin; derste birlikte çözeceğiz.
+Kendiniz deneyin; derste birlikte çözeceğiz.

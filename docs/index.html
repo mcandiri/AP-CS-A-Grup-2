@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 1: Java data types, operators, casting, round-off error and logical operators, with practice questions.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>AP CS-A Grup 2 Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#f6f7fb;
+  --surface:#ffffff;
+  --ink:#171a2b;
+  --ink-soft:#565c73;
+  --ink-faint:#868ca3;
+  --line:#dfe2ec;
+  --line-soft:#eaecf3;
+  --accent:#3d4fc7;
+  --accent-soft:#eceefb;
+  --amber:#a2650a;
+  --amber-soft:#fdf3e0;
+  --amber-line:#ecd4a4;
+  --crimson:#b8382c;
+  --crimson-soft:#fceeec;
+  --crimson-line:#f0c8c2;
+  --moss:#256b4d;
+  --moss-soft:#e9f5ef;
+  --moss-line:#bde0ce;
+
+  /* the editor pane keeps one identity in both themes */
+  --pane:#171a24;
+  --pane-head:#20242f;
+  --pane-line:#2c3140;
+  --pane-ink:#dfe3f0;
+  --pane-faint:#7b8296;
+  --pane-key:#a394f7;
+  --pane-type:#5fc9c2;
+  --pane-str:#e2b164;
+  --pane-num:#f28e7c;
+  --pane-com:#6c7488;
+  --out-ok:#7fd8a8;
+  --out-bad:#f5897a;
+
+  --step--1:.8125rem;
+  --step-0:1.0625rem;
+  --step-1:1.28rem;
+  --step-2:1.62rem;
+  --step-3:2.1rem;
+  --step-4:2.9rem;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#101219;
+    --surface:#171a23;
+    --ink:#e7e9f2;
+    --ink-soft:#a3a9bf;
+    --ink-faint:#7d8399;
+    --line:#282c39;
+    --line-soft:#20242f;
+    --accent:#93a2ff;
+    --accent-soft:#1d2136;
+    --amber:#eab668;
+    --amber-soft:#241f16;
+    --amber-line:#4a3c22;
+    --crimson:#f0938a;
+    --crimson-soft:#241a19;
+    --crimson-line:#4a2b28;
+    --moss:#7fd0a6;
+    --moss-soft:#152219;
+    --moss-line:#26452f;
+    --pane:#0b0d13;
+    --pane-head:#141721;
+    --pane-line:#232837;
+  }
+}
+
+:root[data-theme="dark"]{
+  --ground:#101219;
+  --surface:#171a23;
+  --ink:#e7e9f2;
+  --ink-soft:#a3a9bf;
+  --ink-faint:#7d8399;
+  --line:#282c39;
+  --line-soft:#20242f;
+  --accent:#93a2ff;
+  --accent-soft:#1d2136;
+  --amber:#eab668;
+  --amber-soft:#241f16;
+  --amber-line:#4a3c22;
+  --crimson:#f0938a;
+  --crimson-soft:#241a19;
+  --crimson-line:#4a2b28;
+  --moss:#7fd0a6;
+  --moss-soft:#152219;
+  --moss-line:#26452f;
+  --pane:#0b0d13;
+  --pane-head:#141721;
+  --pane-line:#232837;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  font-size:var(--step-0);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 96px;}
+
+/* ---------- masthead ---------- */
+
+.masthead{padding:56px 0 28px;border-bottom:1px solid var(--line);}
+.eyebrow{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:var(--step--1);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 14px;
+}
+h1{
+  font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;
+  font-weight:700;
+  font-size:var(--step-4);
+  line-height:1.05;
+  letter-spacing:-.02em;
+  text-wrap:balance;
+  margin:0 0 14px;
+}
+.deck{
+  font-size:var(--step-1);
+  color:var(--ink-soft);
+  max-width:56ch;
+  margin:0 0 26px;
+}
+.facts{
+  display:flex;flex-wrap:wrap;gap:10px;
+  list-style:none;margin:0;padding:0;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:var(--step--1);
+  color:var(--ink-soft);
+}
+.facts li{
+  border:1px solid var(--line);
+  background:var(--surface);
+  padding:5px 11px;
+  border-radius:3px;
+}
+
+/* ---------- layout ---------- */
+
+.layout{display:grid;grid-template-columns:184px minmax(0,1fr);gap:56px;align-items:start;}
+
+nav.toc{position:sticky;top:28px;padding-top:44px;}
+nav.toc h2{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:var(--step--1);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  font-weight:400;
+  margin:0 0 14px;
+}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+nav.toc a{
+  display:block;
+  padding:5px 0 5px 13px;
+  border-left:2px solid var(--line);
+  color:var(--ink-soft);
+  text-decoration:none;
+  font-size:.95rem;
+  line-height:1.35;
+  transition:color .15s,border-color .15s;
+}
+nav.toc a:hover{color:var(--ink);border-left-color:var(--ink-faint);}
+nav.toc a.on{color:var(--accent);border-left-color:var(--accent);font-weight:600;}
+nav.toc .sub{padding-left:24px;font-size:.875rem;}
+
+main{padding-top:44px;min-width:0;}
+
+/* ---------- sections ---------- */
+
+.lesson{padding-bottom:8px;}
+.lesson + .lesson{margin-top:76px;}
+.lesson-head{margin-bottom:30px;}
+.lesson-no{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:var(--step--1);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  display:block;
+  margin-bottom:8px;
+}
+h2.lesson-title{
+  font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;
+  font-weight:700;
+  font-size:var(--step-3);
+  line-height:1.12;
+  letter-spacing:-.015em;
+  text-wrap:balance;
+  margin:0;
+}
+h3{
+  font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;
+  font-weight:500;
+  font-size:var(--step-2);
+  line-height:1.2;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  margin:52px 0 12px;
+  padding-top:20px;
+  border-top:1px solid var(--line-soft);
+}
+.lesson-head + h3{margin-top:0;border-top:0;padding-top:0;}
+h4{
+  font-family:"Source Sans 3",sans-serif;
+  font-weight:600;
+  font-size:var(--step-0);
+  margin:28px 0 8px;
+}
+p{max-width:66ch;margin:0 0 16px;}
+ul.plain{max-width:66ch;margin:0 0 16px;padding-left:20px;}
+ul.plain li{margin-bottom:6px;}
+strong{font-weight:600;}
+code.inl{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.86em;
+  background:var(--accent-soft);
+  color:var(--accent);
+  padding:1px 5px;
+  border-radius:3px;
+  white-space:nowrap;
+}
+
+/* ---------- example: editor pane + console ---------- */
+
+.ex{margin:20px 0 24px;border:1px solid var(--pane-line);border-radius:5px;overflow:hidden;background:var(--pane);}
+.ex-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:var(--pane-head);
+  border-bottom:1px solid var(--pane-line);
+  padding:7px 14px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.75rem;
+  letter-spacing:.05em;
+  color:var(--pane-faint);
+  text-transform:uppercase;
+}
+pre.code{
+  margin:0;
+  padding:16px 18px;
+  overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.855rem;
+  line-height:1.75;
+  color:var(--pane-ink);
+  tab-size:4;
+}
+pre.code .k{color:var(--pane-key);}
+pre.code .t{color:var(--pane-type);}
+pre.code .s{color:var(--pane-str);}
+pre.code .n{color:var(--pane-num);}
+pre.code .c{color:var(--pane-com);font-style:italic;}
+
+.out{border-top:1px solid var(--pane-line);background:var(--pane-head);padding:11px 18px 13px;}
+.out-label{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--pane-faint);display:block;margin-bottom:6px;
+}
+.out pre{
+  margin:0;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.855rem;line-height:1.6;
+  color:var(--out-ok);
+}
+.out pre em{color:var(--out-bad);font-style:normal;}
+
+/* ---------- callouts ---------- */
+
+.note{
+  margin:22px 0;
+  padding:16px 18px 4px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  border-radius:4px;
+  max-width:68ch;
+}
+.note .tag{
+  display:inline-block;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.note p{margin-bottom:12px;max-width:none;}
+.note--trap{background:var(--amber-soft);border-color:var(--amber-line);}
+.note--trap .tag{color:var(--amber);}
+.note--rule{background:var(--crimson-soft);border-color:var(--crimson-line);}
+.note--rule .tag{color:var(--crimson);}
+.note--task{background:var(--moss-soft);border-color:var(--moss-line);}
+.note--task .tag{color:var(--moss);}
+
+/* ---------- tables ---------- */
+
+.scroll{overflow-x:auto;margin:20px 0 24px;}
+table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.94rem;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:4px;
+}
+th,td{
+  text-align:left;
+  padding:9px 14px;
+  border-bottom:1px solid var(--line-soft);
+  vertical-align:top;
+}
+tbody tr:last-child td{border-bottom:0;}
+th{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-weight:400;
+  font-size:.72rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+td.mono,th.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.84rem;white-space:nowrap;}
+.tv{color:var(--moss);font-weight:600;}
+.fv{color:var(--crimson);font-weight:600;}
+.err{color:var(--amber);font-weight:600;}
+
+/* truth tables sit side by side */
+.truths{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:20px 0 24px;}
+.truths table{font-size:.88rem;}
+.truths caption{
+  caption-side:top;text-align:left;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-faint);padding-bottom:7px;
+}
+.truths td{padding:6px 12px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;}
+
+/* ---------- recap ---------- */
+
+.recap{margin-top:76px;padding-top:26px;border-top:2px solid var(--ink);}
+.recap h2{
+  font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;
+  font-weight:700;font-size:var(--step-2);letter-spacing:-.01em;margin:0 0 6px;
+}
+
+/* ---------- practice ---------- */
+
+.practice{
+  margin-top:56px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  border-radius:5px;
+  padding:24px 28px 8px;
+}
+.practice-eyebrow{
+  display:block;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:7px;
+}
+h3.practice-title{
+  margin:0 0 6px;
+  border-top:0;padding-top:0;
+  font-size:var(--step-2);
+}
+.practice-lede{color:var(--ink-soft);font-size:.95rem;margin:0 0 4px;max-width:60ch;}
+
+ol.qs{list-style:none;counter-reset:q;margin:0;padding:0;}
+ol.qs > li{
+  counter-increment:q;
+  position:relative;
+  padding:20px 0 20px 40px;
+  border-top:1px solid var(--line-soft);
+}
+ol.qs > li::before{
+  content:counter(q,decimal-leading-zero);
+  position:absolute;left:0;top:22px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.78rem;letter-spacing:.04em;
+  color:var(--ink-faint);
+}
+ol.qs p{margin:0 0 10px;max-width:62ch;}
+ol.qs .ex{margin:12px 0 0;}
+ol.qs ul.plain{margin:0 0 10px;}
+
+details.ans{margin-top:14px;}
+details.ans summary{
+  display:inline-block;cursor:pointer;list-style:none;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid var(--line);
+  background:var(--ground);
+  padding:5px 13px;border-radius:3px;
+  transition:border-color .15s;
+}
+details.ans summary::-webkit-details-marker{display:none;}
+details.ans summary::marker{content:"";}
+details.ans summary:hover{border-color:var(--accent);}
+details.ans[open] summary{margin-bottom:12px;}
+.ans-body{
+  border:1px solid var(--line);
+  background:var(--ground);
+  border-radius:4px;
+  padding:15px 17px 5px;
+}
+.ans-body p{margin:0 0 11px;}
+.ans-body ul.plain{margin:0 0 11px;}
+ol.qs .ans-body .ex{margin:0 0 12px;}
+.ans-body .outline{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.84rem;color:var(--moss);font-weight:600;
+}
+
+footer{
+  margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:var(--step--1);color:var(--ink-faint);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+}
+
+a{color:var(--accent);}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px;}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr;gap:0;}
+  nav.toc{position:static;padding-top:32px;}
+  nav.toc ol{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  nav.toc a{border-left:0;border:1px solid var(--line);border-radius:3px;padding:5px 11px;}
+  nav.toc a.on{border-color:var(--accent);}
+  nav.toc .sub{display:none;}
+  main{padding-top:36px;}
+  :root{--step-4:2.2rem;--step-3:1.72rem;--step-2:1.36rem;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 1</p>
+    <h1>Types, Operators &amp; Logic</h1>
+    <p class="deck">Everything from our first lesson, spread across the three files we worked in — with the exact examples we ran in class, what each one prints, and six questions after every part.</p>
+    <ul class="facts">
+      <li>3 parts</li>
+      <li>Java</li>
+      <li>18 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l1">1 · Variables &amp; Data Types</a></li>
+        <li><a class="sub" href="#l1-int">int</a></li>
+        <li><a class="sub" href="#l1-double">double</a></li>
+        <li><a class="sub" href="#l1-boolean">boolean</a></li>
+        <li><a class="sub" href="#l1-string">String</a></li>
+        <li><a class="sub" href="#p1">Practice</a></li>
+        <li><a href="#l2">2 · Operators &amp; Casting</a></li>
+        <li><a class="sub" href="#l2-arith">Arithmetic</a></li>
+        <li><a class="sub" href="#l2-div">Integer division</a></li>
+        <li><a class="sub" href="#l2-cast">Casting</a></li>
+        <li><a class="sub" href="#l2-rel">Relational</a></li>
+        <li><a class="sub" href="#l2-round">Round-off error</a></li>
+        <li><a class="sub" href="#l2-str">Comparing Strings</a></li>
+        <li><a class="sub" href="#p2">Practice</a></li>
+        <li><a href="#l3">3 · Logical Operators</a></li>
+        <li><a class="sub" href="#l3-short">Short-circuit</a></li>
+        <li><a class="sub" href="#l3-morgan">De Morgan's Law</a></li>
+        <li><a class="sub" href="#p3">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ LESSON 1 ============ -->
+      <section class="lesson" id="l1">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 01 · Lesson1.java</span>
+          <h2 class="lesson-title">Variables and Data Types</h2>
+        </div>
+
+        <p>A variable is a named box that holds one value. Every variable you make in Java follows the same three-part pattern, and the type you pick decides what is allowed in the box.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Pattern</span></div>
+          <pre class="code"><code>// comment line
+// TYPE NAME = VALUE ;
+
+int age = 5;</code></pre>
+        </div>
+
+        <p>Two slashes start a <strong>comment</strong>. Java ignores everything after them on that line, so comments are where you explain the code to yourself and to whoever reads it next.</p>
+
+        <h3 id="l1-int">int — whole numbers</h3>
+
+        <p><code class="inl">int</code> holds whole numbers, positive or negative. No decimal point is allowed.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>int</span></div>
+          <pre class="code"><code>int age = 5;
+int year = 2026;
+int number = -32432;</code></pre>
+        </div>
+
+        <p>An <code class="inl">int</code> is stored in <strong>32 bits</strong>, and those 32 bits can only spell out so many different numbers. That gives it a fixed range: from <code class="inl">-2^31</code> up to <code class="inl">2^31 - 1</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The limits of int</span></div>
+          <pre class="code"><code>// 32 bit   2^31-1   -2^31
+
+int max = 2147483647;    // the largest int
+int min = -2147483648;   // the smallest int</code></pre>
+        </div>
+
+        <h3 id="l1-double">double — numbers with a decimal point</h3>
+
+        <p><code class="inl">double</code> holds numbers that have a fractional part.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>double</span></div>
+          <pre class="code"><code>double y = 3.5;
+double z = 12321.46457567;
+double k = -12312.4535;</code></pre>
+        </div>
+
+        <p>A whole number fits inside a <code class="inl">double</code> without any trouble — Java just stores it with a decimal part of zero. The other direction does not work: a <code class="inl">double</code> may carry a fraction, and there is nowhere in an <code class="inl">int</code> to keep it, so Java refuses to compile.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One direction only</span></div>
+          <pre class="code"><code>double n = 3;      // fine — stored as 3.0
+
+// int m = 3.0;    // ERROR! a double does not fit in an int</code></pre>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Small box into big box is automatic. Big box into small box is an error — unless you force it, which is what casting in Part 2 is for.</p>
+        </div>
+
+        <h3 id="l1-boolean">boolean — true or false</h3>
+
+        <p>A <code class="inl">boolean</code> has exactly two possible values: <code class="inl">true</code> and <code class="inl">false</code>. You can write one down directly, or you can store the answer to a question.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>boolean</span></div>
+          <pre class="code"><code>boolean isPositive = true;
+boolean isValid = false;
+
+boolean x = 3 &gt; 10;    // the question is answered first,
+                       // then the answer goes in the box
+
+System.out.println(x);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <p>This is worth pausing on. Java works out <code class="inl">3 &gt; 10</code> before the assignment happens. Three is not greater than ten, so the result is <code class="inl">false</code>, and <em>that</em> is what lands in <code class="inl">x</code>.</p>
+
+        <h3 id="l1-string">String — text</h3>
+
+        <p>A <code class="inl">String</code> is text inside double quotes. Anything inside those quotes is text — letters, digits, slashes, symbols, spaces.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>String</span></div>
+          <pre class="code"><code>String word = "computer science";
+String password = "abc123";
+String date = "24/08/2026";
+String numbers = "12345";           // text, not a number
+String symbols = "^'+%&amp;/&amp;+%^'";</code></pre>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">"12345"</code> is not the number 12345. It looks like a number to you, but to Java it is five characters of text, and it behaves like text.</p>
+        </div>
+
+        <h3>Primitive and not primitive</h3>
+
+        <p>The four types split into two groups, and this split will matter more and more as the course goes on.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Type</th><th>Holds</th><th>Group</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">int</td><td>whole numbers</td><td>primitive</td></tr>
+              <tr><td class="mono">double</td><td>numbers with a decimal part</td><td>primitive</td></tr>
+              <tr><td class="mono">boolean</td><td>true or false</td><td>primitive</td></tr>
+              <tr><td class="mono">String</td><td>text</td><td><strong>not primitive</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Notice that the three primitive types are written in lowercase, and <code class="inl">String</code> starts with a capital letter. That capital is a hint that <code class="inl">String</code> is a different kind of thing.</p>
+
+        <div class="practice" id="p1">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 1</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Three of these six lines do <strong>not</strong> compile. Which three, and why?</p>
+              <div class="ex">
+                <pre class="code"><code>int a = 7;
+int b = 3.0;
+double c = 12;
+boolean d = "true";
+String e = 5;
+boolean f = 10 &lt; 2;</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">b, d and e fail.</span></p>
+                  <ul class="plain">
+                    <li><code class="inl">int b = 3.0;</code> — a double does not fit into an int.</li>
+                    <li><code class="inl">boolean d = "true";</code> — <code class="inl">"true"</code> is in quotes, so it is text, not the boolean <code class="inl">true</code>.</li>
+                    <li><code class="inl">String e = 5;</code> — 5 is a number, and a String box only takes text.</li>
+                  </ul>
+                  <p>The other three are fine. <code class="inl">c</code> holds 12.0, and <code class="inl">f</code> holds the answer to the question, which is <code class="inl">false</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What appears on the console?</p>
+              <div class="ex">
+                <pre class="code"><code>double d = 10;
+System.out.println(d);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">10.0</span></p>
+                  <p>A whole number goes into a double without complaint, and Java stores it with a decimal part of zero.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>One of these four values cannot be stored in an <code class="inl">int</code>. Which one, and how do you know?</p>
+              <div class="ex">
+                <pre class="code"><code>2147483647    -2147483648    2147483648    -32432</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">2147483648</span></p>
+                  <p>It is one past the top of the range. The largest int is 2147483647, and the smallest is -2147483648 — so the negative one on this list is still legal.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Label each of these four types: primitive, or not primitive?</p>
+              <div class="ex">
+                <pre class="code"><code>int    String    boolean    double</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">int, boolean, double are primitive. String is not.</span></p>
+                  <p>The lowercase spelling is the giveaway: the three primitive types are lowercase, and <code class="inl">String</code> takes a capital letter.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Which of these five values are Strings?</p>
+              <div class="ex">
+                <pre class="code"><code>"12345"    12345    "true"    true    "3.5"</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"12345", "true" and "3.5"</span></p>
+                  <p>Double quotes decide it, and nothing else does. Without the quotes, <code class="inl">12345</code> is an int, <code class="inl">true</code> is a boolean — and <code class="inl">"3.5"</code> is text even though it reads like a double.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write four declarations yourself, one per line, picking the right type each time:</p>
+              <ul class="plain">
+                <li>your age, as a whole number</li>
+                <li>the value 1.75</li>
+                <li>whether it is raining right now</li>
+                <li>the text Java</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int age = 16;
+double height = 1.75;
+boolean isRaining = false;
+String language = "Java";</code></pre>
+                  </div>
+                  <p>The names are yours to choose — the types are not. It has to be <code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code>, <code class="inl">String</code>, in that order.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ LESSON 2 ============ -->
+      <section class="lesson" id="l2">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 02 · Lesson2.java</span>
+          <h2 class="lesson-title">Operators, Casting and Number Traps</h2>
+        </div>
+
+        <h3 id="l2-arith">Arithmetic operators</h3>
+
+        <p>Java gives you five: <code class="inl">+</code>, <code class="inl">-</code>, <code class="inl">*</code>, <code class="inl">/</code> and <code class="inl">%</code>. The last one is called <strong>mod</strong> (modulus) and it hands you the remainder of a division.</p>
+
+        <p>The <code class="inl">+</code> operator does a second job as well. Put it between two Strings and it glues them together.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Plus with Strings</span></div>
+          <pre class="code"><code>String a = "A";
+String b = "B";
+
+System.out.println(a + b);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>AB</pre></div>
+        </div>
+
+        <h4>Order of operations</h4>
+
+        <p>When several operators appear in one expression, Java does not simply work left to right. It follows a priority list:</p>
+
+        <ul class="plain">
+          <li><strong>1.</strong> parentheses</li>
+          <li><strong>2.</strong> <code class="inl">*</code>, <code class="inl">/</code>, <code class="inl">%</code></li>
+          <li><strong>3.</strong> <code class="inl">+</code>, <code class="inl">-</code></li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>Priority in action</span></div>
+          <pre class="code"><code>System.out.println(2 + 3 * 4);      // 3*4 happens first
+System.out.println((2 + 3) * 4);    // parentheses jump the queue</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>14
+20</pre></div>
+        </div>
+
+        <h4>Mod</h4>
+
+        <p><code class="inl">%</code> gives the remainder. Divide, throw away the quotient, keep what is left over.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Mod</span></div>
+          <pre class="code"><code>System.out.println(15 % 4);    // 4 fits 3 times, 3 left over
+System.out.println(14 % 2);    // divides exactly, nothing left
+System.out.println(7 % 3);     // 3 fits 2 times, 1 left over
+System.out.println(5 % 12);    // 12 does not fit at all</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+0
+1
+5</pre></div>
+        </div>
+
+        <p>That last line surprises people. When the left number is smaller than the right one, nothing can be taken out of it, so the whole number is the remainder.</p>
+
+        <h3 id="l2-div">Integer division</h3>
+
+        <p>Divide an <code class="inl">int</code> by an <code class="inl">int</code> and Java gives you an <code class="inl">int</code> back. The fractional part is not rounded — it is thrown away.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>17 divided by 5</span></div>
+          <pre class="code"><code>int x = 17;
+int y = 5;
+
+System.out.println(x / y);       // not 3.4
+
+double answer = x / y;
+System.out.println(answer);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+3.0</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Declaring <code class="inl">answer</code> as a <code class="inl">double</code> does <strong>not</strong> save you. The division on the right runs first, with two ints, and produces 3. Only then is that 3 copied into a double box and becomes 3.0. The 0.4 was already gone before the assignment happened.</p>
+        </div>
+
+        <h3 id="l2-cast">Casting</h3>
+
+        <p>To keep the fractional part, one of the two numbers has to be a <code class="inl">double</code> <em>before</em> the division. Writing <code class="inl">(double)</code> in front of a value forces Java to treat it as one. That is a <strong>cast</strong>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four attempts, one failure</span></div>
+          <pre class="code"><code>System.out.println((double) x / y);            // 17.0 / 5
+System.out.println(x / (double) y);            // 17 / 5.0
+System.out.println((double) x / (double) y);   // 17.0 / 5.0
+System.out.println((double) (x / y));          // (double) 3</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3.4
+3.4
+3.4
+<em>3.0</em></pre></div>
+        </div>
+
+        <p>The first three all work, and it only takes one of the two numbers to be a double — the other is promoted automatically. The fourth one fails, and the only difference is where the parentheses are.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>In <code class="inl">(double) (x / y)</code> the parentheses tell Java to divide first. Two ints go in, 3 comes out, and only that 3 gets cast. You are casting the <strong>answer</strong> instead of the <strong>inputs</strong>, and by then it is too late.</p>
+        </div>
+
+        <h4>Casting the other way</h4>
+
+        <p>You can also cast a <code class="inl">double</code> down to an <code class="inl">int</code>. This is the one Java would not do on its own back in Part 1 — the cast is you taking responsibility for the loss.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>(int) cuts, it does not round</span></div>
+          <pre class="code"><code>double value = 3.89;
+double value2 = 3.19;
+
+System.out.println((int) value);
+System.out.println((int) value2);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+3</pre></div>
+        </div>
+
+        <p>3.89 does not become 4. The cast chops off everything after the decimal point and keeps the whole part, no matter how close to the next number you were.</p>
+
+        <h3>Dividing by zero</h3>
+
+        <p>Dividing an <code class="inl">int</code> by zero is not something Java can do, and it is not something the compiler catches either. The code compiles fine and the program starts fine — then it crashes at the moment it reaches that line. That is a <strong>run-time error</strong>, and this one is called an <code class="inl">ArithmeticException</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>ArithmeticException</span></div>
+          <pre class="code"><code>int number1 = 12;
+int number2 = 0;
+
+// System.out.println(number1 / number2);   // ArithmeticException
+// System.out.println(number1 % number2);   // ArithmeticException</code></pre>
+        </div>
+
+        <p>Both <code class="inl">/</code> and <code class="inl">%</code> crash, because both of them have to divide to do their job.</p>
+
+        <h3 id="l2-rel">Relational operators</h3>
+
+        <p>These compare two values and hand back a <code class="inl">boolean</code>. They are how you ask Java a question.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Operator</th><th>Question it asks</th><th>Use with</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">&gt;</td><td>is the left one bigger?</td><td>int, double</td></tr>
+              <tr><td class="mono">&gt;=</td><td>bigger, or the same?</td><td>int, double</td></tr>
+              <tr><td class="mono">&lt;</td><td>is the left one smaller?</td><td>int, double</td></tr>
+              <tr><td class="mono">&lt;=</td><td>smaller, or the same?</td><td>int, double</td></tr>
+              <tr><td class="mono">==</td><td>are they the same?</td><td>int</td></tr>
+              <tr><td class="mono">!=</td><td>are they different?</td><td>int</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Asking questions</span></div>
+          <pre class="code"><code>int c = 3;
+int d = 5;
+
+System.out.println(c &lt; d);
+System.out.println(d &lt;= c);
+System.out.println(c == d);
+System.out.println(c != d);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false
+false
+true</pre></div>
+        </div>
+
+        <p><code class="inl">==</code> and <code class="inl">!=</code> are listed for <code class="inl">int</code> only, and that restriction is deliberate. The next section shows what happens when you ignore it.</p>
+
+        <h3 id="l2-round">Round-off error</h3>
+
+        <p>A <code class="inl">double</code> does not store a number exactly. It stores something extremely close to it. Almost always that is close enough — until you compare two doubles that should be equal.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two ways to reach 0.7</span></div>
+          <pre class="code"><code>double val1 = 0.6;
+double val2 = 0.8;
+
+double val3 = val1 + 0.1;    // 0.6 + 0.1, so 0.7
+double val4 = val2 - 0.1;    // 0.8 - 0.1, so 0.7
+
+System.out.println(val3 == val4);
+System.out.println(val3);
+System.out.println(val4);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>false</em>
+0.7
+0.7000000000000001</pre></div>
+        </div>
+
+        <p>Both calculations should land on 0.7. One of them lands a tiny distance away, and <code class="inl">==</code> has no tolerance for tiny distances — it wants the two values identical, bit for bit. So the answer is <code class="inl">false</code>, and the console shows you exactly where the extra amount came from.</p>
+
+        <p>It is not that doubles can never be equal. Two doubles that were never calculated, only written down, match perfectly:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same value, written twice</span></div>
+          <pre class="code"><code>double val5 = 23435.6765765;
+double val6 = 23435.6765765;
+
+System.out.println(val5 == val6);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true</pre></div>
+        </div>
+
+        <p>The damage comes from <em>arithmetic</em>. Each operation can nudge the value a little, and those nudges are what <code class="inl">==</code> trips over.</p>
+
+        <div class="note note--task">
+          <span class="tag">Try it</span>
+          <p>Write code that checks whether two <code class="inl">double</code> values are equal <strong>correctly</strong> — in a way that is not fooled by the extra 0.0000000000001. Bring your attempt to class and we will go through it together.</p>
+        </div>
+
+        <h3 id="l2-str">Comparing Strings</h3>
+
+        <p>Build the text <code class="inl">"AB"</code> two different ways, and the two results look identical on screen. Compare them with <code class="inl">==</code> and Java says they are not the same.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Identical on screen, not equal to ==</span></div>
+          <pre class="code"><code>String s1 = "A";
+String s2 = "B";
+String s3 = "AB";
+
+System.out.println(s1 + s2);
+System.out.println(s3);
+System.out.println((s1 + s2) == s3);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>AB
+AB
+<em>false</em></pre></div>
+        </div>
+
+        <p>The first two lines print the same three characters. The third line still says <code class="inl">false</code>. This is the same lesson as round-off error, arriving from a different direction: <code class="inl">==</code> is stricter than "looks the same to me".</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Never use <code class="inl">==</code> to compare two Strings. It is not a rule about style — the answer it gives you will be wrong. We will cover the correct way to do it later.</p>
+        </div>
+
+        <div class="practice" id="p2">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 2</h3>
+          <p class="practice-lede">Predict every line before you run anything. Guessing and checking teaches you nothing here.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Write down all five outputs.</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println(20 / 6);
+System.out.println(20 % 6);
+System.out.println(6 % 20);
+System.out.println(3 * 4 + 2);
+System.out.println(3 * (4 + 2));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3 · 2 · 6 · 14 · 18</span></p>
+                  <ul class="plain">
+                    <li><code class="inl">20 / 6</code> — two ints, so the remainder is thrown away.</li>
+                    <li><code class="inl">20 % 6</code> — 6 fits three times, 2 is left over.</li>
+                    <li><code class="inl">6 % 20</code> — 20 does not fit into 6 at all, so all of it is the remainder.</li>
+                    <li><code class="inl">3 * 4 + 2</code> — multiplication outranks addition.</li>
+                    <li><code class="inl">3 * (4 + 2)</code> — parentheses jump the queue.</li>
+                  </ul>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>This prints <code class="inl">2.0</code>. Change one line so it prints <code class="inl">2.25</code>.</p>
+              <div class="ex">
+                <pre class="code"><code>double result = 9 / 4;
+System.out.println(result);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Cast one of the two numbers <strong>before</strong> the division happens:</p>
+                  <div class="ex">
+                    <pre class="code"><code>double result = (double) 9 / 4;</code></pre>
+                  </div>
+                  <p><code class="inl">9 / (double) 4</code> works just as well — one double on either side is enough. <code class="inl">(double) (9 / 4)</code> does <strong>not</strong> work: it casts the answer instead of the inputs, and still gives 2.0.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Four casts, four outputs. Which one is different from what you would expect?</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println((int) 9.99);
+System.out.println((int) 0.5);
+System.out.println((double) (7 / 2));
+System.out.println((double) 7 / 2);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">9 · 0 · 3.0 · 3.5</span></p>
+                  <p>The first two cut instead of rounding, so 9.99 becomes 9 and 0.5 becomes 0. The third divides two ints first and casts the 3 afterwards, which is too late. Only the fourth keeps the fraction.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Two of these four lines crash. Which two, and what happens on the other two?</p>
+              <div class="ex">
+                <pre class="code"><code>int p = 10;
+int q = 0;
+
+System.out.println(p / q);
+System.out.println(p % q);
+System.out.println(q / p);
+System.out.println(q % p);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">The first two crash. The last two print 0 and 0.</span></p>
+                  <p><code class="inl">p / q</code> and <code class="inl">p % q</code> both throw an <code class="inl">ArithmeticException</code>, because <code class="inl">%</code> has to divide in order to find a remainder. <code class="inl">q / p</code> and <code class="inl">q % p</code> are perfectly safe — zero divided <em>by</em> something is fine. It is dividing <em>by</em> zero that breaks.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What do these two lines print?</p>
+              <div class="ex">
+                <pre class="code"><code>double m = 0.1 + 0.2;
+
+System.out.println(m == 0.3);
+System.out.println(m);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false</span> and <span class="outline">0.30000000000000004</span></p>
+                  <p>Round-off error again. The addition lands a hair above 0.3, and <code class="inl">==</code> accepts nothing less than an exact match.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Both println lines look like they should agree with each other. Do they?</p>
+              <div class="ex">
+                <pre class="code"><code>String x = "12";
+String y = "34";
+String z = "1234";
+
+System.out.println(x + y);
+System.out.println((x + y) == z);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1234</span> and <span class="outline">false</span></p>
+                  <p>The text really is identical — that is what the first line proves. The second line is still <code class="inl">false</code>, because <code class="inl">==</code> is the wrong tool for comparing Strings.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ LESSON 3 ============ -->
+      <section class="lesson" id="l3">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 03 · Lesson3.java</span>
+          <h2 class="lesson-title">Logical Operators</h2>
+        </div>
+
+        <p>Relational operators turn numbers into <code class="inl">true</code> and <code class="inl">false</code>. Logical operators take those <code class="inl">true</code> and <code class="inl">false</code> values and combine them, so you can ask one question made of several smaller questions.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Symbol</th><th>Name</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">&amp;&amp;</td><td>AND</td><td>true only when both sides are true</td></tr>
+              <tr><td class="mono">||</td><td>OR</td><td>true when at least one side is true</td></tr>
+              <tr><td class="mono">!</td><td>NOT</td><td>flips true to false and false to true</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>All three fit in three small tables. Learn these and there is nothing else to memorise here.</p>
+
+        <div class="truths">
+          <table>
+            <caption>AND &nbsp;&amp;&amp;</caption>
+            <tbody>
+              <tr><td><span class="tv">T</span> &amp;&amp; <span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="tv">T</span> &amp;&amp; <span class="fv">F</span></td><td><span class="fv">F</span></td></tr>
+              <tr><td><span class="fv">F</span> &amp;&amp; <span class="tv">T</span></td><td><span class="fv">F</span></td></tr>
+              <tr><td><span class="fv">F</span> &amp;&amp; <span class="fv">F</span></td><td><span class="fv">F</span></td></tr>
+            </tbody>
+          </table>
+          <table>
+            <caption>OR &nbsp;||</caption>
+            <tbody>
+              <tr><td><span class="tv">T</span> || <span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="tv">T</span> || <span class="fv">F</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="fv">F</span> || <span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="fv">F</span> || <span class="fv">F</span></td><td><span class="fv">F</span></td></tr>
+            </tbody>
+          </table>
+          <table>
+            <caption>NOT &nbsp;!</caption>
+            <tbody>
+              <tr><td>! <span class="tv">T</span></td><td><span class="fv">F</span></td></tr>
+              <tr><td>! <span class="fv">F</span></td><td><span class="tv">T</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Now put them together. Work from the inside out, exactly as the tables tell you to.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Working inside out</span></div>
+          <pre class="code"><code>System.out.println(5 &lt; 3 || !(2 &lt; 5));
+
+// 5 &lt; 3   is false
+// 2 &lt; 5   is true, and !true is false
+// false || false   is false</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <h3 id="l3-short">Short-circuit evaluation</h3>
+
+        <p>Look at the AND table again. If the left side is already <code class="inl">false</code>, the answer is <code class="inl">false</code> no matter what the right side says. And in the OR table, if the left side is already <code class="inl">true</code>, the answer is <code class="inl">true</code> regardless.</p>
+
+        <p>Java notices this. When the left side settles the question on its own, <strong>the right side is never evaluated at all</strong>. It is not that Java evaluates it and ignores the result — it does not run it.</p>
+
+        <p>Here is how we proved it. <code class="inl">c</code> is zero, so <code class="inl">b / c</code> would throw the <code class="inl">ArithmeticException</code> from Part 2 the instant it ran. That makes the right side a tripwire: if the program crashes, the right side ran.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The tripwire</span></div>
+          <pre class="code"><code>int a = 3;
+int b = 5;
+int c = 0;      // dividing by this crashes
+int d = -3;
+
+// System.out.println(a &gt; b &amp;&amp; b / c == d);   // false &amp;&amp; ...  -&gt; false
+// System.out.println(a &lt; b &amp;&amp; b / c == d);   // true  &amp;&amp; ...  -&gt; crash
+// System.out.println(a &lt; b || b / c == d);   // true  || ...  -&gt; true
+// System.out.println(a &gt; b || b / c == d);   // false || ...  -&gt; crash</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Expression</th><th class="mono">Left side</th><th>Right side</th><th>Result</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">a &gt; b &amp;&amp; b / c == d</td><td class="mono"><span class="fv">false</span></td><td>never runs</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">a &lt; b &amp;&amp; b / c == d</td><td class="mono"><span class="tv">true</span></td><td>runs</td><td class="mono"><span class="err">crash</span></td></tr>
+              <tr><td class="mono">a &lt; b || b / c == d</td><td class="mono"><span class="tv">true</span></td><td>never runs</td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">a &gt; b || b / c == d</td><td class="mono"><span class="fv">false</span></td><td>runs</td><td class="mono"><span class="err">crash</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The very same broken right side is harmless in two of these lines and fatal in the other two. Nothing changed about the danger — only whether the left side made Java bother to look.</p>
+        </div>
+
+        <h3 id="l3-morgan">De Morgan's Law</h3>
+
+        <p>Sometimes you need the opposite of a compound condition. Putting a <code class="inl">!</code> in front of the whole thing works, but it is hard to read. De Morgan's Law lets you push that <code class="inl">!</code> all the way inside instead.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same condition, written twice</span></div>
+          <pre class="code"><code>// !( a &lt; b &amp;&amp; c == d )
+
+//    a &gt;= b  ||  c != d</code></pre>
+        </div>
+
+        <p>Two things happen at once when the <code class="inl">!</code> moves inside:</p>
+
+        <ul class="plain">
+          <li>Every comparison flips to its opposite — <code class="inl">&lt;</code> becomes <code class="inl">&gt;=</code>, and <code class="inl">==</code> becomes <code class="inl">!=</code>.</li>
+          <li>The operator in the middle swaps — <code class="inl">&amp;&amp;</code> becomes <code class="inl">||</code>.</li>
+        </ul>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Flipping the comparisons but leaving <code class="inl">&amp;&amp;</code> in the middle is the mistake almost everyone makes. Both changes have to happen, or the new condition means something completely different.</p>
+        </div>
+
+        <div class="practice" id="p3">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 3</h3>
+          <p class="practice-lede">Keep the three truth tables next to you and work from the inside out.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Evaluate all five.</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println(true &amp;&amp; false);
+System.out.println(!(4 &gt; 2));
+System.out.println(3 &lt; 5 || 10 &lt; 2);
+System.out.println(3 &lt; 5 &amp;&amp; 10 &lt; 2);
+System.out.println(!(1 == 2) &amp;&amp; !(2 == 3));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false · false · true · false · true</span></p>
+                  <p>The last one is the interesting one: <code class="inl">1 == 2</code> is false and <code class="inl">2 == 3</code> is false, so both <code class="inl">!</code> flip them to true, and <code class="inl">true &amp;&amp; true</code> is true.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Using these three values, evaluate the three conditions.</p>
+              <div class="ex">
+                <pre class="code"><code>int a = 4;
+int b = 9;
+int c = 4;
+
+System.out.println(a &lt; b &amp;&amp; b &gt; c);
+System.out.println(a == c || a &gt; b);
+System.out.println(!(a == c));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">true · true · false</span></p>
+                  <p>In the second line the left side is already true, so it does not matter that <code class="inl">a &gt; b</code> is false. In the third, <code class="inl">a == c</code> is true and <code class="inl">!</code> flips it.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p><code class="inl">c</code> is zero, so <code class="inl">a / c</code> crashes the moment it runs. Two of these four lines crash. Which two?</p>
+              <div class="ex">
+                <pre class="code"><code>int a = 5;
+int b = 2;
+int c = 0;
+
+System.out.println(a &lt; b &amp;&amp; a / c == 1);
+System.out.println(a &gt; b || a / c == 1);
+System.out.println(a &gt; b &amp;&amp; a / c == 1);
+System.out.println(a &lt; b || a / c == 1);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Lines 3 and 4 crash. Line 1 prints false, line 2 prints true.</span></p>
+                  <p>Here <code class="inl">a &lt; b</code> is false and <code class="inl">a &gt; b</code> is true. A <code class="inl">false</code> on the left of <code class="inl">&amp;&amp;</code> and a <code class="inl">true</code> on the left of <code class="inl">||</code> both settle the question on their own, so the dangerous right side is never reached. In the other two the left side settles nothing, Java goes on to evaluate <code class="inl">a / c</code>, and the program dies.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Rewrite this without the outer <code class="inl">!</code>, using De Morgan's Law.</p>
+              <div class="ex">
+                <pre class="code"><code>!(x &gt; 5 || y == 2)</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>x &lt;= 5 &amp;&amp; y != 2</code></pre>
+                  </div>
+                  <p>Both comparisons flip, and the <code class="inl">||</code> in the middle becomes <code class="inl">&amp;&amp;</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Same again, this time starting from an <code class="inl">&amp;&amp;</code>.</p>
+              <div class="ex">
+                <pre class="code"><code>!(a &gt;= b &amp;&amp; c != d)</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>a &lt; b || c == d</code></pre>
+                  </div>
+                  <p>The opposite of <code class="inl">&gt;=</code> is <code class="inl">&lt;</code>, the opposite of <code class="inl">!=</code> is <code class="inl">==</code>, and the <code class="inl">&amp;&amp;</code> becomes <code class="inl">||</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>A student rewrote the first line as the second. Something is wrong. What is it, and what is the correct version?</p>
+              <div class="ex">
+                <pre class="code"><code>!(m &lt; n &amp;&amp; p == q)
+
+m &gt;= n &amp;&amp; p != q</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The two comparisons were flipped correctly, but the operator in the middle was left alone. It has to change as well:</p>
+                  <div class="ex">
+                    <pre class="code"><code>m &gt;= n || p != q</code></pre>
+                  </div>
+                  <p>This is the mistake to watch for. Half of De Morgan's Law is not a weaker version of it — it is a different condition that happens to look right.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Five traps to remember</h2>
+        <p>Every one of these compiles without complaint. That is exactly what makes them worth memorising.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">double answer = 17 / 5;</td>
+                <td class="mono">3.4</td>
+                <td class="mono"><span class="fv">3.0</span></td>
+                <td>two ints divide first, before the assignment</td>
+              </tr>
+              <tr>
+                <td class="mono">(double) (x / y)</td>
+                <td class="mono">3.4</td>
+                <td class="mono"><span class="fv">3.0</span></td>
+                <td>casts the answer, not the inputs</td>
+              </tr>
+              <tr>
+                <td class="mono">(int) 3.89</td>
+                <td class="mono">4</td>
+                <td class="mono"><span class="fv">3</span></td>
+                <td>casting cuts, it does not round</td>
+              </tr>
+              <tr>
+                <td class="mono">0.6 + 0.1 == 0.8 - 0.1</td>
+                <td class="mono">true</td>
+                <td class="mono"><span class="fv">false</span></td>
+                <td>round-off error in double arithmetic</td>
+              </tr>
+              <tr>
+                <td class="mono">("A" + "B") == "AB"</td>
+                <td class="mono">true</td>
+                <td class="mono"><span class="fv">false</span></td>
+                <td>== is the wrong tool for Strings</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 1, parts 1–3. Every console output on this page was compiled and run.
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KW = /^(public|class|static|void|package|new|final|return|true|false|this|null)$/;
+  var TY = /^(int|double|boolean|String|char|long|float)$/;
+
+  function esc(s){
+    return s.replace(/[&<>]/g, function(ch){
+      return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : '&gt;';
+    });
+  }
+
+  var RE = /(\/\/[^\n]*)|("(?:\\.|[^"\\])*")|('(?:\\.|[^'\\])*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_$]*)/g;
+
+  function highlight(src){
+    var out = '', last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null){
+      out += esc(src.slice(last, m.index));
+      var tok = m[0];
+      if (m[1])            out += '<span class="c">' + esc(tok) + '</span>';
+      else if (m[2] || m[3]) out += '<span class="s">' + esc(tok) + '</span>';
+      else if (m[4])       out += '<span class="n">' + esc(tok) + '</span>';
+      else if (KW.test(tok)) out += '<span class="k">' + tok + '</span>';
+      else if (TY.test(tok)) out += '<span class="t">' + tok + '</span>';
+      else                 out += esc(tok);
+      last = m.index + tok.length;
+    }
+    return out + esc(src.slice(last));
+  }
+
+  var blocks = document.querySelectorAll('pre.code > code');
+  for (var i = 0; i < blocks.length; i++){
+    blocks[i].innerHTML = highlight(blocks[i].textContent);
+  }
+
+  // highlight the contents entry for whatever section is on screen
+  var links = {};
+  var anchors = document.querySelectorAll('nav.toc a');
+  for (var j = 0; j < anchors.length; j++){
+    links[anchors[j].getAttribute('href').slice(1)] = anchors[j];
+  }
+
+  var targets = document.querySelectorAll('section[id], h3[id]');
+  if ('IntersectionObserver' in window){
+    var seen = {};
+    var obs = new IntersectionObserver(function(entries){
+      for (var k = 0; k < entries.length; k++){
+        seen[entries[k].target.id] = entries[k].isIntersecting;
+      }
+      var current = null;
+      for (var m2 = 0; m2 < targets.length; m2++){
+        if (seen[targets[m2].id]) { current = targets[m2].id; break; }
+      }
+      for (var id in links) links[id].classList.remove('on');
+      if (current && links[current]) links[current].classList.add('on');
+    }, { rootMargin: '-10% 0px -70% 0px' });
+    for (var n = 0; n < targets.length; n++) obs.observe(targets[n]);
+  }
+})();
+</script>
+
+</body>
+</html>
