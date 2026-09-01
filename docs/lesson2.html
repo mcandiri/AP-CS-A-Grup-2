@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 2: assignment operators, ++ and --, final, int overflow, and the whole if / else if / else family including the dangling else.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 2 · Assignment, final &amp; if / else — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 2</p>
+    <h1>Assignment, final &amp; if / else</h1>
+    <p class="deck">Our second lesson, across the three files we worked in — the shorthand assignment operators, what <code class="inl">final</code> protects, the moment an <code class="inl">int</code> runs off the end of its range, and the whole <code class="inl">if</code> family right through to the dangling else.</p>
+    <ul class="facts">
+      <li>3 parts</li>
+      <li>Java</li>
+      <li>18 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l4">4 · Assignment, final, overflow</a></li>
+        <li><a class="sub" href="#l4-assign">Reassigning</a></li>
+        <li><a class="sub" href="#l4-compound">Compound operators</a></li>
+        <li><a class="sub" href="#l4-incr">++ and --</a></li>
+        <li><a class="sub" href="#l4-final">final</a></li>
+        <li><a class="sub" href="#l4-overflow">Overflow</a></li>
+        <li><a class="sub" href="#p4">Practice</a></li>
+        <li><a href="#l5">5 · if and else</a></li>
+        <li><a class="sub" href="#l5-shape">The shape of an if</a></li>
+        <li><a class="sub" href="#l5-braces">Braces</a></li>
+        <li><a class="sub" href="#l5-else">else</a></li>
+        <li><a class="sub" href="#l5-nested">Nested if vs else if</a></li>
+        <li><a class="sub" href="#p5">Practice</a></li>
+        <li><a href="#l6">6 · Chains &amp; dangling else</a></li>
+        <li><a class="sub" href="#l6-grade">A grade from a number</a></li>
+        <li><a class="sub" href="#l6-separate">Separate ifs</a></li>
+        <li><a class="sub" href="#l6-dangling">The dangling else</a></li>
+        <li><a class="sub" href="#p6">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 4 ============ -->
+      <section class="lesson" id="l4">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 04 · Lesson4.java</span>
+          <h2 class="lesson-title">Assignment Operators, final and Overflow</h2>
+        </div>
+
+        <h3 id="l4-assign">Reassigning a variable</h3>
+
+        <p>Declaring a variable and changing it later are two different things. The type is written <strong>once</strong>, when the box is created. After that you only use the name.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Declare once, assign as often as you like</span></div>
+          <pre class="code"><code>int a = 3;               // type name = value ;
+System.out.println("a: " + a);
+
+a = 5;                   // name = value ;
+System.out.println("a: " + a);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 3
+a: 5</pre></div>
+        </div>
+
+        <p>The old value is gone the moment the new one lands. A variable holds one value, never two.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The right side is worked out first</span></div>
+          <pre class="code"><code>int b = 8;
+b = 11;
+
+a = b;         // a becomes 11
+System.out.println("a: " + a);
+
+a = b + 3;     // 11 + 3
+System.out.println("a: " + a);
+
+a = a + 5;     // 14 + 5
+System.out.println("a: " + a);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 11
+a: 14
+a: 19</pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p><code class="inl">=</code> is not the equals sign from maths. Java works out the whole right-hand side first, then drops the answer into the box on the left. That is why <code class="inl">a = a + 5</code> makes perfect sense to Java and no sense at all as an equation.</p>
+        </div>
+
+        <h3 id="l4-compound">Compound assignment operators</h3>
+
+        <p>Writing <code class="inl">a = a + 2</code> over and over gets old, so Java gives you a shorthand for each of the five arithmetic operators.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Shorthand</th><th class="mono">Means</th><th>Reads as</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">a += 2</td><td class="mono">a = a + 2</td><td>add 2 to a</td></tr>
+              <tr><td class="mono">a -= 3</td><td class="mono">a = a - 3</td><td>take 3 away from a</td></tr>
+              <tr><td class="mono">a *= 4</td><td class="mono">a = a * 4</td><td>multiply a by 4</td></tr>
+              <tr><td class="mono">a /= 2</td><td class="mono">a = a / 2</td><td>divide a by 2</td></tr>
+              <tr><td class="mono">a %= 3</td><td class="mono">a = a % 3</td><td>replace a with the remainder</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>They are not new arithmetic — they are the same five operators with less typing. Follow the value of <code class="inl">a</code> down this list, starting from 19:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>All five, one after another</span></div>
+          <pre class="code"><code>int a = 19;
+
+a += 2;    System.out.println("a: " + a);   // 19 + 2
+a -= 3;    System.out.println("a: " + a);   // 21 - 3
+a *= 4;    System.out.println("a: " + a);   // 18 * 4
+a /= 2;    System.out.println("a: " + a);   // 72 / 2
+a %= 3;    System.out.println("a: " + a);   // 36 % 3</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 21
+a: 18
+a: 72
+a: 36
+a: 0</pre></div>
+        </div>
+
+        <p>The last line lands on 0 because 3 divides 36 exactly, so there is no remainder left over.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The shorthand does not rescue you from integer division. Two <code class="inl">int</code> values still divide as ints, and the fraction is still thrown away.</p>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Still integer division</span></div>
+          <pre class="code"><code>int d = 7;
+d /= 2;                 // you might read this as 3.5
+System.out.println(d);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>3</em></pre></div>
+        </div>
+
+        <h3 id="l4-incr">++ and --</h3>
+
+        <p>Adding or taking away exactly 1 is so common that it gets its own operator: <code class="inl">++</code> counts up by one, <code class="inl">--</code> counts down by one.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>++ and -- on their own line</span></div>
+          <pre class="code"><code>int n = 5;
+System.out.println(n);
+
+n++;                    // exactly the same as n += 1
+System.out.println(n);
+
+n--;                    // exactly the same as n -= 1
+System.out.println(n);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+6
+5</pre></div>
+        </div>
+
+        <p>So there are three ways to write the same step: <code class="inl">n = n + 1</code>, <code class="inl">n += 1</code>, and <code class="inl">n++</code>. They do exactly the same thing, and <code class="inl">++</code> is simply the shortest of the three.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p><code class="inl">++</code> and <code class="inl">--</code> only ever change the value by 1. For any other amount you need <code class="inl">+=</code> or <code class="inl">-=</code> — there is no such thing as <code class="inl">++2</code>.</p>
+        </div>
+
+        <h3 id="l4-final">final</h3>
+
+        <p>Put <code class="inl">final</code> in front of a declaration and the box is sealed. It gets one value, and any attempt to change it later is a compile error — Java refuses to build the program at all.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Sealed after the first value</span></div>
+          <pre class="code"><code>final int x = 5;
+
+x = 10;                 // ERROR</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: cannot assign a value to final variable x</em>
+        x = 10;
+        ^
+1 error</pre></div>
+        </div>
+
+        <p>This is not Java being difficult. It is a way of writing down a value that <em>should</em> never move, so that the compiler catches you if you ever change it by accident.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Values that have no business changing</span></div>
+          <pre class="code"><code>final double PI = 3.14;
+final double TAX_RATE = 0.2;
+final int MAX_VALUE = 2147483647;
+final int MIN_VALUE = -2147483648;</code></pre>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>By convention a <code class="inl">final</code> variable is named in <code class="inl">ALL_CAPS</code>, with underscores between words. Java does not force this, but every Java programmer reading your code expects it — a capitalised name is a promise that the value never moves.</p>
+        </div>
+
+        <p>The value a <code class="inl">final</code> is sealed with does not have to be typed out. It can be whatever another variable happens to hold at that moment — and it is a copy, frozen right there.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Frozen at the moment of the assignment</span></div>
+          <pre class="code"><code>int y = 5;
+y = 12;
+y = 3;
+
+final int z = y;        // z takes the value 3
+
+y = 99;                 // y is free to keep moving
+System.out.println("z: " + z + "   y: " + y);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>z: 3   y: 99</pre></div>
+        </div>
+
+        <p><code class="inl">z</code> is not tied to <code class="inl">y</code>. It copied the number 3 and then stopped listening.</p>
+
+        <h3 id="l4-overflow">Arithmetic overflow</h3>
+
+        <p>Back in Lesson 1 we said an <code class="inl">int</code> lives in <strong>32 bits</strong>, and that this gives it a fixed range. Now we find out what happens when a calculation walks off the end of that range.</p>
+
+        <p>32 bits can spell out 2<sup>32</sup> = 4,294,967,296 different patterns — no more. Java hands out half of them to negative numbers and half to zero-and-up, which is where the two limits come from:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The two ends of the range</span></div>
+          <pre class="code"><code>int min = -2147483648;   // -2^31    the smallest int
+int max =  2147483647;   //  2^31-1  the largest int</code></pre>
+        </div>
+
+        <p>There is no pattern left over for "one more than the largest". So what does Java do when you ask for it?</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One past the top</span></div>
+          <pre class="code"><code>int num = 2147483647;
+
+System.out.println(num + 1);
+
+num *= 2;
+System.out.println(num);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>-2147483648</em>
+<em>-2</em></pre></div>
+        </div>
+
+        <p>It <strong>wraps around</strong>. Think of the odometer in a car, or the hour hand on a clock: when the digits run out, they do not stop and they do not grow an extra column — they roll over to the beginning. Adding 1 to the largest <code class="inl">int</code> lands you on the smallest one.</p>
+
+        <p>The second line is the same effect, further around the dial. 2147483647 × 2 is 4,294,967,294, which is 2 short of the 4,294,967,296 patterns that exist — so counting that far around the ring leaves you 2 short of where you started, at <code class="inl">-2</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The ring, from both directions</span></div>
+          <pre class="code"><code>int max = 2147483647;
+System.out.println(max + 1);      // over the top
+System.out.println(max + 2);      // and one further
+
+int min = -2147483648;
+System.out.println(min - 1);      // under the bottom</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>-2147483648</em>
+<em>-2147483647</em>
+<em>2147483647</em></pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Overflow produces <strong>no error, no warning and no exception</strong>. The program keeps running happily with a wrong number in it. This is the reason it is worth memorising: nothing will tell you it happened except the nonsense in your output.</p>
+        </div>
+
+        <div class="practice" id="p4">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 4</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Follow <code class="inl">a</code> line by line. What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int a = 10;
+a += 5;
+a *= 2;
+a -= 10;
+a /= 4;
+System.out.println(a);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">5</span></p>
+                  <p>10 → 15 → 30 → 20 → 5. Each line replaces the value, so the only thing that matters is where the previous line left you.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What appears on the console, and why is it not 3.5?</p>
+              <div class="ex">
+                <pre class="code"><code>int a = 7;
+a /= 2;
+System.out.println(a);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3</span></p>
+                  <p><code class="inl">a /= 2</code> is just <code class="inl">a = a / 2</code>, and <code class="inl">7 / 2</code> is two ints dividing — the fraction is cut off before it ever reaches <code class="inl">a</code>. The shorthand changes nothing about that.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>One of these four lines does not compile. Which one?</p>
+              <div class="ex">
+                <pre class="code"><code>final int LIMIT = 100;
+LIMIT = 200;
+final double RATE = 0.2;
+double total = RATE * 50;</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Line 2, <code class="inl">LIMIT = 200;</code></span></p>
+                  <p><code class="inl">cannot assign a value to final variable LIMIT</code>. Line 4 is fine — <em>reading</em> a final variable is always allowed, it is only writing to it a second time that fails.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Follow <code class="inl">count</code> down the lines. What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int count = 8;
+count++;
+count += 3;
+count--;
+count /= 2;
+System.out.println(count);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">5</span></p>
+                  <p>8 → 9 → 12 → 11 → 5. The last step is <code class="inl">11 / 2</code> between two ints, so the 0.5 is cut off rather than rounded.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed, and what did Java not tell you along the way?</p>
+              <div class="ex">
+                <pre class="code"><code>int big = 2147483647;
+big += 1;
+System.out.println(big);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-2147483648</span></p>
+                  <p>One past the largest <code class="inl">int</code> wraps around to the smallest one. Java gave no error, no warning and no exception — the program simply carried on with a wrong number.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Rewrite all three lines using the shortest form you know.</p>
+              <div class="ex">
+                <pre class="code"><code>score = score + 10;
+lives = lives - 1;
+total = total * 2;</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>score += 10;
+lives--;          // or lives -= 1;
+total *= 2;</code></pre>
+                  </div>
+                  <p>Only the middle one can go all the way to <code class="inl">--</code>, because that is the only one changing by exactly 1.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 5 ============ -->
+      <section class="lesson" id="l5">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 05 · Lesson5.java</span>
+          <h2 class="lesson-title">Control Structures: if and else</h2>
+        </div>
+
+        <p>Everything we have written so far runs top to bottom, every line, every time. A <strong>control structure</strong> is what lets the program choose — and the first one is <code class="inl">if</code>.</p>
+
+        <h3 id="l5-shape">The shape of an if</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>The full pattern</span></div>
+          <pre class="code"><code>if (condition)
+{
+    action
+}
+else if (condition2)
+{
+    action2
+}
+else
+{
+    action3
+}</code></pre>
+        </div>
+
+        <p>What goes in the parentheses has to be a <strong>boolean</strong> — something that is either <code class="inl">true</code> or <code class="inl">false</code>. That is exactly what the relational and logical operators from Lesson 1 produce, which is why we did those first.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Even or odd</span></div>
+          <pre class="code"><code>int number = 6;
+
+if (number % 2 == 0)
+{
+    System.out.println("Even number!");
+}
+else
+{
+    System.out.println("Odd number!");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Even number!</pre></div>
+        </div>
+
+        <p><code class="inl">number % 2</code> is the remainder after dividing by 2, and comparing it to 0 answers the question "does 2 divide this exactly?". Exactly one of the two branches runs — never both, never neither.</p>
+
+        <h3 id="l5-braces">Braces: when they are required, and what happens without them</h3>
+
+        <p>The braces are <strong>required as soon as the <code class="inl">if</code> controls two or more lines</strong>. For a single line they are optional, and Java will not complain if you leave them out.</p>
+
+        <p>That optional-ness is the trap. Leave the braces off and write two lines anyway, and only the <strong>first</strong> one belongs to the <code class="inl">if</code>. The second is an ordinary line that runs no matter what.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>No braces, two lines</span></div>
+          <pre class="code"><code>int number = -4;
+
+if (number > 0)
+    System.out.println("Positive");
+    System.out.println("Positive!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Positive!</em></pre></div>
+        </div>
+
+        <p>The number is negative, and the word <code class="inl">Positive!</code> still appears. Indentation is for human eyes — Java ignores it completely. What Java actually read is this:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How Java reads the same code</span></div>
+          <pre class="code"><code>if (number > 0)
+    System.out.println("Positive");
+
+System.out.println("Positive!");    // never belonged to the if</code></pre>
+        </div>
+
+        <p>Put the braces in and the second line joins the first inside the <code class="inl">if</code>. Now the negative number silences both:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>With braces, same value</span></div>
+          <pre class="code"><code>int number = -4;
+
+if (number > 0)
+{
+    System.out.println("Positive");
+    System.out.println("Positive!");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><span class="q">(nothing)</span></pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Write the braces every time, even for a single line. They cost two characters and they remove this entire category of bug — including the dangling else waiting for us in Part 6.</p>
+        </div>
+
+        <h3 id="l5-else">else</h3>
+
+        <p><code class="inl">else</code> has no condition of its own. It is the branch that runs when the <code class="inl">if</code> above it was false, and nothing else needs to be checked.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two branches, one of them always runs</span></div>
+          <pre class="code"><code>int number = 6;
+
+if (number > 0) {
+    System.out.println("Positive");
+}
+else {
+    System.out.println("Not Positive");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Positive</pre></div>
+        </div>
+
+        <h3 id="l5-nested">Nested if versus else if</h3>
+
+        <p>Two branches are often not enough. A number can be positive, negative <em>or</em> zero — three answers. One way to get there is to put a whole second <code class="inl">if</code> inside the <code class="inl">else</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>An if inside an else</span></div>
+          <pre class="code"><code>int number = 1;
+
+if (number > 0) {
+    System.out.println("Positive");
+}
+else {
+    if (number &lt; 0) {
+        System.out.println("Negative");
+    }
+    else {
+        System.out.println("Zero");
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Positive</pre></div>
+        </div>
+
+        <p>It works, but every extra answer pushes the code further to the right. Java lets you drop the braces around that inner <code class="inl">if</code> and pull it back onto the <code class="inl">else</code> line:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The same three branches, written flat</span></div>
+          <pre class="code"><code>int number = 1;
+
+if (number > 0) {
+    System.out.println("Positive");
+}
+else if (number &lt; 0) {
+    System.out.println("Negative");
+}
+else {
+    System.out.println("Zero");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Positive</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">else if</code> is not a new keyword. It is an ordinary <code class="inl">else</code> whose action happens to be another <code class="inl">if</code> — the two versions above are the <em>same program</em>, just typed differently. Knowing that is what makes the dangling else in Part 6 make sense.</p>
+        </div>
+
+        <div class="practice" id="p5">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 5</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What appears on the console?</p>
+              <div class="ex">
+                <pre class="code"><code>int number = -4;
+
+if (number > 0)
+    System.out.println("A");
+    System.out.println("B");</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">B</span></p>
+                  <p>Without braces only the first line belongs to the <code class="inl">if</code>. <code class="inl">A</code> is skipped because -4 is not positive; <code class="inl">B</code> was never inside the <code class="inl">if</code> at all, so it runs regardless.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Now the same code with <code class="inl">number = 6</code>. What appears?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">A, then B</span></p>
+                  <p>This is why the bug survives so long. When the condition is true the output looks exactly right, and nothing gives away that the second line was never protected.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed for <code class="inl">number = 0</code>?</p>
+              <div class="ex">
+                <pre class="code"><code>if (number > 0) {
+    System.out.println("Positive");
+}
+else if (number &lt; 0) {
+    System.out.println("Negative");
+}
+else {
+    System.out.println("Zero");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Zero</span></p>
+                  <p>0 is not greater than 0, and not less than 0 either. Both conditions fail, so the <code class="inl">else</code> — which has no condition to fail — is what is left.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Rewrite this without the nesting, using <code class="inl">else if</code>.</p>
+              <div class="ex">
+                <pre class="code"><code>if (temp > 30) {
+    System.out.println("Hot");
+}
+else {
+    if (temp > 15) {
+        System.out.println("Warm");
+    }
+    else {
+        System.out.println("Cold");
+    }
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>if (temp > 30) {
+    System.out.println("Hot");
+}
+else if (temp > 15) {
+    System.out.println("Warm");
+}
+else {
+    System.out.println("Cold");
+}</code></pre>
+                  </div>
+                  <p>Notice <code class="inl">temp > 15</code> did not have to become <code class="inl">temp > 15 &amp;&amp; temp &lt;= 30</code>. Anything above 30 was already taken by the first branch, so by the time the second one is reached that half is impossible.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Here is a test for odd numbers. It works for 7 and fails for -7. What does it print for each, and why?</p>
+              <div class="ex">
+                <pre class="code"><code>if (number % 2 == 1) {
+    System.out.println("Odd");
+}
+else {
+    System.out.println("Even");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">7 gives Odd. -7 gives Even, which is wrong.</span></p>
+                  <p>In Java <code class="inl">-7 % 2</code> is <code class="inl">-1</code>, not <code class="inl">1</code> — the remainder keeps the sign of the left-hand number. So the condition is false and the <code class="inl">else</code> runs.</p>
+                  <p>Test against 0 instead: <code class="inl">number % 2 == 0</code> is true for both 6 and -6, because 0 has no sign to get wrong.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write an <code class="inl">if / else</code> that prints <code class="inl">Teenager</code> when <code class="inl">age</code> is from 13 to 19 inclusive, and <code class="inl">Not a teenager</code> otherwise.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>if (age >= 13 &amp;&amp; age &lt;= 19) {
+    System.out.println("Teenager");
+}
+else {
+    System.out.println("Not a teenager");
+}</code></pre>
+                  </div>
+                  <p>Both ends are <code class="inl">>=</code> and <code class="inl">&lt;=</code> because "inclusive" means 13 and 19 are in. With <code class="inl">></code> and <code class="inl">&lt;</code> the code would compile and quietly get those two ages wrong.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 6 ============ -->
+      <section class="lesson" id="l6">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 06 · Lesson6.java</span>
+          <h2 class="lesson-title">else if Chains and the Dangling else</h2>
+        </div>
+
+        <h3 id="l6-grade">A grade from a number</h3>
+
+        <p>Turning a mark out of 100 into a grade from 1 to 5 needs five branches, plus one more for a mark that is not a valid mark at all.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The whole chain</span></div>
+          <pre class="code"><code>int note = -243;
+
+if (note &lt; 0 || note > 100) {
+    System.out.println("INVALID NOTE!!");
+}
+else if (note >= 80) {
+    System.out.println("5");
+}
+else if (note >= 60) {
+    System.out.println("4");
+}
+else if (note >= 40) {
+    System.out.println("3");
+}
+else if (note >= 20) {
+    System.out.println("2");
+}
+else {
+    System.out.println("1");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>INVALID NOTE!!</pre></div>
+        </div>
+
+        <p>Two things are worth stealing from this chain.</p>
+
+        <p><strong>The validity check comes first.</strong> Rejecting nonsense before any real work happens means none of the branches below have to worry about it. That is what <code class="inl">||</code> from Lesson 1 is doing there: too small <em>or</em> too big, either one is enough to reject.</p>
+
+        <p><strong>Each branch only sees what the ones above rejected.</strong> <code class="inl">note >= 60</code> looks like it should catch 85 as well — and on its own it would. But 85 was already taken by the branch above, so by the time Java reaches this line it is really asking "is it 60 to 79?". This is why the chain has to run from the highest boundary down.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same chain, four different marks</span></div>
+          <pre class="code"><code>// note = 100  ->  5
+// note =  80  ->  5
+// note =  79  ->  4
+// note =   0  ->  1</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+5
+4
+1</pre></div>
+        </div>
+
+        <p>0 falls all the way through to the final <code class="inl">else</code> — it is a legal mark, so the first branch does not reject it, and it clears none of the four boundaries.</p>
+
+        <h3 id="l6-separate">Separate ifs are not a chain</h3>
+
+        <p>Now take the <code class="inl">else</code> out of every line. The code still compiles, still looks like a chain, and does something completely different.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four separate ifs</span></div>
+          <pre class="code"><code>int note = 85;
+
+if (note >= 80) System.out.println("5");
+if (note >= 60) System.out.println("4");
+if (note >= 40) System.out.println("3");
+if (note >= 20) System.out.println("2");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>5
+4
+3
+2</em></pre></div>
+        </div>
+
+        <p>Four separate <code class="inl">if</code> statements are four separate decisions. Java checks every single one, top to bottom, and runs every one whose condition is true. 85 clears all four boundaries, so all four print.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The same conditions, joined by else</span></div>
+          <pre class="code"><code>int note = 85;
+
+if (note >= 80) System.out.println("5");
+else if (note >= 60) System.out.println("4");
+else if (note >= 40) System.out.println("3");
+else if (note >= 20) System.out.println("2");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5</pre></div>
+        </div>
+
+        <figure class="fig">
+          <svg viewBox="0 0 760 500" role="img" aria-label="Two columns compared with note equal to 85. On the left, four separate if statements: every condition is checked and all four print, giving four lines of output. On the right, the same conditions joined into one else if chain: the first true condition prints and the remaining three are never checked, giving one line of output.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+              </marker>
+              <marker id="arm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--moss)"/>
+              </marker>
+            </defs>
+
+            <rect x="20" y="8" width="340" height="484" rx="10" fill="none" stroke="currentColor" stroke-width="1" opacity=".18"/>
+            <rect x="400" y="8" width="340" height="484" rx="10" fill="none" stroke="currentColor" stroke-width="1" opacity=".18"/>
+
+            <text class="fig-t" x="36" y="32" font-weight="700">Four separate ifs</text>
+            <text class="fig-lbl" x="36" y="50">note = 85</text>
+            <text class="fig-t" x="416" y="32" font-weight="700">One else if chain</text>
+            <text class="fig-lbl" x="416" y="50">note = 85</text>
+
+            <!-- LEFT: every condition checked, every true one runs -->
+            <rect class="fig-hit" x="36" y="66" width="170" height="40" rx="8"/>
+            <text class="fig-m" x="48" y="91">if (note &gt;= 80)</text>
+            <line x1="210" y1="86" x2="246" y2="86" stroke="var(--moss)" stroke-width="1.4" marker-end="url(#arm)"/>
+            <rect class="fig-hit" x="252" y="69" width="92" height="34" rx="6"/>
+            <text class="fig-run" x="298" y="91" text-anchor="middle">prints 5</text>
+            <line x1="121" y1="106" x2="121" y2="142" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
+            <text class="fig-lbl" x="132" y="130">checked anyway</text>
+
+            <rect class="fig-hit" x="36" y="146" width="170" height="40" rx="8"/>
+            <text class="fig-m" x="48" y="171">if (note &gt;= 60)</text>
+            <line x1="210" y1="166" x2="246" y2="166" stroke="var(--moss)" stroke-width="1.4" marker-end="url(#arm)"/>
+            <rect class="fig-hit" x="252" y="149" width="92" height="34" rx="6"/>
+            <text class="fig-run" x="298" y="171" text-anchor="middle">prints 4</text>
+            <line x1="121" y1="186" x2="121" y2="222" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
+
+            <rect class="fig-hit" x="36" y="226" width="170" height="40" rx="8"/>
+            <text class="fig-m" x="48" y="251">if (note &gt;= 40)</text>
+            <line x1="210" y1="246" x2="246" y2="246" stroke="var(--moss)" stroke-width="1.4" marker-end="url(#arm)"/>
+            <rect class="fig-hit" x="252" y="229" width="92" height="34" rx="6"/>
+            <text class="fig-run" x="298" y="251" text-anchor="middle">prints 3</text>
+            <line x1="121" y1="266" x2="121" y2="302" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
+
+            <rect class="fig-hit" x="36" y="306" width="170" height="40" rx="8"/>
+            <text class="fig-m" x="48" y="331">if (note &gt;= 20)</text>
+            <line x1="210" y1="326" x2="246" y2="326" stroke="var(--moss)" stroke-width="1.4" marker-end="url(#arm)"/>
+            <rect class="fig-hit" x="252" y="309" width="92" height="34" rx="6"/>
+            <text class="fig-run" x="298" y="331" text-anchor="middle">prints 2</text>
+
+            <rect class="fig-box" x="36" y="376" width="308" height="104" rx="8"/>
+            <text class="fig-lbl" x="48" y="398">Console</text>
+            <text class="fig-run" x="48" y="420">5</text>
+            <text class="fig-run" x="48" y="438">4</text>
+            <text class="fig-run" x="48" y="456">3</text>
+            <text class="fig-run" x="48" y="474">2</text>
+
+            <!-- RIGHT: first true condition wins, the rest are never reached -->
+            <rect class="fig-hit" x="416" y="66" width="170" height="40" rx="8"/>
+            <text class="fig-m" x="428" y="91">if (note &gt;= 80)</text>
+            <line x1="590" y1="86" x2="626" y2="86" stroke="var(--moss)" stroke-width="1.4" marker-end="url(#arm)"/>
+            <rect class="fig-hit" x="632" y="69" width="92" height="34" rx="6"/>
+            <text class="fig-run" x="678" y="91" text-anchor="middle">prints 5</text>
+            <line class="fig-miss" x1="501" y1="106" x2="501" y2="146"/>
+            <text class="fig-skip" x="512" y="130">chain ends here</text>
+
+            <rect class="fig-miss" x="416" y="146" width="170" height="40" rx="8"/>
+            <text class="fig-skip" x="428" y="171">else if (note &gt;= 60)</text>
+            <text class="fig-skip" x="678" y="171" text-anchor="middle">not checked</text>
+            <line class="fig-miss" x1="501" y1="186" x2="501" y2="226"/>
+
+            <rect class="fig-miss" x="416" y="226" width="170" height="40" rx="8"/>
+            <text class="fig-skip" x="428" y="251">else if (note &gt;= 40)</text>
+            <text class="fig-skip" x="678" y="251" text-anchor="middle">not checked</text>
+            <line class="fig-miss" x1="501" y1="266" x2="501" y2="306"/>
+
+            <rect class="fig-miss" x="416" y="306" width="170" height="40" rx="8"/>
+            <text class="fig-skip" x="428" y="331">else if (note &gt;= 20)</text>
+            <text class="fig-skip" x="678" y="331" text-anchor="middle">not checked</text>
+
+            <rect class="fig-box" x="416" y="376" width="308" height="104" rx="8"/>
+            <text class="fig-lbl" x="428" y="398">Console</text>
+            <text class="fig-run" x="428" y="420">5</text>
+          </svg>
+          <figcaption>The same four conditions and the same value. On the left there is no <code class="inl">else</code>, so Java walks all the way down and runs every branch that is true. On the right each <code class="inl">else</code> ties the next test to the failure of the one before it, so the first true condition ends the chain and the remaining three are never even evaluated.</figcaption>
+        </figure>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Separate <code class="inl">if</code> statements run <strong>independently</strong> — Java checks every one and runs every true one. An <code class="inl">if / else if</code> chain runs <strong>exactly one</strong> branch: the first true one, and then it is finished. Use a chain whenever the cases are meant to exclude each other.</p>
+        </div>
+
+        <h3 id="l6-dangling">The dangling else</h3>
+
+        <p>Now the one that catches everybody. Read this and decide what it prints for a positive, odd number like 3:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>What does this do with number = 3?</span></div>
+          <pre class="code"><code>int number = 3;
+
+if (number > 0)
+    if (number % 2 == 0)
+        System.out.println("even number");
+else
+    System.out.println("number is negative!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>number is negative!</em></pre></div>
+        </div>
+
+        <p>3 is positive. The program says it is negative.</p>
+
+        <p>The indentation lines the <code class="inl">else</code> up with the outer <code class="inl">if</code>, which is clearly what whoever wrote it meant. Java does not read indentation. Its rule is much simpler and completely unmoved by whitespace:</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>An <code class="inl">else</code> belongs to the <strong>nearest <code class="inl">if</code> above it that does not already have one</strong>. Nothing about how you indent it changes that.</p>
+        </div>
+
+        <p>The nearest <code class="inl">if</code> without an <code class="inl">else</code> is the inner one. So what Java compiled is this — the same characters, honestly indented:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>What Java actually built</span></div>
+          <pre class="code"><code>if (number > 0)
+    if (number % 2 == 0)
+        System.out.println("even number");
+    else
+        System.out.println("number is negative!");   // the ODD branch</code></pre>
+        </div>
+
+        <p>Read that way, the message is exactly where it lands: 3 is positive, so we go inside; 3 is not even, so we take the <code class="inl">else</code> — which is the odd branch wearing the wrong label. And a genuinely negative number never gets inside the outer <code class="inl">if</code> at all, so it prints nothing.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">number</th><th>What you expect</th><th>What it actually prints</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">4</td><td class="mono">even number</td><td class="mono">even number</td></tr>
+              <tr><td class="mono">3</td><td class="mono"><span class="q">nothing</span></td><td class="mono"><span class="fv">number is negative!</span></td></tr>
+              <tr><td class="mono">-3</td><td class="mono">number is negative!</td><td class="mono"><span class="fv">nothing</span></td></tr>
+              <tr><td class="mono">0</td><td class="mono">number is negative!</td><td class="mono"><span class="fv">nothing</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Only the first row is right, which is exactly why the bug survives testing.</p>
+
+        <p><strong>The fix is braces.</strong> Wrap the outer <code class="inl">if</code> and the inner one can no longer reach out and grab the <code class="inl">else</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Braces close the inner if off</span></div>
+          <pre class="code"><code>if (number > 0) {
+    if (number % 2 == 0) {
+        System.out.println("even number");
+    }
+}
+else {
+    System.out.println("number is negative!");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><span class="q">number = 3  ->  (nothing)</span>
+number = -3 -&gt;  number is negative!</pre></div>
+        </div>
+
+        <p>If what you wanted all along was three separate answers, give the inner <code class="inl">if</code> its own <code class="inl">else</code>. Once the inner one is taken, the next <code class="inl">else</code> has no choice but to attach to the outer <code class="inl">if</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three answers, no braces needed</span></div>
+          <pre class="code"><code>if (number > 0)
+    if (number % 2 == 0)
+        System.out.println("even number");
+    else
+        System.out.println("odd number");
+else
+    System.out.println("number is negative!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>number = 4  -&gt;  even number
+number = 3  -&gt;  odd number
+number = -3 -&gt;  number is negative!</pre></div>
+        </div>
+
+        <p>This version is correct. It is also one deleted line away from being wrong again — which is the real argument for writing the braces every time.</p>
+
+        <div class="practice" id="p6">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 6</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Using the grade chain from the top of this part, what is printed for <code class="inl">note = 100</code>, and for <code class="inl">note = 101</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">100 gives 5. 101 gives INVALID NOTE!!</span></p>
+                  <p>The first branch checks <code class="inl">note &gt; 100</code>, not <code class="inl">&gt;=</code>, so 100 is a legal mark and falls through to <code class="inl">note &gt;= 80</code>. 101 is one past the top and is rejected before any grade is considered.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed here, and how many lines is it?</p>
+              <div class="ex">
+                <pre class="code"><code>int note = 45;
+
+if (note >= 80) System.out.println("5");
+if (note >= 60) System.out.println("4");
+if (note >= 40) System.out.println("3");
+if (note >= 20) System.out.println("2");</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Two lines: 3, then 2.</span></p>
+                  <p>There is no <code class="inl">else</code> anywhere, so all four conditions are checked. 45 fails the first two and passes the last two, and each passing <code class="inl">if</code> prints on its own.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Add the missing keyword to question 2 so that <code class="inl">note = 45</code> prints only <code class="inl">3</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>if (note >= 80) System.out.println("5");
+else if (note >= 60) System.out.println("4");
+else if (note >= 40) System.out.println("3");
+else if (note >= 20) System.out.println("2");</code></pre>
+                  </div>
+                  <p>One <code class="inl">else</code> in front of each of the last three. That turns four independent decisions into a single chain that stops at the first true condition.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does this print for <code class="inl">number = 7</code>?</p>
+              <div class="ex">
+                <pre class="code"><code>if (number > 0)
+    if (number % 2 == 0)
+        System.out.println("even number");
+else
+    System.out.println("number is negative!");</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">number is negative!</span></p>
+                  <p>The <code class="inl">else</code> attaches to the <em>inner</em> <code class="inl">if</code>, no matter where it sits on the page. 7 is positive so we go inside, 7 is not even so the <code class="inl">else</code> runs — and it is really the odd branch with a misleading message in it.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Fix question 4 with braces so that <code class="inl">number = 7</code> prints nothing and <code class="inl">number = -7</code> prints <code class="inl">number is negative!</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>if (number > 0) {
+    if (number % 2 == 0) {
+        System.out.println("even number");
+    }
+}
+else {
+    System.out.println("number is negative!");
+}</code></pre>
+                  </div>
+                  <p>The braces around the outer <code class="inl">if</code> close the inner one off. There is no unmatched <code class="inl">if</code> left inside, so the <code class="inl">else</code> can only belong to the outer one.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a chain that prints <code class="inl">Hot</code> above 30, <code class="inl">Warm</code> from 16 to 30, <code class="inl">Cold</code> from 1 to 15 and <code class="inl">Freezing</code> at 0 or below. Then say what your code prints for <code class="inl">temp = 30</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>if (temp > 30) {
+    System.out.println("Hot");
+}
+else if (temp > 15) {
+    System.out.println("Warm");
+}
+else if (temp > 0) {
+    System.out.println("Cold");
+}
+else {
+    System.out.println("Freezing");
+}</code></pre>
+                  </div>
+                  <p><code class="inl">temp = 30</code> prints <code class="inl">Warm</code>. 30 is not <em>above</em> 30, so the first branch lets it through, and the chain guarantees the rest of the range is already excluded — none of the conditions needs an upper limit of its own.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Six traps to remember</h2>
+        <p>Every one of these compiles without complaint. That is exactly what makes them worth memorising.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">2147483647 + 1</td>
+                <td class="mono">2147483648</td>
+                <td class="mono"><span class="fv">-2147483648</span></td>
+                <td>an int has 32 bits and wraps around</td>
+              </tr>
+              <tr>
+                <td class="mono">int d = 7; d /= 2;</td>
+                <td class="mono">3.5</td>
+                <td class="mono"><span class="fv">3</span></td>
+                <td>the shorthand is still integer division</td>
+              </tr>
+              <tr>
+                <td class="mono">if (…) line1; line2;</td>
+                <td>both guarded</td>
+                <td><span class="fv">line2 always runs</span></td>
+                <td>braces decide, indentation does not</td>
+              </tr>
+              <tr>
+                <td class="mono">four separate ifs, note = 85</td>
+                <td class="mono">5</td>
+                <td class="mono"><span class="fv">5 4 3 2</span></td>
+                <td>with no else, every one is checked</td>
+              </tr>
+              <tr>
+                <td class="mono">dangling else, number = 3</td>
+                <td><span class="q">nothing</span></td>
+                <td class="mono"><span class="fv">number is negative!</span></td>
+                <td>else binds to the nearest unmatched if</td>
+              </tr>
+              <tr>
+                <td class="mono">-7 % 2 == 1</td>
+                <td class="mono">true</td>
+                <td class="mono"><span class="fv">false</span></td>
+                <td>-7 % 2 is -1; test against 0 instead</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 2, parts 4–6. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson1.html">← Lesson 1</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
