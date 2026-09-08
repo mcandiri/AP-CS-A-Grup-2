@@ -1,0 +1,1996 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 3: the for loop (start, stop, step), accumulators, the while loop, hailstone sequences, leap years, taking a number apart with % 10 and / 10, common divisors, and scope.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 3 · Loops — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 3</p>
+    <h1>Loops</h1>
+    <p class="deck">Our third lesson, across the six files we worked in — the three pieces of a <code class="inl">for</code> header, what happens when the step points the wrong way, totals built up one pass at a time, the same loops written again as <code class="inl">while</code>, loops that run until something happens rather than a fixed number of times, the rule that decides where a loop variable still exists — and a closing set of extras that use nothing but what is already on this page.</p>
+    <ul class="facts">
+      <li>6 parts</li>
+      <li>Java</li>
+      <li>42 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l7">7 · The for loop</a></li>
+        <li><a class="sub" href="#l7-idea">Why a loop</a></li>
+        <li><a class="sub" href="#l7-shape">start · stop · step</a></li>
+        <li><a class="sub" href="#l7-up">Counting up</a></li>
+        <li><a class="sub" href="#l7-down">Counting down</a></li>
+        <li><a class="sub" href="#l7-any">Any step you like</a></li>
+        <li><a class="sub" href="#l7-inf">The loop that never ends</a></li>
+        <li><a class="sub" href="#p7">Practice</a></li>
+        <li><a href="#l8">8 · Working inside the loop</a></li>
+        <li><a class="sub" href="#l8-sum">Building a sum</a></li>
+        <li><a class="sub" href="#l8-filter">Only some of them</a></li>
+        <li><a class="sub" href="#l8-fact">Factorial</a></li>
+        <li><a class="sub" href="#l8-count">Counting</a></li>
+        <li><a class="sub" href="#p8">Practice</a></li>
+        <li><a href="#l9">9 · The while loop</a></li>
+        <li><a class="sub" href="#l9-shape">The same three pieces</a></li>
+        <li><a class="sub" href="#l9-same">The same loop, twice</a></li>
+        <li><a class="sub" href="#l9-sum">A sum with while</a></li>
+        <li><a class="sub" href="#l9-forget">The step you must not forget</a></li>
+        <li><a class="sub" href="#p9">Practice</a></li>
+        <li><a href="#l10">10 · Until something happens</a></li>
+        <li><a class="sub" href="#l10-hail">Hailstone sequences</a></li>
+        <li><a class="sub" href="#l10-count">Counting the terms</a></li>
+        <li><a class="sub" href="#l10-leap">Leap years</a></li>
+        <li><a class="sub" href="#p10">Practice</a></li>
+        <li><a href="#l11">11 · Taking a number apart</a></li>
+        <li><a class="sub" href="#l11-digits">% 10 and / 10</a></li>
+        <li><a class="sub" href="#l11-sum">Digit sum and digit count</a></li>
+        <li><a class="sub" href="#l11-zero">Why != 0</a></li>
+        <li><a class="sub" href="#l11-div">Common divisors</a></li>
+        <li><a class="sub" href="#p11">Practice</a></li>
+        <li><a href="#l12">12 · Where a variable lives</a></li>
+        <li><a class="sub" href="#l12-header">Declared in the header</a></li>
+        <li><a class="sub" href="#l12-before">Declared before the loop</a></li>
+        <li><a class="sub" href="#l12-body">Declared inside the body</a></li>
+        <li><a class="sub" href="#l12-braces">No braces at all</a></li>
+        <li><a class="sub" href="#p12">Practice</a></li>
+        <li><a href="#extras">Extras · beyond the files</a></li>
+        <li><a class="sub" href="#x-avg">Averages</a></li>
+        <li><a class="sub" href="#x-max">The best so far</a></li>
+        <li><a class="sub" href="#x-perfect">Perfect numbers</a></li>
+        <li><a class="sub" href="#x-gcd">Euclid's shortcut</a></li>
+        <li><a class="sub" href="#x-fib">Fibonacci</a></li>
+        <li><a class="sub" href="#x-pow">Powers</a></li>
+        <li><a class="sub" href="#x-flag">A yes / no answer</a></li>
+        <li><a class="sub" href="#x-string">Building a line of text</a></li>
+        <li><a class="sub" href="#x-trace">Tracing on paper</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 7 ============ -->
+      <section class="lesson" id="l7">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 07 · Lesson7.java</span>
+          <h2 class="lesson-title">The for Loop</h2>
+        </div>
+
+        <h3 id="l7-idea">Why a loop</h3>
+
+        <p>Everything we have written so far runs each line exactly once. To print <code class="inl">Hello</code> ten times you would need ten lines — and to print it a thousand times, a thousand lines. A <strong>loop</strong> writes the line once and tells Java how many times to run it. Each pass through a loop is called an <strong>iteration</strong>.</p>
+
+        <p>We already have the two operators a loop leans on. From Lesson 2:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The step, written four ways</span></div>
+          <pre class="code"><code>i += 1;      i++;      // one step forward
+i -= 1;      i--;      // one step back</code></pre>
+        </div>
+
+        <h3 id="l7-shape">start · stop · step</h3>
+
+        <p>A <code class="inl">for</code> loop puts all three of its moving parts in one line, separated by two semicolons.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The pattern</span></div>
+          <pre class="code"><code>for (start ; stop ; step)
+{
+    action
+}</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Piece</th><th class="mono">In our first loop</th><th>When it runs</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>start</strong></td><td class="mono">int i = 1</td><td>once, before anything else</td></tr>
+              <tr><td><strong>stop</strong></td><td class="mono">i &lt;= 10</td><td>before every pass — while it is <code class="inl">true</code> the loop keeps going</td></tr>
+              <tr><td><strong>step</strong></td><td class="mono">i++</td><td>at the end of every pass, just before the next check</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>So the order is not top to bottom. Java checks the condition, runs the body, takes the step, and comes back to the condition again:</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 700 330" role="img" aria-label="Flow of a for loop: start runs once, then the condition is checked before every pass; if true the body runs and the step is taken before checking again; if false the loop is over.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <rect class="fig-box" x="120" y="18" width="200" height="42" rx="8"/>
+            <text class="fig-m" x="220" y="44" text-anchor="middle">int i = 1</text>
+            <text class="fig-lbl" x="330" y="44">start — once only</text>
+
+            <line x1="220" y1="60" x2="220" y2="96" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <rect class="fig-cond" x="120" y="98" width="200" height="42" rx="8"/>
+            <text class="fig-m" x="220" y="124" text-anchor="middle">i &lt;= 10 ?</text>
+            <text class="fig-lbl" x="330" y="112">stop — checked before</text>
+            <text class="fig-lbl" x="330" y="128">every single pass</text>
+
+            <line x1="220" y1="140" x2="220" y2="176" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+            <text class="fig-run" x="230" y="164">true</text>
+
+            <rect class="fig-hit" x="120" y="178" width="200" height="42" rx="8"/>
+            <text class="fig-m" x="220" y="204" text-anchor="middle">println("Hello")</text>
+            <text class="fig-lbl" x="330" y="204">the body</text>
+
+            <line x1="220" y1="220" x2="220" y2="256" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <rect class="fig-box" x="120" y="258" width="200" height="42" rx="8"/>
+            <text class="fig-m" x="220" y="284" text-anchor="middle">i++</text>
+            <text class="fig-lbl" x="330" y="284">step — end of each pass</text>
+
+            <path d="M 120 279 L 70 279 L 70 119 L 118 119" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <line x1="320" y1="119" x2="470" y2="119" class="fig-miss" marker-end="url(#ar)"/>
+            <text class="fig-skip" x="380" y="108">false</text>
+            <rect class="fig-box" x="472" y="98" width="200" height="42" rx="8"/>
+            <text class="fig-m" x="572" y="124" text-anchor="middle">the line after }</text>
+          </svg>
+          <figcaption>The condition is tested <em>before</em> the body, never after. If it is already <code class="inl">false</code> on the very first check, the body never runs at all.</figcaption>
+        </figure>
+
+        <h3 id="l7-up">Counting up</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten Hellos from one println</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 10; i++)
+{
+    System.out.println("Hello");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello</pre></div>
+        </div>
+
+        <p>Ten lines out of one <code class="inl">println</code>. Notice that <code class="inl">i</code> never appears inside the body — it is doing nothing but counting the passes. That is allowed and it is common: the counter's only job here is to run out.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>There is no semicolon after <code class="inl">for (…)</code>. The two semicolons live <em>inside</em> the brackets, separating start from stop from step. Nothing follows the closing bracket except the body.</p>
+        </div>
+
+        <h3 id="l7-down">Counting down</h3>
+
+        <p>The step does not have to be <code class="inl">++</code>. Any of the assignment operators from Lesson 2 can drive the loop.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>From 25, three at a time, backwards</span></div>
+          <pre class="code"><code>for (int i = 25; i &gt; 0; i -= 3) {
+    System.out.println("i= " + i);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 25
+i= 22
+i= 19
+i= 16
+i= 13
+i= 10
+i= 7
+i= 4
+i= 1</pre></div>
+        </div>
+
+        <p>It stops at <code class="inl">1</code>, not at <code class="inl">0</code>. After printing 1 the step makes <code class="inl">i</code> equal to <code class="inl">-2</code>, the test <code class="inl">-2 &gt; 0</code> is false, and the loop is over — so <code class="inl">-2</code> is never printed. When you are counting down, the last value you see is whatever the step happened to land on before it crossed the line.</p>
+
+        <h3 id="l7-any">Any step you like</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>From 2, five at a time</span></div>
+          <pre class="code"><code>for (int i = 2; i &lt; 100; i += 5) {
+    System.out.println("i= " + i);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 2
+i= 7
+i= 12
+i= 17
+i= 22
+i= 27
+i= 32
+i= 37
+i= 42
+i= 47
+i= 52
+i= 57
+i= 62
+i= 67
+i= 72
+i= 77
+i= 82
+i= 87
+i= 92
+i= 97</pre></div>
+        </div>
+
+        <p>The last value printed is 97. The next one would be 102, which fails <code class="inl">i &lt; 100</code> — and because the test runs <em>before</em> the body, 102 is never printed.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Because the condition is checked first, a loop can run <strong>zero</strong> times. <code class="inl">for (int i = 5; i &lt; 3; i++)</code> prints nothing at all — the test is false on the very first check and Java walks straight past the body.</p>
+        </div>
+
+        <h3 id="l7-inf">The loop that never ends</h3>
+
+        <p>Every loop needs the step to push the counter <em>towards</em> the moment the condition turns false. Point it the other way and the condition never turns false:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Infinite loop — do not run this one</span></div>
+          <pre class="code"><code>for (int i = 10; i &gt; 0; i++) {
+    System.out.println("i= " + i);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 10
+i= 11
+i= 12
+i= 13
+<span class="q">… and on, and on, and on</span></pre></div>
+        </div>
+
+        <p>The counter starts at 10, the test asks whether it is still above 0, and the step makes it <em>bigger</em>. Every pass takes it further away from stopping. This is the single most common loop bug, and it is always the same mistake: the step and the condition disagree about which direction the loop is going.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Strictly speaking this loop does end. <code class="inl">i</code> climbs to 2147483647, and then — exactly as in Lesson 2 — the next <code class="inl">i++</code> wraps it around to a negative number, which finally fails <code class="inl">i &gt; 0</code>. That takes <strong>2,147,483,638 passes</strong>, each one printing a line. Nobody is waiting for that. Treat it as infinite and stop the program yourself: the red <span class="err">■</span> button in Eclipse.</p>
+        </div>
+
+        <div class="practice" id="p7">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 7</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    System.out.print(i + " ");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1 2 3 4 5</span></p>
+                  <p>Five passes. <code class="inl">print</code> instead of <code class="inl">println</code> keeps them all on one line.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times does each of these run its body?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 0; i &lt; 10; i++)      // A
+for (int i = 1; i &lt; 10; i++)      // B
+for (int i = 1; i &lt;= 10; i++)     // C</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">A: 10 &nbsp; B: 9 &nbsp; C: 10</span></p>
+                  <p>Starting at 0 with <code class="inl">&lt;</code> and starting at 1 with <code class="inl">&lt;=</code> both give you ten passes. Mixing them up — 1 with <code class="inl">&lt;</code> — is where the missing pass goes.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed, and what is the value of the counter when the loop gives up?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 20; i &gt; 0; i -= 6) {
+    System.out.print(i + " ");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">20 14 8 2</span></p>
+                  <p>The next step makes <code class="inl">i</code> equal to <code class="inl">-4</code>, which fails <code class="inl">i &gt; 0</code>, so <code class="inl">-4</code> is never printed. The loop ends holding a value it never showed you.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>One of these two never stops. Which one, and why?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 5; i--)      // A
+for (int i = 5; i &gt;= 1; i--)      // B</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">A</span></p>
+                  <p>A starts at 1 and asks whether it is still at most 5, while the step makes it smaller and smaller — the condition only gets <em>more</em> true. B is the correct countdown: five passes, 5 down to 1.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a loop that prints every even number from 2 to 20 on one line.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>for (int i = 2; i &lt;= 20; i += 2) {
+    System.out.print(i + " ");
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>2 4 6 8 10 12 14 16 18 20 </pre></div>
+                  </div>
+                  <p>The step carries the evenness. There is no need to test anything inside the body.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Fill in the header so that the loop prints <code class="inl">1 5 9 13 17</code>.</p>
+              <div class="ex">
+                <pre class="code"><code>for ( ______ ; ______ ; ______ ) {
+    System.out.print(i + " ");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">for (int i = 1; i &lt;= 17; i += 4)</span></p>
+                  <p>Start where the output starts, step by the gap between the numbers, and stop anywhere from 17 to 20 — <code class="inl">i &lt; 21</code> works just as well, because the next value after 17 is 21 either way.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 8 ============ -->
+      <section class="lesson" id="l8">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 08 · Lesson8.java</span>
+          <h2 class="lesson-title">Working Inside the Loop</h2>
+        </div>
+
+        <p>A loop that only prints is a warm-up. The useful ones carry a value from one pass to the next — a running total, a running product, a running count. That variable is called an <strong>accumulator</strong>, and where you declare it decides everything.</p>
+
+        <h3 id="l8-sum">Building a sum</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>1 + 2 + 3 + … + 10</span></div>
+          <pre class="code"><code>int sum = 0;
+
+for (int i = 1; i &lt;= 10; i++) {
+    sum = sum + i;
+    System.out.println("i= " + i + " sum= " + sum);
+}
+System.out.println(sum);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 1 sum= 1
+i= 2 sum= 3
+i= 3 sum= 6
+i= 4 sum= 10
+i= 5 sum= 15
+i= 6 sum= 21
+i= 7 sum= 28
+i= 8 sum= 36
+i= 9 sum= 45
+i= 10 sum= 55
+55</pre></div>
+        </div>
+
+        <p>Read the two columns side by side. <code class="inl">i</code> is the number arriving on this pass; <code class="inl">sum</code> is everything that has arrived so far. The line <code class="inl">sum = sum + i</code> is the Lesson 2 idea again — the right-hand side is worked out from the old value, and the answer replaces it. <code class="inl">sum += i</code> would say exactly the same thing.</p>
+
+        <p>The last <code class="inl">println</code> sits <em>outside</em> the braces, so it runs once, after the loop is finished. That is where a total belongs.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>An accumulator is declared <strong>before</strong> the loop and read <strong>after</strong> it. Only the adding happens inside. If it were declared inside, it would be a brand-new variable on every pass and would never accumulate anything.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Move that declaration one line down, inside the braces, and the total quietly becomes wrong — <code class="inl">1 2 3 4</code> instead of <code class="inl">1 3 6 10</code>. Every pass starts from a fresh zero. Java does not complain; the numbers just stop meaning what you think they mean.</p>
+        </div>
+
+        <h3 id="l8-filter">Only some of them</h3>
+
+        <p>Put an <code class="inl">if</code> inside the loop and the body becomes selective. The loop still visits every value; only the ones that pass the test get added.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Adding up the multiples of 5 between 3 and 35</span></div>
+          <pre class="code"><code>sum = 0;
+
+for (int i = 3; i &lt;= 35; i++) {
+    if (i % 5 == 0) {
+        sum = sum + i;
+        System.out.println("i= " + i + " sum= " + sum);
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 5 sum= 5
+i= 10 sum= 15
+i= 15 sum= 30
+i= 20 sum= 50
+i= 25 sum= 75
+i= 30 sum= 105
+i= 35 sum= 140</pre></div>
+        </div>
+
+        <p>The loop ran 33 times; only 7 of those passes printed anything. <code class="inl">i % 5 == 0</code> is the "divides exactly" test from Lesson 1 — the remainder is what tells you.</p>
+
+        <p>Note the first line: <code class="inl">sum = 0;</code> with no <code class="inl">int</code> in front. <code class="inl">sum</code> already exists from the previous example, so this is a reassignment, not a declaration — and it is essential. Reusing an accumulator without clearing it first means the old 55 is still sitting in there.</p>
+
+        <h3 id="l8-fact">Factorial</h3>
+
+        <p>Same shape, different operator. 7! means 7 × 6 × 5 × 4 × 3 × 2 × 1, so the loop counts down and multiplies.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>7 factorial</span></div>
+          <pre class="code"><code>int factorial = 1;
+// 7! --> 7*6*5*4*3*2*1
+for (int i = 7; i &gt; 0; i--) {
+    factorial *= i;
+}
+System.out.println(factorial);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5040</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>A product accumulator starts at <strong>1</strong>, never 0. Start it at 0 and the answer is 0 — the first multiplication wipes out everything that follows, and it keeps doing it. A sum starts at 0 for the same reason in reverse: 0 is the value that changes nothing when you add it.</p>
+        </div>
+
+        <h3 id="l8-count">Counting</h3>
+
+        <p>A counter is an accumulator that always steps by 1, no matter what value triggered it.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many even numbers below 35</span></div>
+          <pre class="code"><code>int count = 0;
+for (int i = 1; i &lt; 35; i++) {
+    if (i % 2 == 0) {
+        count++;
+        System.out.println("i= " + i + " count= " + count);
+    }
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 2 count= 1
+i= 4 count= 2
+i= 6 count= 3
+i= 8 count= 4
+i= 10 count= 5
+<span class="q">…</span>
+i= 30 count= 15
+i= 32 count= 16
+i= 34 count= 17
+17</pre></div>
+        </div>
+
+        <p>17, not 34. <code class="inl">i</code> counts the numbers we <em>looked at</em>; <code class="inl">count</code> counts the ones that <em>passed the test</em>. Those are two different jobs, and that is exactly why the counter has to be its own variable.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>You want</th><th class="mono">Start it at</th><th class="mono">Inside the loop</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>a total</td><td class="mono">0</td><td class="mono">sum += i;</td></tr>
+              <tr><td>a product</td><td class="mono">1</td><td class="mono">product *= i;</td></tr>
+              <tr><td>a count</td><td class="mono">0</td><td class="mono">count++;</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="practice" id="p8">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 8</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int sum = 0;
+for (int i = 1; i &lt;= 5; i++) {
+    sum += i;
+}
+System.out.println(sum);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">15</span></p>
+                  <p>1, 3, 6, 10, 15 — and only the last one is printed, because the <code class="inl">println</code> is outside the braces.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed, and why is it not <code class="inl">1 3 6 10</code>?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 4; i++) {
+    int sum = 0;
+    sum += i;
+    System.out.print(sum + " ");
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1 2 3 4</span></p>
+                  <p><code class="inl">sum</code> is declared inside the loop, so every pass makes a new one and sets it back to 0. It never carries anything from the previous pass — it is just <code class="inl">i</code> with extra steps.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int sum = 0;
+for (int i = 1; i &lt;= 20; i++) {
+    if (i % 3 == 0) {
+        sum += i;
+    }
+}
+System.out.println(sum);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">63</span></p>
+                  <p>3 + 6 + 9 + 12 + 15 + 18. 21 is out of range, so six values pass the test.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed, and what single character would fix it?</p>
+              <div class="ex">
+                <pre class="code"><code>int product = 0;
+for (int i = 1; i &lt;= 5; i++) {
+    product *= i;
+}
+System.out.println(product);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0</span></p>
+                  <p>Change the <code class="inl">0</code> on the first line to <code class="inl">1</code> and it prints <code class="inl">120</code>. Multiplying by zero once is enough to lose the whole answer, and every later pass multiplies zero by something again.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a loop that counts how many numbers from 1 to 29 divide exactly by 4, then prints the count.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int count = 0;
+for (int i = 1; i &lt; 30; i++) {
+    if (i % 4 == 0) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>7</pre></div>
+                  </div>
+                  <p>4, 8, 12, 16, 20, 24, 28.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change one number in the sum loop from question 1 so that it adds up 1 to 100. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int sum = 0;
+for (int i = 1; i &lt;= 100; i++) {
+    sum += i;
+}
+System.out.println(sum);</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>5050</pre></div>
+                  </div>
+                  <p>Only the stop condition changes. That is the whole point of a loop: the amount of work grows, the amount of code does not.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 9 ============ -->
+      <section class="lesson" id="l9">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 09 · Lesson9.java</span>
+          <h2 class="lesson-title">The while Loop</h2>
+        </div>
+
+        <h3 id="l9-shape">The same three pieces</h3>
+
+        <p>A <code class="inl">while</code> loop is not a new idea. It is the same start, stop and step — the brackets just hold one of them instead of all three, and you have to put the other two somewhere yourself.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The pattern</span></div>
+          <pre class="code"><code>start
+while (stop)
+{
+    action
+    step
+}</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Piece</th><th>In a for loop</th><th>In a while loop</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>start</strong></td><td>first slot of the header</td><td>on its own line, above the loop</td></tr>
+              <tr><td><strong>stop</strong></td><td>middle slot of the header</td><td>inside the brackets</td></tr>
+              <tr><td><strong>step</strong></td><td>last slot of the header</td><td>the last line of the body — your job</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l9-same">The same loop, twice</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten Hellos — for</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 10; i++)
+{
+    System.out.println("Hello");
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten Hellos — while</span></div>
+          <pre class="code"><code>int i = 1;
+while (i &lt;= 10)
+{
+    System.out.println("Hello");
+    i++;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello</pre></div>
+        </div>
+
+        <p>Identical output, identical number of passes. The three pieces did not disappear — they moved. <code class="inl">int i = 1;</code> is the start, <code class="inl">i &lt;= 10</code> is the stop, <code class="inl">i++</code> at the bottom of the body is the step.</p>
+
+        <h3 id="l9-sum">A sum with while</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Multiples of 5, again</span></div>
+          <pre class="code"><code>int sum = 0;
+int j = 3;
+while (j &lt;= 35)
+{
+    if (j % 5 == 0) {
+        sum = sum + j;
+        System.out.println("j= " + j + " sum= " + sum);
+    }
+    j++;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>j= 5 sum= 5
+j= 10 sum= 15
+j= 15 sum= 30
+j= 20 sum= 50
+j= 25 sum= 75
+j= 30 sum= 105
+j= 35 sum= 140</pre></div>
+        </div>
+
+        <p>Exactly the output of the <code class="inl">for</code> version in Part 8. Look at where <code class="inl">j++</code> sits: at the bottom of the body, <em>outside</em> the <code class="inl">if</code>. It has to be. If the step were inside the <code class="inl">if</code>, then the first value that failed the test would freeze <code class="inl">j</code> forever and the loop would never move again.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counting from 0</span></div>
+          <pre class="code"><code>int k = 0;
+while (k &lt; 10) {
+    System.out.println(k);
+    k++;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0
+1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div>
+        </div>
+
+        <p>Ten lines, 0 through 9 — the 10 is never printed, because the test is checked before the pass that would have printed it.</p>
+
+        <h3 id="l9-forget">The step you must not forget</h3>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Leave <code class="inl">i++</code> out of a <code class="inl">while</code> body and the loop is genuinely endless. Nothing in the body touches <code class="inl">i</code>, so the condition that was true on the first check is still true on every check after it — this one does not even have overflow to save it. A <code class="inl">for</code> loop keeps the step where you cannot forget it; a <code class="inl">while</code> loop trusts you.</p>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Never ends</span></div>
+          <pre class="code"><code>int i = 1;
+while (i &lt;= 10)
+{
+    System.out.println("Hello");
+                        // no i++ anywhere
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Hello
+Hello
+Hello
+<span class="q">… until you stop the program</span></pre></div>
+        </div>
+
+        <p>So which do you reach for? Use <code class="inl">for</code> when you know in advance how many passes there are — ten Hellos, every number from 3 to 35. Use <code class="inl">while</code> when you do not: when the loop runs until something <em>happens</em>. That is the next lesson.</p>
+
+        <div class="practice" id="p9">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 9</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int k = 0;
+while (k &lt; 5) {
+    System.out.print(k + " ");
+    k++;
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0 1 2 3 4</span></p>
+                  <p>Five passes. The pass that would print 5 never starts, because <code class="inl">5 &lt; 5</code> is false.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Rewrite this <code class="inl">for</code> loop as a <code class="inl">while</code> loop.</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 25; i &gt; 0; i -= 3) {
+    System.out.println("i= " + i);
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int i = 25;
+while (i &gt; 0) {
+    System.out.println("i= " + i);
+    i -= 3;
+}</code></pre>
+                  </div>
+                  <p>Start above, stop in the brackets, step at the bottom of the body. Same nine lines of output.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times does the body run?</p>
+              <div class="ex">
+                <pre class="code"><code>int i = 10;
+while (i &lt; 5) {
+    System.out.println("hello");
+    i++;
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Zero times — nothing is printed.</span></p>
+                  <p>The condition is tested before the first pass and it is already false. A <code class="inl">while</code> loop can run no times at all, exactly like a <code class="inl">for</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>This loop was meant to print the multiples of 5 up to 35. What actually happens?</p>
+              <div class="ex">
+                <pre class="code"><code>int j = 3;
+while (j &lt;= 35) {
+    if (j % 5 == 0) {
+        System.out.println(j);
+        j++;
+    }
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Nothing is printed, and the program never ends.</span></p>
+                  <p><code class="inl">j</code> starts at 3, which is not a multiple of 5, so the <code class="inl">if</code> is skipped — and the step is inside the <code class="inl">if</code>, so <code class="inl">j</code> stays 3 forever. The fix is to move <code class="inl">j++</code> out of the <code class="inl">if</code>, to the bottom of the body.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>After this loop finishes, what is in <code class="inl">j</code>?</p>
+              <div class="ex">
+                <pre class="code"><code>int j = 3;
+while (j &lt;= 35) {
+    j++;
+}
+System.out.println(j);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">36</span></p>
+                  <p>A loop always ends holding the first value that <em>failed</em> the test — one step past the edge. That is why 36 comes out rather than 35.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a <code class="inl">while</code> loop that adds up the even numbers from 1 to 10 and prints the total.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int sum = 0;
+int i = 1;
+while (i &lt;= 10) {
+    if (i % 2 == 0) {
+        sum += i;
+    }
+    i++;
+}
+System.out.println(sum);</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>30</pre></div>
+                  </div>
+                  <p>2 + 4 + 6 + 8 + 10. The accumulator and the counter are two separate variables, both declared before the loop.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 10 ============ -->
+      <section class="lesson" id="l10">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 10 · Lesson10.java</span>
+          <h2 class="lesson-title">Loops That Run Until Something Happens</h2>
+        </div>
+
+        <p>Every loop in Lesson 3 knew its own length before it started. This one does not — and that is exactly what <code class="inl">while</code> is for.</p>
+
+        <h3 id="l10-hail">Hailstone sequences</h3>
+
+        <p>The <strong>hailstone</strong> or <strong>Collatz</strong> sequence has two rules and nothing else:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>If the number is…</th><th class="mono">do this</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>even</td><td class="mono">n / 2</td></tr>
+              <tr><td>odd</td><td class="mono">n * 3 + 1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Keep applying them and the number bounces up and down like a hailstone in a cloud — but it always seems to come down to 1 in the end. Nobody has ever proved that it must, for every starting number. It is an unsolved problem, and we are writing the loop for it.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Starting from 5</span></div>
+          <pre class="code"><code>int count = 0;
+int n = 5;
+while (n != 1)
+{
+    System.out.print(" N: " + n);
+    if (n % 2 == 0) {
+        n /= 2;
+    } else {
+        n = n * 3 + 1;
+    }
+    count++;
+}
+System.out.print(" N: " + n);
+System.out.println();
+System.out.println(count + 1);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre> N: 5 N: 16 N: 8 N: 4 N: 2 N: 1
+6</pre></div>
+        </div>
+
+        <p>5 is odd, so it jumps to 16. From there it is halved four times: 8, 4, 2, 1. The moment <code class="inl">n</code> reaches 1 the condition <code class="inl">n != 1</code> turns false and the loop stops.</p>
+
+        <p>This cannot be a <code class="inl">for</code> loop with a count in the header, because <em>nobody knows the count in advance</em>. 5 takes 5 steps; 7 takes 16. The only way to find out is to run it.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>In a counting loop the step is fixed: <code class="inl">i++</code>. Here the "step" is the whole <code class="inl">if / else</code> — it changes <code class="inl">n</code> in a different way depending on what <code class="inl">n</code> currently is. It is still a step: it is still the thing that eventually makes the condition false.</p>
+        </div>
+
+        <h3 id="l10-count">Counting the terms</h3>
+
+        <p>Two details in that program are worth slowing down for.</p>
+
+        <p>First, the <code class="inl">print</code> is at the <em>top</em> of the body, before <code class="inl">n</code> changes. So it shows the number the loop is working on. But the last value, 1, is never printed inside the loop — by the time <code class="inl">n</code> is 1 the condition is false and the body never runs again. That is why there is a second <code class="inl">print</code> after the loop: it is there to print the final 1.</p>
+
+        <p>Second, <code class="inl">count</code> counts the <em>passes</em>, and there were 5. The sequence has 6 numbers in it. The printed answer is <code class="inl">count + 1</code> for exactly the same reason as the extra print — the loop never gets a pass for the final 1.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Start from <code class="inl">n = 1</code> and the loop body never runs at all. The output is <code class="inl"> N: 1</code> and <code class="inl">1</code> — the two lines after the loop still run. A <code class="inl">while</code> whose condition is false at the start does nothing, and the code after it carries on regardless.</p>
+        </div>
+
+        <h3 id="l10-leap">Leap years</h3>
+
+        <p>Back to a counting loop — here we know the range — but with a real condition inside it. A year is a leap year when:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Test</th><th>Meaning</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">year % 400 == 0</td><td>divisible by 400 — always a leap year</td><td class="mono">2000 <span class="tv">yes</span></td></tr>
+              <tr><td class="mono">year % 4 == 0</td><td>divisible by 4…</td><td class="mono">1904 <span class="tv">yes</span></td></tr>
+              <tr><td class="mono">year % 100 != 0</td><td>…but not by 100</td><td class="mono">1900 <span class="fv">no</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every leap year from 1897 to 2029</span></div>
+          <pre class="code"><code>int startYear = 1897;
+int endYear = 2029;
+int counter = 0;
+for (int i = startYear; i &lt;= endYear; i++)
+{
+    if ((i % 400 == 0) || (i % 4 == 0 &amp;&amp; i % 100 != 0))
+    {
+        System.out.println(i);
+        counter++;
+    }
+}
+System.out.println(counter);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1904
+1908
+1912
+<span class="q">… every fourth year …</span>
+1996
+2000
+2004
+<span class="q">… </span>
+2024
+2028
+32</pre></div>
+        </div>
+
+        <p>1900 is missing from that list, and it is missing on purpose: it divides by 4 and by 100, and it does not divide by 400. 2000 <em>is</em> there, because 400 divides it exactly. Those two years are the whole reason the rule is more than "every fourth year".</p>
+
+        <p>Look at how the condition is built. It is the <code class="inl">&amp;&amp;</code> and <code class="inl">||</code> from Lesson 1, doing real work for the first time: <code class="inl">&amp;&amp;</code> ties "divides by 4" to "does not divide by 100", and <code class="inl">||</code> lets the 400 rule win on its own regardless of everything else.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Drop the last two tests and keep only <code class="inl">i % 4 == 0</code> and the loop happily reports 1900 as a leap year. It compiles, it runs, it counts 4 leap years between 1896 and 1910 instead of 3. A wrong condition is not an error — it is just a wrong answer.</p>
+        </div>
+
+        <div class="practice" id="p10">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 10</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Write out the hailstone sequence that starts at 6, and say how many numbers it has.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6 3 10 5 16 8 4 2 1 — nine numbers</span></p>
+                  <p>6 is even → 3. 3 is odd → 10. Then 5, 16, 8, 4, 2, 1. The loop body would run 8 times, so the program prints <code class="inl">count + 1</code> = 9.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Why is the second <code class="inl">System.out.print(" N: " + n);</code> written after the loop instead of inside it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Because the body never runs for the final 1.</span></p>
+                  <p>As soon as <code class="inl">n</code> becomes 1, the condition <code class="inl">n != 1</code> is false and the loop is finished — so 1 is the one value the print inside the body can never reach.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does the hailstone program print if <code class="inl">n</code> starts at 1?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline"> N: 1 &nbsp;then&nbsp; 1</span></p>
+                  <p>Zero passes through the body. The print and the <code class="inl">count + 1</code> after the loop still run, and <code class="inl">count</code> is still 0.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Which years between 1896 and 1910 does the leap-year loop print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1896 1904 1908</span></p>
+                  <p>1900 is the gap. It passes <code class="inl">% 4 == 0</code> but fails <code class="inl">% 100 != 0</code>, and it is not divisible by 400 either — so both halves of the <code class="inl">||</code> are false.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many leap years are there from 2000 to 2100 inclusive?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">25</span></p>
+                  <p>26 years in that range divide by 4 (2000, 2004, … 2100), but 2100 is knocked out by the <code class="inl">% 100</code> rule. 2000 survives because of the 400 rule.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a loop that counts the leap years between 1990 and 2010 without printing them, then prints the count.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int counter = 0;
+for (int i = 1990; i &lt;= 2010; i++) {
+    if ((i % 400 == 0) || (i % 4 == 0 &amp;&amp; i % 100 != 0)) {
+        counter++;
+    }
+}
+System.out.println(counter);</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>5</pre></div>
+                  </div>
+                  <p>1992, 1996, 2000, 2004, 2008. Only the <code class="inl">println</code> moved out of the <code class="inl">if</code> — the counter pattern from Part 8 is unchanged.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 11 ============ -->
+      <section class="lesson" id="l11">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 11 · Lesson11.java</span>
+          <h2 class="lesson-title">Taking a Number Apart</h2>
+        </div>
+
+        <h3 id="l11-digits">% 10 and / 10</h3>
+
+        <p>An <code class="inl">int</code> is a single value — you cannot ask it for "the third digit". But two operators you already have will peel the digits off one at a time:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Operation</th><th>Gives you</th><th class="mono">On 1234056</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">number % 10</td><td>the last digit</td><td class="mono">6</td></tr>
+              <tr><td class="mono">number / 10</td><td>everything except the last digit</td><td class="mono">123405</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The second one is integer division from Lesson 1 — the digit that falls off is exactly the fraction Java throws away. Put the two together in a loop and the number gets shorter every pass until there is nothing left:</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 660 280" role="img" aria-label="Each pass takes the last digit with % 10 and shortens the number with / 10, until the number reaches zero.">
+            <defs>
+              <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <rect class="fig-box" x="40" y="18" width="180" height="40" rx="8"/>
+            <text class="fig-m" x="130" y="43" text-anchor="middle">1234056</text>
+            <line x1="220" y1="38" x2="392" y2="38" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="240" y="30">% 10</text>
+            <rect class="fig-hit" x="394" y="18" width="46" height="40" rx="8"/>
+            <text class="fig-m" x="417" y="43" text-anchor="middle">6</text>
+            <line x1="130" y1="58" x2="130" y2="86" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="142" y="78">/ 10</text>
+
+            <rect class="fig-box" x="40" y="88" width="180" height="40" rx="8"/>
+            <text class="fig-m" x="130" y="113" text-anchor="middle">123405</text>
+            <line x1="220" y1="108" x2="392" y2="108" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="240" y="100">% 10</text>
+            <rect class="fig-hit" x="394" y="88" width="46" height="40" rx="8"/>
+            <text class="fig-m" x="417" y="113" text-anchor="middle">5</text>
+            <line x1="130" y1="128" x2="130" y2="156" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="142" y="148">/ 10</text>
+
+            <rect class="fig-box" x="40" y="158" width="180" height="40" rx="8"/>
+            <text class="fig-m" x="130" y="183" text-anchor="middle">12340</text>
+            <line x1="220" y1="178" x2="392" y2="178" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="240" y="170">% 10</text>
+            <rect class="fig-hit" x="394" y="158" width="46" height="40" rx="8"/>
+            <text class="fig-m" x="417" y="183" text-anchor="middle">0</text>
+            <line x1="130" y1="198" x2="130" y2="226" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar2)"/>
+            <text class="fig-lbl" x="142" y="218">/ 10</text>
+
+            <rect class="fig-miss" x="40" y="228" width="180" height="40" rx="8"/>
+            <text class="fig-skip" x="130" y="253" text-anchor="middle">1234 … and on to 0</text>
+            <text class="fig-lbl" x="470" y="43">digits come out</text>
+            <text class="fig-lbl" x="470" y="59">back to front</text>
+          </svg>
+          <figcaption>The digits arrive in reverse order — last digit first — because <code class="inl">% 10</code> can only ever reach the end of the number.</figcaption>
+        </figure>
+
+        <h3 id="l11-sum">Digit sum and digit count</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every digit of 1234056</span></div>
+          <pre class="code"><code>int number = 1234056;
+int sum = 0;
+int count = 0;
+while (number != 0) {
+    int digit = number % 10;
+    System.out.println(digit);
+    sum += digit;
+    count++;
+    number /= 10;
+}
+System.out.println(sum + " " + count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6
+5
+0
+4
+3
+2
+1
+21 7</pre></div>
+        </div>
+
+        <p>Two accumulators from Part 8, side by side: <code class="inl">sum</code> adds up the digits (6+5+0+4+3+2+1 = 21) and <code class="inl">count</code> counts them (7). The digit itself gets a name — <code class="inl">int digit = number % 10;</code> — because it is used three times on that pass, and working it out once is clearer than writing <code class="inl">number % 10</code> over and over.</p>
+
+        <p>This is a <code class="inl">while</code> loop rather than a <code class="inl">for</code> for the Part 10 reason: you do not know how many digits a number has until you have taken them all off.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">number</code> is destroyed by this loop. When it ends, the variable holds 0 — the original 1234056 is gone. If you still need it afterwards, copy it into another variable before the loop starts.</p>
+        </div>
+
+        <h3 id="l11-zero">Why <code class="inl">!= 0</code> and not <code class="inl">&gt; 0</code></h3>
+
+        <p>For a positive number the two conditions behave identically. They part company when the number is negative:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">number</th><th class="mono">while (number != 0)</th><th class="mono">while (number &gt; 0)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">1234056</td><td class="mono">6 5 0 4 3 2 1</td><td class="mono">6 5 0 4 3 2 1</td></tr>
+              <tr><td class="mono">-123</td><td class="mono">-3 -2 -1</td><td class="mono"><span class="q">nothing at all</span></td></tr>
+              <tr><td class="mono">0</td><td class="mono"><span class="q">nothing at all</span></td><td class="mono"><span class="q">nothing at all</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>With <code class="inl">!= 0</code> a negative number still comes apart, but every digit arrives negative — <code class="inl">-123 % 10</code> is <code class="inl">-3</code>, the sign that surprised us in Lesson 1. Neither version prints anything for 0, since the condition is false before the first pass. Which one you want depends on what you promised the program would do; what matters is that you know they differ.</p>
+
+        <div class="note note--task">
+          <span class="tag">Try it</span>
+          <p>Homework, left in the file as <code class="inl">/// REVERSE THE NUMBER</code>: using nothing but this loop and the accumulator idea, turn 1234 into 4321. Every piece you need is on this page — the digits already come out back to front. We will go through it together in class.</p>
+        </div>
+
+        <h3 id="l11-div">Common divisors</h3>
+
+        <p><code class="inl">%</code> answers one more question: does <code class="inl">i</code> divide this number exactly? Ask it of two numbers at once and you get their common divisors.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>What divides both 120 and 160</span></div>
+          <pre class="code"><code>int n = 120;
+int m = 160;
+sum = 0;
+int counter = 0;
+for (int i = n; i &gt; 0; i--) {
+    if (n % i == 0 &amp;&amp; m % i == 0) {
+        System.out.print(i + " ");
+        sum += i;
+        counter++;
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>40 20 10 8 5 4 2 1 </pre></div>
+        </div>
+
+        <p>The loop counts <em>down</em> from 120, so the first number it prints is the biggest one that divides both: <strong>40</strong>, the greatest common divisor. Counting up would have found the same eight numbers in the opposite order, and 1 first is much less interesting than 40 first.</p>
+
+        <p>Starting at <code class="inl">i = n</code> is deliberate too. Nothing bigger than 120 can divide 120, so there is no point looking. And the test needs both halves: <code class="inl">n % i == 0</code> alone would list every divisor of 120, including the ones 160 knows nothing about.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>There is no <code class="inl">println</code> after this loop, so <code class="inl">sum</code> and <code class="inl">counter</code> are computed and never shown — the console line even ends without a newline. The values are there (90 and 8); the program simply never prints them. Adding <code class="inl">System.out.println();</code> and one more line is all it takes.</p>
+        </div>
+
+        <div class="practice" id="p11">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 11</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Run the digit loop on <code class="inl">number = 407</code>. What is printed, and what are the final <code class="inl">sum</code> and <code class="inl">count</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">7, 0, 4 — then 11 3</span></p>
+                  <p>407 % 10 = 7 and 407 / 10 = 40; then 0 and 4; then 4 and 0, which ends the loop. The middle zero is a digit like any other and it counts.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What are <code class="inl">sum</code> and <code class="inl">count</code> for <code class="inl">number = 1000</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">sum 1, count 4</span></p>
+                  <p>Three zeros then a one. The zeros add nothing to the sum but they are still four passes, so the count is right.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many passes does the loop make if <code class="inl">number</code> starts at 0?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">None. Nothing is printed and count stays 0.</span></p>
+                  <p><code class="inl">0 != 0</code> is false on the first check. The program says a number with no digits — the one case this loop cannot describe properly.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does the loop print for <code class="inl">number = -123</code>, and what would change if the condition were <code class="inl">number &gt; 0</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-3 -2 -1 &nbsp;·&nbsp; with &gt; 0 it prints nothing</span></p>
+                  <p><code class="inl">%</code> keeps the sign of the left-hand number, so each "digit" comes out negative and the sum is -6. With <code class="inl">&gt; 0</code> the condition is false immediately and the loop is skipped.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change <code class="inl">n</code> to 36 and <code class="inl">m</code> to 48 in the divisor loop. What is printed, and what is the greatest common divisor?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">12 6 4 3 2 1 &nbsp;·&nbsp; the GCD is 12</span></p>
+                  <p>Six common divisors, largest first, because the loop counts down. The first number printed is always the greatest common divisor.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does the divisor loop print for <code class="inl">n = 7</code> and <code class="inl">m = 13</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1</span></p>
+                  <p>7 and 13 are both prime and different, so the only number dividing both is 1. The loop still runs seven times to find that out.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 12 ============ -->
+      <section class="lesson" id="l12">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 12 · Lesson12.java</span>
+          <h2 class="lesson-title">Where a Variable Lives</h2>
+        </div>
+
+        <p>Braces do more than group statements. Every pair of braces is a little world: a variable declared inside one exists from its declaration to the matching <code class="inl">}</code>, and not one line further. That region is called the variable's <strong>scope</strong>.</p>
+
+        <h3 id="l12-header">Declared in the header</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Perfectly normal — until the last line</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; 3; i++)
+    System.out.println("i= " + i);
+
+System.out.println("End of the for loop, i= " + i);   // ERROR</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: cannot find symbol</em>
+        System.out.println("End of the for loop, i= " + i);
+                                                          ^
+  symbol:   variable i
+1 error</pre></div>
+        </div>
+
+        <p>Eclipse words it as <code class="inl">i cannot be resolved to a variable</code>, which says the same thing more plainly: by the time that line runs, <code class="inl">i</code> does not exist any more. Declaring the counter in the header ties its life to the loop. The loop ends, the counter is gone.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A variable declared in a <code class="inl">for</code> header belongs to that loop and nothing else. This is usually what you want — the counter has no meaning outside the loop, and the name <code class="inl">i</code> is free to be used again by the next loop.</p>
+        </div>
+
+        <h3 id="l12-before">Declared before the loop</h3>
+
+        <p>If you do need the value afterwards, declare the variable first and let the header only assign to it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The counter outlives the loop</span></div>
+          <pre class="code"><code>int i = 0;
+for (i = 0; i &lt; 3; i++)
+    System.out.println("i= " + i);
+
+System.out.println("End of the for loop, i= " + i);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 0
+i= 1
+i= 2
+End of the for loop, i= 3</pre></div>
+        </div>
+
+        <p>Note the header: <code class="inl">for (i = 0; …)</code> with no <code class="inl">int</code>, because the variable already exists — the same declaration-versus-assignment distinction as Lesson 2. And the value left behind is <strong>3</strong>, not 2: the loop ends on the first value that failed the test, exactly as the <code class="inl">while</code> loops in Lesson 3 did.</p>
+
+        <h3 id="l12-body">Declared inside the body</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>A variable that is born and dies on every pass</span></div>
+          <pre class="code"><code>int j = 5;
+while (j &lt; 10)
+{
+    int p = 3;
+    j++;
+}
+System.out.println(p);        // ERROR</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: cannot find symbol</em>
+        System.out.println(p);
+                           ^
+  symbol:   variable p
+1 error</pre></div>
+        </div>
+
+        <p><code class="inl">p</code> is created fresh on every pass and thrown away at the closing brace — five times over, in this loop. Outside those braces it has never existed. <code class="inl">j</code>, declared above the loop, is still perfectly usable afterwards and holds 10.</p>
+
+        <p>This is the same rule that made the accumulator trap in Lesson 3 Part 8: a total declared inside the braces is not a total, it is a new variable on every pass.</p>
+
+        <h3 id="l12-braces">No braces at all</h3>
+
+        <p>Both examples above wrote the loop body without braces. That works — but only for one statement, and it is the same trap as the <code class="inl">if</code> in Lesson 2:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Only the first line is the loop</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; 3; i++)
+    System.out.println("i= " + i);
+    System.out.println("done");     // indented, but not in the loop</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>i= 0
+i= 1
+i= 2
+done</pre></div>
+        </div>
+
+        <p><code class="inl">done</code> appears once. The indentation suggests it is part of the loop; Java does not read indentation. Write the braces and the question never comes up.</p>
+
+        <div class="practice" id="p12">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 12</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Does this compile? If not, what is the message?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 0; i &lt; 5; i++) {
+    System.out.println(i);
+}
+System.out.println(i);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No — <code class="inl">i cannot be resolved to a variable</code></span></p>
+                  <p><code class="inl">i</code> was declared in the header, so it stopped existing at the closing brace. <code class="inl">javac</code> calls the same error <code class="inl">cannot find symbol</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Add one line to question 1 so that it compiles and prints 0, 1, 2, 3, 4 and then 5.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>int i;
+for (i = 0; i &lt; 5; i++) {
+    System.out.println(i);
+}
+System.out.println(i);</code></pre>
+                  </div>
+                  <p>Declare it above, assign it in the header. The final value is 5 — the first one that failed <code class="inl">i &lt; 5</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int i;
+for (i = 5; i &gt; 0; i -= 2) {
+}
+System.out.println(i);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-1</span></p>
+                  <p>5, 3, 1 all pass the test; the step then makes <code class="inl">i</code> equal to <code class="inl">-1</code>, which fails it. An empty body is legal — the loop still runs, it just does nothing on each pass.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many lines does this print?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 0; i &lt; 4; i++)
+    System.out.println("a");
+    System.out.println("b");</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Five: four a's and one b.</span></p>
+                  <p>Without braces the loop owns exactly one statement — the first one. The <code class="inl">b</code> line runs once, after the loop, however it is indented.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Which two of these three lines fail, and why?</p>
+              <div class="ex">
+                <pre class="code"><code>int total = 0;
+while (total &lt; 3) {
+    int step = 1;
+    total += step;
+}
+System.out.println(total);      // A
+System.out.println(step);       // B
+System.out.println(total + step);   // C</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">B and C fail; A prints 3.</span></p>
+                  <p><code class="inl">step</code> is declared inside the loop braces, so it does not exist on either of those lines. <code class="inl">total</code> was declared above the loop and survives it.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Is this legal Java? Explain in one sentence.</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 0; i &lt; 3; i++) {
+    System.out.println(i);
+}
+for (int i = 10; i &gt; 7; i--) {
+    System.out.println(i);
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Yes — it prints 0 1 2 then 10 9 8.</span></p>
+                  <p>The first <code class="inl">i</code> stopped existing at the first closing brace, so the second loop is free to declare a brand-new variable with the same name. Two separate scopes, no clash.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the six files</span>
+          <h2 class="lesson-title">More You Can Do With Just a Loop</h2>
+        </div>
+
+        <p>Nothing below is new syntax. Every one of these uses only what is already on this page — a counter, a condition, an accumulator — plus the types and operators from Lessons 1 and 2. They are here because they are the loops you will meet again and again.</p>
+
+        <h3 id="x-avg">Averages, and the division that goes wrong</h3>
+
+        <p>You have a total and you have a count. The average should be one more line — and that line is a trap.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three ways to divide, two of them wrong</span></div>
+          <pre class="code"><code>int sum = 0;
+int count = 0;
+for (int i = 1; i &lt;= 10; i++) {
+    sum += i;
+    count++;
+}
+
+System.out.println(sum / count);
+System.out.println((double)(sum / count));
+System.out.println((double) sum / count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>5</em>
+<em>5.0</em>
+5.5</pre></div>
+        </div>
+
+        <p>55 divided by 10 is 5.5, and only the last line says so. The first line is two <code class="inl">int</code> values dividing, so the .5 is gone before anything else happens. The second line is the Lesson 1 trap in full: the cast is applied to <code class="inl">sum / count</code>, which has <em>already</em> been worked out as 5 — casting a 5 to a <code class="inl">double</code> gives you a very confident 5.0.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Cast <strong>before</strong> the division, not after. <code class="inl">(double) sum / count</code> turns <code class="inl">sum</code> into a <code class="inl">double</code> first, and one <code class="inl">double</code> on either side is enough to make the whole division a <code class="inl">double</code> division.</p>
+        </div>
+
+        <h3 id="x-max">Keeping the best so far</h3>
+
+        <p>An accumulator does not have to add. It can hold the largest thing seen up to now — and this pattern comes back untouched the day we start on lists of values.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The biggest digit in a number</span></div>
+          <pre class="code"><code>int number = 1234056;
+int max = 0;
+while (number != 0) {
+    int digit = number % 10;
+    if (digit &gt; max) {
+        max = digit;
+    }
+    number /= 10;
+}
+System.out.println(max);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6</pre></div>
+        </div>
+
+        <p>Three lines added to the Part 11 loop. <code class="inl">max</code> means "the biggest one I have met so far": every digit is compared against it, and it only ever moves up.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Starting <code class="inl">max</code> at 0 is safe <em>here</em> because no digit can be smaller than 0. Start a maximum at 0 over values that might all be negative and the answer comes back 0 — a number that was never in your data at all.</p>
+        </div>
+
+        <h3 id="x-perfect">Perfect numbers</h3>
+
+        <p>The divisor loop in Part 11 quietly worked out a <code class="inl">sum</code> and never printed it. Here is what that sum is good for. A number is <strong>perfect</strong> when its divisors — not counting itself — add up to exactly the number.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>28 = 1 + 2 + 4 + 7 + 14</span></div>
+          <pre class="code"><code>int n = 28;
+int sum = 0;
+for (int i = 1; i &lt; n; i++) {
+    if (n % i == 0) {
+        sum += i;
+    }
+}
+System.out.println(sum);
+if (sum == n) {
+    System.out.println("perfect");
+} else {
+    System.out.println("not perfect");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>28
+perfect</pre></div>
+        </div>
+
+        <p>The condition is <code class="inl">i &lt; n</code>, not <code class="inl">i &lt;= n</code> — a number always divides itself, and letting it in would make every number twice itself and nothing would ever be perfect. 6 is the smallest perfect number (1 + 2 + 3); 12 is not, its divisors come to 16.</p>
+
+        <h3 id="x-gcd">Euclid's shortcut</h3>
+
+        <p>Part 11 found the greatest common divisor of 120 and 160 by testing all 120 candidates. There is a way to get the same 40 in three passes, and it is nothing but <code class="inl">%</code> in a <code class="inl">while</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Replace the pair with a smaller pair, until one of them is 0</span></div>
+          <pre class="code"><code>int a = 120;
+int b = 160;
+while (b != 0) {
+    int t = b;
+    b = a % b;
+    a = t;
+}
+System.out.println(a);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>40</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Pass</th><th class="mono">a</th><th class="mono">b</th><th class="mono">a % b</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">120</td><td class="mono">160</td><td class="mono">120</td></tr>
+              <tr><td>2</td><td class="mono">160</td><td class="mono">120</td><td class="mono">40</td></tr>
+              <tr><td>3</td><td class="mono">120</td><td class="mono">40</td><td class="mono">0</td></tr>
+              <tr><td>—</td><td class="mono"><span class="tv">40</span></td><td class="mono">0</td><td>loop ends</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The temporary variable <code class="inl">t</code> is the whole trick. <code class="inl">b</code> has to be saved before it is overwritten, or the value needed on the next line is already gone. This is the same shuffle as swapping two variables, and it is worth being able to write from memory.</p>
+
+        <h3 id="x-fib">Fibonacci: carrying two values</h3>
+
+        <p>Every loop so far carried one value from pass to pass. Carry two and you get a sequence where each number is the sum of the previous two.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The first ten</span></div>
+          <pre class="code"><code>int a = 0;
+int b = 1;
+for (int i = 1; i &lt;= 10; i++) {
+    System.out.print(a + " ");
+    int next = a + b;
+    a = b;
+    b = next;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0 1 1 2 3 5 8 13 21 34 </pre></div>
+        </div>
+
+        <p>Read the last three lines in order. <code class="inl">next</code> is worked out while both old values are still intact; only then does <code class="inl">a</code> take <code class="inl">b</code>'s place and <code class="inl">b</code> take the new value. Assign <code class="inl">a = b</code> first and the old <code class="inl">a</code> is destroyed before you have finished with it.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Let this loop run to <code class="inl">i &lt;= 48</code> and the 48th number it prints is <code class="inl">-1323752223</code>. Fibonacci numbers grow fast enough to walk off the end of an <code class="inl">int</code>, and Lesson 2 already told us what happens then: no error, just a wrong answer.</p>
+        </div>
+
+        <h3 id="x-pow">Powers, without Math.pow</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>2 to the power of 10</span></div>
+          <pre class="code"><code>int base = 2;
+int exponent = 10;
+int result = 1;
+for (int i = 0; i &lt; exponent; i++) {
+    result *= base;
+}
+System.out.println(result);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1024</pre></div>
+        </div>
+
+        <p>The product accumulator from Part 8, with the same value multiplied in every time. Starting at 1 pays off twice here: it is the correct starting value for a product, and it is also the right answer when <code class="inl">exponent</code> is 0 — the loop runs zero times and <code class="inl">result</code> is already 1.</p>
+
+        <h3 id="x-flag">A yes / no answer</h3>
+
+        <p>Sometimes the question is not "how many" but "is there one at all". That answer is a <code class="inl">boolean</code> — the type from Lesson 1 finally doing a job.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Does this number contain a 7?</span></div>
+          <pre class="code"><code>int number = 1234056;
+boolean found = false;
+while (number != 0) {
+    if (number % 10 == 7) {
+        found = true;
+    }
+    number /= 10;
+}
+System.out.println(found);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <p>Run the same loop on 407 and it prints <code class="inl">true</code>. The variable is called a <strong>flag</strong>: it starts at <code class="inl">false</code>, and a single matching digit raises it. Notice it can only ever go up — nothing in the loop sets it back to <code class="inl">false</code>, because one 7 is enough no matter what comes after it.</p>
+
+        <p>The loop keeps checking the remaining digits even after the flag is up. It costs a few wasted passes and the answer is still right — leaving the loop early is a tool we have not met yet.</p>
+
+        <h3 id="x-string">Building a line of text</h3>
+
+        <p>A <code class="inl">String</code> accumulates exactly like a number does. The <code class="inl">+</code> that joins text is the same <code class="inl">+</code> we have been using since Lesson 1.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One line instead of five</span></div>
+          <pre class="code"><code>String out = "";
+for (int i = 1; i &lt;= 5; i++) {
+    out = out + i + " ";
+}
+System.out.println(out);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 2 3 4 5 </pre></div>
+        </div>
+
+        <p>Every accumulator starts from the value that changes nothing, and for text that value is the empty String <code class="inl">""</code>:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>You are building</th><th class="mono">Start it at</th><th class="mono">Inside the loop</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>a total</td><td class="mono">0</td><td class="mono">sum += i;</td></tr>
+              <tr><td>a product</td><td class="mono">1</td><td class="mono">product *= i;</td></tr>
+              <tr><td>a line of text</td><td class="mono">""</td><td class="mono">out = out + i + " ";</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Once a String is involved, <code class="inl">+</code> stops adding and starts joining — and it works from left to right. <code class="inl">"sum: " + 1 + 2</code> gives <code class="inl">sum: 12</code>, while <code class="inl">"sum: " + (1 + 2)</code> gives <code class="inl">sum: 3</code>. The brackets are not decoration; they decide which <code class="inl">+</code> runs first.</p>
+        </div>
+
+        <h3 id="x-trace">Tracing a loop on paper</h3>
+
+        <p>Every trap on this page is findable without a computer, if you write the variables down pass by pass. One column per variable, one row per pass, and you fill a row only when a line changes something.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Trace this</span></div>
+          <pre class="code"><code>int n = 5;
+int r = 1;
+while (n &gt; 1) {
+    r *= n;
+    n--;
+}
+System.out.println(r);</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Pass</th><th class="mono">n at the top</th><th class="mono">n &gt; 1</th><th class="mono">r after r *= n</th><th class="mono">n after n--</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">5</td><td class="mono"><span class="tv">true</span></td><td class="mono">5</td><td class="mono">4</td></tr>
+              <tr><td>2</td><td class="mono">4</td><td class="mono"><span class="tv">true</span></td><td class="mono">20</td><td class="mono">3</td></tr>
+              <tr><td>3</td><td class="mono">3</td><td class="mono"><span class="tv">true</span></td><td class="mono">60</td><td class="mono">2</td></tr>
+              <tr><td>4</td><td class="mono">2</td><td class="mono"><span class="tv">true</span></td><td class="mono">120</td><td class="mono">1</td></tr>
+              <tr><td>5</td><td class="mono">1</td><td class="mono"><span class="fv">false</span></td><td colspan="2">loop ends, r stays 120</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The last row is the one people forget to write, and it is the row that answers most exam questions: the pass that <em>fails</em> the test still costs you a check, and it is where the final values come from.</p>
+
+        <div class="note note--task">
+          <span class="tag">Try it</span>
+          <p>Draw the same table for this loop, one row per pass, before you run it. The answer is question 6 below.</p>
+          <div class="ex">
+            <pre class="code"><code>int sum = 0;
+for (int i = 1; i &lt;= 4; i++) {
+    sum += i * i;
+}
+System.out.println(sum);</code></pre>
+          </div>
+        </div>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What do these two lines print?</p>
+              <div class="ex">
+                <pre class="code"><code>int sum = 7;
+int count = 2;
+System.out.println(sum / count);
+System.out.println((double) sum / count);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3 &nbsp;then&nbsp; 3.5</span></p>
+                  <p>Two <code class="inl">int</code> values divide as ints. The cast on the second line reaches <code class="inl">sum</code> before the division happens, so the whole thing becomes a <code class="inl">double</code> division.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is the biggest digit of 90210, and how many passes does the loop make to find it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">9, in 5 passes</span></p>
+                  <p>The digits arrive as 0, 1, 2, 0, 9 — so <code class="inl">max</code> moves 0 → 1 → 2 → 9, and the winner turns up last. The loop cannot know that, which is why it has to look at all of them.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Is 12 a perfect number? Show the sum.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No — the sum is 16</span></p>
+                  <p>1 + 2 + 3 + 4 + 6 = 16, which is more than 12. (A number whose divisors overshoot like this is called <em>abundant</em>.)</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Trace Euclid's loop for <code class="inl">a = 48</code> and <code class="inl">b = 18</code>. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6</span></p>
+                  <p>(48, 18) → (18, 12) → (12, 6) → (6, 0). Three passes, and the answer is whatever <code class="inl">a</code> holds when <code class="inl">b</code> finally hits 0.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>int result = 1;
+for (int i = 0; i &lt; 4; i++) {
+    result *= 3;
+}
+System.out.println(result);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">81</span></p>
+                  <p>Four passes, so 3 is multiplied in four times: 3 → 9 → 27 → 81. The counter starts at 0 and is never used inside the body — it is only there to count to four.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Fill in the trace table from the <span class="tag">Try it</span> box above, then give the final value of <code class="inl">sum</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">30</span></p>
+                  <div class="scroll">
+                    <table>
+                      <thead>
+                        <tr><th>Pass</th><th class="mono">i</th><th class="mono">i * i</th><th class="mono">sum</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>1</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td></tr>
+                        <tr><td>2</td><td class="mono">2</td><td class="mono">4</td><td class="mono">5</td></tr>
+                        <tr><td>3</td><td class="mono">3</td><td class="mono">9</td><td class="mono">14</td></tr>
+                        <tr><td>4</td><td class="mono">4</td><td class="mono">16</td><td class="mono">30</td></tr>
+                        <tr><td>5</td><td class="mono">5</td><td colspan="2"><span class="fv">5 &lt;= 4 is false — loop ends</span></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>1 + 4 + 9 + 16 = 30.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Ten traps to remember</h2>
+        <p>Eight of these compile without complaint. The other two refuse to compile at all — and knowing which is which is half the battle.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">for (int i = 10; i &gt; 0; i++)</td>
+                <td>a countdown</td>
+                <td><span class="fv">never stops</span></td>
+                <td>the step moves away from the condition</td>
+              </tr>
+              <tr>
+                <td class="mono">for (int i = 2; i &lt; 100; i += 5)</td>
+                <td class="mono">… 97 102</td>
+                <td class="mono"><span class="fv">… 97</span></td>
+                <td>the test runs before the pass, not after</td>
+              </tr>
+              <tr>
+                <td class="mono">int sum = 0; inside the braces</td>
+                <td class="mono">1 3 6 10</td>
+                <td class="mono"><span class="fv">1 2 3 4</span></td>
+                <td>a new variable, reset on every pass</td>
+              </tr>
+              <tr>
+                <td class="mono">int product = 0; product *= i;</td>
+                <td class="mono">120</td>
+                <td class="mono"><span class="fv">0</span></td>
+                <td>a product accumulator has to start at 1</td>
+              </tr>
+              <tr>
+                <td class="mono">while (…) with the step inside an if</td>
+                <td>the loop advances</td>
+                <td><span class="fv">frozen forever</span></td>
+                <td>the step must run on every pass</td>
+              </tr>
+              <tr>
+                <td class="mono">i % 4 == 0 as the leap-year test</td>
+                <td>1900 skipped</td>
+                <td class="mono"><span class="fv">1900 counted</span></td>
+                <td>÷100 and not ÷400 is not a leap year</td>
+              </tr>
+              <tr>
+                <td class="mono">-123 % 10</td>
+                <td class="mono">3</td>
+                <td class="mono"><span class="fv">-3</span></td>
+                <td>% keeps the sign of the left-hand number</td>
+              </tr>
+              <tr>
+                <td class="mono">sum / count for the average</td>
+                <td class="mono">5.5</td>
+                <td class="mono"><span class="fv">5</span></td>
+                <td>cast before the division, not after</td>
+              </tr>
+              <tr>
+                <td class="mono">"sum: " + 1 + 2</td>
+                <td class="mono">sum: 3</td>
+                <td class="mono"><span class="fv">sum: 12</span></td>
+                <td>with a String, + joins from left to right</td>
+              </tr>
+              <tr>
+                <td class="mono">println(i) after for (int i …)</td>
+                <td>the final value</td>
+                <td><span class="err">will not compile</span></td>
+                <td>the header's variable dies with the loop</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 3, parts 7–12. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson2.html">← Lesson 2</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

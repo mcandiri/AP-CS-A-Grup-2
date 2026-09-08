@@ -46,11 +46,13 @@ public class Lesson6 {
 		
 		if(number > 0) 
 			if(number % 2 == 0)
-				System.out.println("even number");
+				System.out.println("positive even number");
 			else
-				System.out.println("odd number");
+				System.out.println("positive odd number");
 		else
 			System.out.println("number is negative!");
 
+		
+		
 	}
 }
