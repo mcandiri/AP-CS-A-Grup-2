@@ -30,6 +30,26 @@ public class Lesson12 {
 		}
 
 		// FIBONACCI SEQUENCES(15 terms) --- 1 1 2 3 5 8 13 21 34 .... 
+		int first = 1 ; 
+		int second  = 1 ;
+		System.out.print(first + " " + second + " ");
+		for(int k = 1 ; k <= 13 ; k++) {
+			int third = first + second ; 
+			System.out.print(third + " ");	
+			first = second ; 
+			second = third; 
+		}
+		
+		/*
+		 * 
+		 * 	F = 1		F = 1	F = 2   
+		 *  S = 1       S = 2   S = 3 
+		 *  T = 2		T = 3   T = 5
+		 * 
+		 * 
+		 * 
+		 */
+		
 		
 	}
 

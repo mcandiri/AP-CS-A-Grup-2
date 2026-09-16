@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 4: nested loops. Reversing a number and palindromes, a loop inside a loop, rectangles, triangles and pyramids of stars, and listing prime numbers with a boolean flag.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 4 · Nested Loops — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 4</p>
+    <h1>Nested Loops</h1>
+    <p class="deck">Our fourth lesson. First the two pieces we finished from last week's files — reversing a number and the Fibonacci sequence — then the new idea: a loop whose body is another loop. Rows and columns, triangles and pyramids built from stars, and the classic use of an inner loop: deciding whether a number is prime. A closing set of extras uses nothing beyond what is on this page.</p>
+    <ul class="facts">
+      <li>3 files + warm-up</li>
+      <li>Java</li>
+      <li>30 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#warm">Warm-up · finishing Lesson 3</a></li>
+        <li><a class="sub" href="#w-reverse">Reversing a number</a></li>
+        <li><a class="sub" href="#w-palin">Palindromes</a></li>
+        <li><a class="sub" href="#w-fib">Fibonacci</a></li>
+        <li><a class="sub" href="#pw">Practice</a></li>
+        <li><a href="#l13">13 · A loop inside a loop</a></li>
+        <li><a class="sub" href="#l13-idea">The idea</a></li>
+        <li><a class="sub" href="#l13-trace">Reading the output</a></li>
+        <li><a class="sub" href="#l13-rect">Rows and columns</a></li>
+        <li><a class="sub" href="#l13-count">Counting the passes</a></li>
+        <li><a class="sub" href="#p13">Practice</a></li>
+        <li><a href="#l14">14 · Patterns</a></li>
+        <li><a class="sub" href="#l14-grow">A growing triangle</a></li>
+        <li><a class="sub" href="#l14-shrink">A shrinking triangle</a></li>
+        <li><a class="sub" href="#l14-right">Spaces first</a></li>
+        <li><a class="sub" href="#l14-pyramid">A pyramid</a></li>
+        <li><a class="sub" href="#l14-recipe">The recipe</a></li>
+        <li><a class="sub" href="#p14">Practice</a></li>
+        <li><a href="#l15">15 · Prime numbers</a></li>
+        <li><a class="sub" href="#l15-idea">What we are testing</a></li>
+        <li><a class="sub" href="#l15-code">The nested loop</a></li>
+        <li><a class="sub" href="#l15-trace">16 and 17, by hand</a></li>
+        <li><a class="sub" href="#l15-reset">Where the flag lives</a></li>
+        <li><a class="sub" href="#l15-cost">What it costs</a></li>
+        <li><a class="sub" href="#p15">Practice</a></li>
+        <li><a href="#extras">Extras · beyond the files</a></li>
+        <li><a class="sub" href="#x-table">A multiplication table</a></li>
+        <li><a class="sub" href="#x-numbers">Numbers instead of stars</a></li>
+        <li><a class="sub" href="#x-count">How many times does it run</a></li>
+        <li><a class="sub" href="#x-while">A while inside a for</a></li>
+        <li><a class="sub" href="#x-primecount">Counting the primes</a></li>
+        <li><a class="sub" href="#x-trace">Tracing on paper</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ WARM-UP ============ -->
+      <section class="lesson" id="warm">
+        <div class="lesson-head">
+          <span class="lesson-no">Warm-up · Lesson11.java &amp; Lesson12.java, continued</span>
+          <h2 class="lesson-title">Finishing Lesson 3</h2>
+        </div>
+
+        <p>Two things from last week's files were left open: the homework in <code class="inl">Lesson11.java</code> and the Fibonacci comment at the bottom of <code class="inl">Lesson12.java</code>. We closed both before starting the new topic, so they belong on this page.</p>
+
+        <h3 id="w-reverse">Reversing a number</h3>
+
+        <p>The homework was: turn 1234 into 4321 using nothing but the digit loop. The digits already come out back to front — 4, then 3, then 2, then 1 — so the whole job is to <em>build a number</em> out of them in the order they arrive. One new line inside the loop does it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The line that builds the reversed number</span></div>
+          <pre class="code"><code>reverse = reverse * 10 + digit;</code></pre>
+        </div>
+
+        <p>Multiplying by 10 shifts everything already collected one place to the left, and adding the new digit drops it into the empty last place. Trace it for 1234:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Pass</th><th class="mono">digit</th><th class="mono">reverse * 10 + digit</th><th class="mono">reverse after</th><th class="mono">number after / 10</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">4</td><td class="mono">0 * 10 + 4</td><td class="mono">4</td><td class="mono">123</td></tr>
+              <tr><td>2</td><td class="mono">3</td><td class="mono">4 * 10 + 3</td><td class="mono">43</td><td class="mono">12</td></tr>
+              <tr><td>3</td><td class="mono">2</td><td class="mono">43 * 10 + 2</td><td class="mono">432</td><td class="mono">1</td></tr>
+              <tr><td>4</td><td class="mono">1</td><td class="mono">432 * 10 + 1</td><td class="mono"><span class="tv">4321</span></td><td class="mono">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>It is an accumulator, exactly like <code class="inl">sum</code> — it starts at 0 and every pass folds one more digit in. The only difference is the <code class="inl">* 10</code>, which is what turns "add" into "append".</p>
+
+        <h3 id="w-palin">Palindromes</h3>
+
+        <p>Once you can reverse a number, one comparison tells you whether it reads the same both ways. Here is the finished file, run on 1234321:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson11.java — digits, sum, count, reverse, palindrome</span></div>
+          <pre class="code"><code>int number = 1234321;
+int temp = number;
+int sum = 0;
+int count = 0;
+int reverse = 0;
+while (number != 0) {
+    int digit = number % 10;
+    reverse = reverse * 10 + digit;
+    System.out.println(digit);
+    sum += digit;
+    count++;
+    number /= 10;
+}
+System.out.println(sum + " " + count);
+System.out.println(reverse);
+System.out.println(number);
+System.out.println("---------");
+if (reverse == temp)
+{
+    System.out.println("Palindrome number");
+}
+else
+{
+    System.out.println("Not Palindrome number");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1
+2
+3
+4
+3
+2
+1
+16 7
+1234321
+0
+---------
+Palindrome number</pre></div>
+        </div>
+
+        <p>Look at the third-from-last line: <code class="inl">number</code> prints as <code class="inl">0</code>. Lesson 3 warned that the loop destroys it, and this is the moment it matters. The comparison has to be against something, and <code class="inl">number</code> is gone — so the very first line of the program copies it into <code class="inl">temp</code>, and the <code class="inl">if</code> compares against the copy.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Write <code class="inl">if (reverse == number)</code> instead and nothing is ever a palindrome. By the time the <code class="inl">if</code> runs, <code class="inl">number</code> is 0, and <code class="inl">reverse</code> is never 0 for a number that had digits. The copy is not optional.</p>
+        </div>
+
+        <p>Run the same file on 1234056 and it prints <code class="inl">6504321</code>, then <code class="inl">Not Palindrome number</code>.</p>
+
+        <h3 id="w-fib">Fibonacci</h3>
+
+        <p>The sequence where each number is the sum of the two before it: 1, 1, 2, 3, 5, 8, 13, … The file prints fifteen terms.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson12.java — fifteen terms</span></div>
+          <pre class="code"><code>int first = 1;
+int second = 1;
+System.out.print(first + " " + second + " ");
+for (int k = 1; k &lt;= 13; k++) {
+    int third = first + second;
+    System.out.print(third + " ");
+    first = second;
+    second = third;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 </pre></div>
+        </div>
+
+        <p>Two terms are printed before the loop starts, so the loop only has to produce the remaining thirteen — that is where <code class="inl">k &lt;= 13</code> comes from. Inside, the three lines after the <code class="inl">print</code> are the whole idea, and their order is not negotiable:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">first</th><th class="mono">second</th><th class="mono">third = first + second</th><th>then</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">1</td><td class="mono">1</td><td class="mono">2</td><td>first becomes 1, second becomes 2</td></tr>
+              <tr><td class="mono">1</td><td class="mono">2</td><td class="mono">3</td><td>first becomes 2, second becomes 3</td></tr>
+              <tr><td class="mono">2</td><td class="mono">3</td><td class="mono">5</td><td>first becomes 3, second becomes 5</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Each pass slides the window one step along: the old <code class="inl">second</code> becomes the new <code class="inl">first</code>, and the number just computed becomes the new <code class="inl">second</code>. Swap those two assignments and <code class="inl">second</code> is overwritten before <code class="inl">first</code> has read it.</p>
+
+        <div class="practice" id="pw">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the warm-up</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does the reversing loop produce for <code class="inl">number = 1200</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">21</span></p>
+                  <p>The digits come out as 0, 0, 2, 1. After two passes <code class="inl">reverse</code> is still <code class="inl">0 * 10 + 0 = 0</code> — an <code class="inl">int</code> has no way to remember leading zeros. So "0021" is simply 21.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Which of these does the program call a palindrome: 12321, 1231?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">12321 yes · 1231 no</span></p>
+                  <p>12321 reversed is 12321, equal to the copy in <code class="inl">temp</code>. 1231 reversed is 1321, which is not.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Why does the file copy <code class="inl">number</code> into <code class="inl">temp</code> before the loop? What would <code class="inl">if (reverse == number)</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Not Palindrome number — for every input</span></p>
+                  <p>The loop divides <code class="inl">number</code> by 10 until it reaches 0, and 0 is what the <code class="inl">if</code> would see. The copy preserves the original so there is something to compare against.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change the Fibonacci header to <code class="inl">k &lt;= 8</code>. How many terms are printed, and what is the last one?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">10 terms, ending in 55</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>1 1 2 3 5 8 13 21 34 55 </pre></div>
+                  </div>
+                  <p>Two terms come from the <code class="inl">print</code> before the loop, eight from the loop. The count is always <em>2 + the number of passes</em>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Keep the loop exactly as it is but start with <code class="inl">first = 2</code> and <code class="inl">second = 1</code>, and run it for 8 passes. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>2 1 3 4 7 11 18 29 47 76 </pre></div>
+                  </div>
+                  <p>The rule "add the previous two" does not care what the first two are. Different seeds, same loop, a different sequence.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>A student writes <code class="inl">reverse = reverse + digit;</code> — forgetting the <code class="inl">* 10</code>. For 1234321, what does <code class="inl">reverse</code> hold when the loop ends?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">16</span></p>
+                  <p>Without the shift it is just <code class="inl">sum += digit</code> under another name: 1+2+3+4+3+2+1. The <code class="inl">* 10</code> is the only thing that makes the digits land in separate places.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 13 ============ -->
+      <section class="lesson" id="l13">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 13 · Lesson13.java</span>
+          <h2 class="lesson-title">A Loop Inside a Loop</h2>
+        </div>
+
+        <h3 id="l13-idea">The idea</h3>
+
+        <p>The body of a loop can hold any statements — a <code class="inl">println</code>, an <code class="inl">if</code>, an assignment. It can also hold another loop. When it does, the loop on the outside is the <strong>outer loop</strong> and the one in its body is the <strong>inner loop</strong>, and the inner loop runs <em>from start to finish</em> on every single pass of the outer one.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three passes outside, five inside</span></div>
+          <pre class="code"><code>// outer loop
+for (int j = 1; j &lt;= 3; j++) {
+    for (int i = 1; i &lt;= 5; i++) { // inner loop
+        System.out.println("j= " + j + " i= " + i);
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>j= 1 i= 1
+j= 1 i= 2
+j= 1 i= 3
+j= 1 i= 4
+j= 1 i= 5
+
+j= 2 i= 1
+j= 2 i= 2
+j= 2 i= 3
+j= 2 i= 4
+j= 2 i= 5
+
+j= 3 i= 1
+j= 3 i= 2
+j= 3 i= 3
+j= 3 i= 4
+j= 3 i= 5
+</pre></div>
+        </div>
+
+        <h3 id="l13-trace">Reading the output</h3>
+
+        <p>Read the <code class="inl">j</code> column: it moves slowly. Read the <code class="inl">i</code> column: it runs 1 to 5, then <em>starts again</em> from 1. That restart is the whole point. When the inner loop finishes, control comes back to the outer loop, the outer loop takes its step, and on the next outer pass the inner loop's <code class="inl">int i = 1</code> runs again from scratch.</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 700 250" role="img" aria-label="Three rows, one per outer pass. In each row the inner loop runs i from 1 to 5, then a println ends the row before the outer loop steps j.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <text class="fig-lbl" x="20" y="22">outer pass</text>
+            <text class="fig-lbl" x="150" y="22">inner loop, start to finish</text>
+            <text class="fig-lbl" x="560" y="22">then</text>
+
+            <text class="fig-m" x="20" y="66">j = 1</text>
+            <rect class="fig-hit" x="150" y="44" width="56" height="34" rx="6"/><text class="fig-m" x="178" y="66" text-anchor="middle">i=1</text>
+            <rect class="fig-hit" x="220" y="44" width="56" height="34" rx="6"/><text class="fig-m" x="248" y="66" text-anchor="middle">i=2</text>
+            <rect class="fig-hit" x="290" y="44" width="56" height="34" rx="6"/><text class="fig-m" x="318" y="66" text-anchor="middle">i=3</text>
+            <rect class="fig-hit" x="360" y="44" width="56" height="34" rx="6"/><text class="fig-m" x="388" y="66" text-anchor="middle">i=4</text>
+            <rect class="fig-hit" x="430" y="44" width="56" height="34" rx="6"/><text class="fig-m" x="458" y="66" text-anchor="middle">i=5</text>
+            <rect class="fig-box" x="560" y="44" width="110" height="34" rx="6"/><text class="fig-m" x="615" y="66" text-anchor="middle">println()</text>
+            <line x1="486" y1="61" x2="558" y2="61" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <path d="M 615 78 L 615 96 L 110 96 L 110 130 L 148 130" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+            <text class="fig-lbl" x="122" y="112">j++ · inner loop restarts from i = 1</text>
+
+            <text class="fig-m" x="20" y="135">j = 2</text>
+            <rect class="fig-hit" x="150" y="113" width="56" height="34" rx="6"/><text class="fig-m" x="178" y="135" text-anchor="middle">i=1</text>
+            <rect class="fig-hit" x="220" y="113" width="56" height="34" rx="6"/><text class="fig-m" x="248" y="135" text-anchor="middle">i=2</text>
+            <rect class="fig-hit" x="290" y="113" width="56" height="34" rx="6"/><text class="fig-m" x="318" y="135" text-anchor="middle">i=3</text>
+            <rect class="fig-hit" x="360" y="113" width="56" height="34" rx="6"/><text class="fig-m" x="388" y="135" text-anchor="middle">i=4</text>
+            <rect class="fig-hit" x="430" y="113" width="56" height="34" rx="6"/><text class="fig-m" x="458" y="135" text-anchor="middle">i=5</text>
+            <rect class="fig-box" x="560" y="113" width="110" height="34" rx="6"/><text class="fig-m" x="615" y="135" text-anchor="middle">println()</text>
+            <line x1="486" y1="130" x2="558" y2="130" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <path d="M 615 147 L 615 165 L 110 165 L 110 199 L 148 199" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+            <text class="fig-lbl" x="122" y="181">j++ · and again</text>
+
+            <text class="fig-m" x="20" y="204">j = 3</text>
+            <rect class="fig-hit" x="150" y="182" width="56" height="34" rx="6"/><text class="fig-m" x="178" y="204" text-anchor="middle">i=1</text>
+            <rect class="fig-hit" x="220" y="182" width="56" height="34" rx="6"/><text class="fig-m" x="248" y="204" text-anchor="middle">i=2</text>
+            <rect class="fig-hit" x="290" y="182" width="56" height="34" rx="6"/><text class="fig-m" x="318" y="204" text-anchor="middle">i=3</text>
+            <rect class="fig-hit" x="360" y="182" width="56" height="34" rx="6"/><text class="fig-m" x="388" y="204" text-anchor="middle">i=4</text>
+            <rect class="fig-hit" x="430" y="182" width="56" height="34" rx="6"/><text class="fig-m" x="458" y="204" text-anchor="middle">i=5</text>
+            <rect class="fig-box" x="560" y="182" width="110" height="34" rx="6"/><text class="fig-m" x="615" y="204" text-anchor="middle">println()</text>
+            <line x1="486" y1="199" x2="558" y2="199" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+            <text class="fig-lbl" x="150" y="240">15 green boxes = 15 printed lines · 3 println() = 3 blank lines</text>
+          </svg>
+          <figcaption>The outer loop moves down one row at a time. The inner loop runs the whole row before the outer loop is allowed to take its next step.</figcaption>
+        </figure>
+
+        <p>Two different counters, two different names. The outer one is <code class="inl">j</code> and the inner one is <code class="inl">i</code> here — which letter is which does not matter, but they cannot share a name. Java will refuse to compile an inner <code class="inl">int i</code> while an outer <code class="inl">int i</code> is still alive (question 6 below).</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>The empty <code class="inl">System.out.println();</code> after the inner loop belongs to the <strong>outer</strong> body — it is inside the outer braces but after the inner closing brace. So it runs 3 times, once per outer pass, not 15. Where a line sits relative to the two closing braces decides how many times it runs.</p>
+        </div>
+
+        <h3 id="l13-rect">Rows and columns</h3>
+
+        <p>Swap <code class="inl">println</code> for <code class="inl">print</code> in the inner loop and the inner passes land on one line instead of one under another. Now the outer loop draws <strong>rows</strong> and the inner loop draws the <strong>columns</strong> inside each row:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Five rows of twenty stars</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {       // rows
+    for (int j = 1; j &lt;= 20; j++) {  // columns
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>********************
+********************
+********************
+********************
+********************</pre></div>
+        </div>
+
+        <p>The <code class="inl">println()</code> with nothing in it is what ends a row. Every inner pass prints one star and stays on the line; when the inner loop is done the outer body's <code class="inl">println()</code> moves the cursor down; then the next row begins. Take that line out and all 100 stars arrive in a single row.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Put a <code class="inl">println("*")</code> in the inner loop instead of <code class="inl">print("*")</code> and every star gets its own line. The 5 × 20 rectangle becomes 100 lines with one star each, plus a blank line every twenty. The difference between <code class="inl">print</code> and <code class="inl">println</code> is the difference between a column and a row.</p>
+        </div>
+
+        <h3 id="l13-count">Counting the passes</h3>
+
+        <p>How many times does the inner body run? The inner loop runs completely for each outer pass, so the answer is a multiplication:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Outer passes</th><th>Inner passes each time</th><th>Inner body runs</th><th>Lines in the output</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">j = 1 … 3</td><td class="mono">i = 1 … 5</td><td class="mono">3 × 5 = 15</td><td>15 lines + 3 blank lines</td></tr>
+              <tr><td class="mono">i = 1 … 5</td><td class="mono">j = 1 … 20</td><td class="mono">5 × 20 = 100</td><td>5 rows of 20 stars</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The statement <em>after</em> the inner loop but still inside the outer braces runs once per outer pass — 3 times, or 5 times. The statement inside both loops runs 15 or 100 times. When a question asks "how many times is this line executed", the first thing to find is which pair of braces it lives in.</p>
+
+        <div class="practice" id="p13">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 13</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 2; i++) {
+    for (int j = 1; j &lt;= 3; j++) {
+        System.out.print(i * j + " ");
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>1 2 3 
+2 4 6 </pre></div>
+                  </div>
+                  <p>Two rows (outer), three values in each (inner). On the first row <code class="inl">i</code> is 1 so the row is 1×1, 1×2, 1×3; on the second it is 2×1, 2×2, 2×3.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times is <code class="inl">Hi</code> printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int a = 1; a &lt;= 4; a++) {
+    for (int b = 1; b &lt;= 6; b++) {
+        System.out.println("Hi");
+    }
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">24</span></p>
+                  <p>Four outer passes, and on every one of them the inner loop runs six times: 4 × 6.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>In the rectangle example, swap the two numbers: outer loop to 20, inner loop to 5. Describe the output.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">20 rows of 5 stars</span></p>
+                  <p>Still 100 stars, but a tall thin rectangle instead of a wide flat one. The outer loop is always the number of rows and the inner loop the width of each row.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does this print? Count the lines.</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 2; i++) {
+    for (int j = 1; j &lt;= 3; j++) {
+        System.out.println("*");
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>*
+*
+*
+
+*
+*
+*
+</pre></div>
+                  </div>
+                  <p>Eight lines: six stars, each on its own line because it is <code class="inl">println</code>, and two blank lines from the outer body's <code class="inl">println()</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a nested loop that prints a rectangle 3 rows high and 7 <code class="inl">#</code> wide.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>for (int i = 1; i &lt;= 3; i++) {
+    for (int j = 1; j &lt;= 7; j++) {
+        System.out.print("#");
+    }
+    System.out.println();
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>#######
+#######
+#######</pre></div>
+                  </div>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What happens when you try to run this?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 3; i++) {
+    for (int i = 1; i &lt;= 5; i++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">It does not compile</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: variable i is already defined in method main(String[])</em></pre></div>
+                  </div>
+                  <p>Eclipse underlines the inner <code class="inl">int i</code> with "Duplicate local variable i". Lesson 3 said a header variable lives until its loop's closing brace — the outer <code class="inl">i</code> is still alive when the inner header tries to declare another one. Give the inner loop its own name.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 14 ============ -->
+      <section class="lesson" id="l14">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 14 · Lesson14.java</span>
+          <h2 class="lesson-title">Patterns</h2>
+        </div>
+
+        <p>The rectangle's inner loop always ran to 20, no matter which row it was on. Let the inner loop's limit <em>depend on the outer counter</em> and each row can be a different length. That is all a pattern is.</p>
+
+        <h3 id="l14-grow">A growing triangle</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>One more star per row — the way we wrote it first</span></div>
+          <pre class="code"><code>int n = 1;
+for (int i = 1; i &lt;= 5; i++) {      // rows
+    for (int j = 1; j &lt;= n; j++) {  // columns
+        System.out.print("*");
+    }
+    n++;
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>*
+**
+***
+****
+*****</pre></div>
+        </div>
+
+        <p>A separate variable <code class="inl">n</code> holds the width of the current row. It starts at 1, the inner loop prints <code class="inl">n</code> stars, and then — after the inner loop, before the next row — <code class="inl">n++</code> makes the next row one wider. Notice where the <code class="inl">n++</code> sits: inside the outer braces, after the inner closing brace. Move it above the inner loop and the first row already has two stars (question 2).</p>
+
+        <p>But look at the values: on row 1, <code class="inl">n</code> is 1; on row 2, <code class="inl">n</code> is 2; on row 5, <code class="inl">n</code> is 5. It is always equal to <code class="inl">i</code>. So the extra variable can go:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The same triangle, using the row number directly</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    for (int j = 1; j &lt;= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>*
+**
+***
+****
+*****</pre></div>
+        </div>
+
+        <p><code class="inl">j &lt;= i</code> is the line to stare at. The inner loop's stop condition uses the outer loop's counter, so the inner loop runs 1 time, then 2, then 3, then 4, then 5. This is the shape every pattern on this page comes from.</p>
+
+        <h3 id="l14-shrink">A shrinking triangle</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>One fewer star per row</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {        // rows
+    for (int j = 1; j &lt;= 6 - i; j++) {  // columns
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>*****
+****
+***
+**
+*</pre></div>
+        </div>
+
+        <p>The row number still goes up, 1 to 5, but the width is <code class="inl">6 - i</code>: 5, 4, 3, 2, 1. Work out the expression for the first and the last row before you trust it — <code class="inl">6 - 1 = 5</code> and <code class="inl">6 - 5 = 1</code>, so the ends are right, and a straight-line expression that gets both ends right gets everything in between right too.</p>
+
+        <h3 id="l14-right">Spaces first</h3>
+
+        <p>To push the triangle over to the right, each row needs some spaces <em>before</em> its stars. That is a second inner loop, one after the other inside the same outer body: one loop for the spaces, then one loop for the stars, then the newline.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two inner loops per row</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    for (int k = 0; k &lt; 5 - i; k++) {   // spaces
+        System.out.print(" ");
+    }
+    for (int j = 1; j &lt;= i; j++) {      // stars
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>    *
+   **
+  ***
+ ****
+*****</pre></div>
+        </div>
+
+        <p>The two inner loops are not nested in each other — they are <em>siblings</em>, both nested in the outer loop. On each row the first one runs to completion, then the second one. The file plans the row out in a comment before writing the code, and it is the right habit:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Row <span class="mono">i</span></th><th>Spaces</th><th>Stars</th><th>Looks like</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">1</td><td class="mono">4</td><td class="mono">1</td><td class="mono">····*</td></tr>
+              <tr><td class="mono">2</td><td class="mono">3</td><td class="mono">2</td><td class="mono">···**</td></tr>
+              <tr><td class="mono">3</td><td class="mono">2</td><td class="mono">3</td><td class="mono">··***</td></tr>
+              <tr><td class="mono">4</td><td class="mono">1</td><td class="mono">4</td><td class="mono">·****</td></tr>
+              <tr><td class="mono">5</td><td class="mono">0</td><td class="mono">5</td><td class="mono">*****</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Spaces are <code class="inl">5 - i</code> and stars are <code class="inl">i</code>. The space loop is written with <code class="inl">k = 0</code> and <code class="inl">&lt;</code>, the star loop with <code class="inl">j = 1</code> and <code class="inl">&lt;=</code>; both run the number of times their column says, and either style would do for either loop.</p>
+
+        <h3 id="l14-pyramid">A pyramid</h3>
+
+        <p>Same two inner loops, but now the stars go up by two each row so that the shape stays centred:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten rows, odd widths</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 10; i++) {
+    for (int k = 0; k &lt; 10 - i; k++) {
+        System.out.print(" ");
+    }
+    for (int j = 1; j &lt;= 2 * i - 1; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>         *
+        ***
+       *****
+      *******
+     *********
+    ***********
+   *************
+  ***************
+ *****************
+*******************</pre></div>
+        </div>
+
+        <p><code class="inl">2 * i - 1</code> gives 1, 3, 5, 7, … — the odd numbers. Check the ends: row 1 has <code class="inl">2·1 − 1 = 1</code> star, row 10 has <code class="inl">2·10 − 1 = 19</code>. And row 10 has <code class="inl">10 − 10 = 0</code> spaces, so the base sits flush against the left edge.</p>
+
+        <h3 id="l14-recipe">The recipe</h3>
+
+        <p>Every pattern on this page was built the same way, and it is worth writing the steps down because the exam will hand you a shape you have not seen:</p>
+
+        <ul class="plain">
+          <li><strong>One outer loop per row.</strong> Its counter is the row number.</li>
+          <li><strong>Draw a table</strong> with one line per row: how many spaces, how many stars.</li>
+          <li><strong>Find the expression</strong> in <code class="inl">i</code> for each column. Check it on the first row and the last.</li>
+          <li><strong>One inner loop per column</strong> of the table, in left-to-right order, each running that many times.</li>
+          <li><strong><code class="inl">println()</code> at the end</strong> of the outer body, and nowhere else.</li>
+        </ul>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Shape</th><th class="mono">Spaces</th><th class="mono">Stars</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>rectangle</td><td class="mono">—</td><td class="mono">20</td></tr>
+              <tr><td>growing triangle</td><td class="mono">—</td><td class="mono">i</td></tr>
+              <tr><td>shrinking triangle</td><td class="mono">—</td><td class="mono">6 - i</td></tr>
+              <tr><td>right-aligned triangle</td><td class="mono">5 - i</td><td class="mono">i</td></tr>
+              <tr><td>pyramid</td><td class="mono">10 - i</td><td class="mono">2 * i - 1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="practice" id="p14">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 14</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 4; i++) {
+    for (int j = 1; j &lt;= i; j++) {
+        System.out.print(i);
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>1
+22
+333
+4444</pre></div>
+                  </div>
+                  <p>The growing triangle, but printing the row number instead of a star. The inner loop runs <code class="inl">i</code> times and prints <code class="inl">i</code> each time — <code class="inl">j</code> only counts.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>In the first triangle, move <code class="inl">n++;</code> to the line <em>before</em> the inner loop. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>**
+***
+****
+*****
+******</pre></div>
+                  </div>
+                  <p><code class="inl">n</code> becomes 2 before the first row is drawn. Still five rows, still one wider each time, but the whole shape has shifted by one. Where a line sits inside the outer body matters even when it is not a loop.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change the shrinking triangle to 8 rows, starting from 8 stars. What must <code class="inl">6 - i</code> become?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">9 - i</span></p>
+                  <p>Check the ends: row 1 needs 8 stars, <code class="inl">9 − 1 = 8</code>; row 8 needs 1, <code class="inl">9 − 8 = 1</code>. The number in the expression is always one more than the number of rows.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>In the right-aligned triangle a student writes the space loop as <code class="inl">k &lt; i</code> instead of <code class="inl">k &lt; 5 - i</code>. Draw what comes out.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre> *
+  **
+   ***
+    ****
+     *****</pre></div>
+                  </div>
+                  <p>The spaces now <em>grow</em> with the stars — one space on row 1, five on row 5 — so the shape leans to the right instead of lining up. The stars are right; the table's spaces column was wrong.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many stars does the ten-row pyramid print in total?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">100</span></p>
+                  <p>1 + 3 + 5 + … + 19. The sum of the first ten odd numbers is 10², and you can check it with a counter added to the star loop.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write the pyramid upside down, five rows: 9 stars on the first row, 1 on the last, still centred.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    for (int k = 0; k &lt; i - 1; k++) {
+        System.out.print(" ");
+    }
+    for (int j = 1; j &lt;= 11 - 2 * i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>*********
+ *******
+  *****
+   ***
+    *</pre></div>
+                  </div>
+                  <p>Table first: row 1 is 0 spaces and 9 stars, row 5 is 4 spaces and 1 star. Spaces are <code class="inl">i - 1</code>; stars go down by two, so <code class="inl">11 - 2 * i</code> — check: <code class="inl">11 − 2 = 9</code>, <code class="inl">11 − 10 = 1</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 15 ============ -->
+      <section class="lesson" id="l15">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 15 · Lesson15.java</span>
+          <h2 class="lesson-title">Prime Numbers</h2>
+        </div>
+
+        <h3 id="l15-idea">What we are testing</h3>
+
+        <p>A prime number has exactly two divisors: 1 and itself. So to decide whether <code class="inl">n</code> is prime, ask whether <em>anything between</em> 1 and <code class="inl">n</code> divides it. That is one loop — <code class="inl">i</code> from 2 up to <code class="inl">n − 1</code>, testing <code class="inl">n % i == 0</code> each time — and it is the divisor loop from Lesson 3 with the two ends cut off.</p>
+
+        <p>To list <em>all</em> the primes up to some limit, wrap that loop in another one that tries every <code class="inl">n</code> in turn. The outer loop picks the candidate; the inner loop looks for a divisor; the answer for one candidate is a <code class="inl">boolean</code> flag.</p>
+
+        <h3 id="l15-code">The nested loop</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every prime below 100</span></div>
+          <pre class="code"><code>for (int n = 2; n &lt; 100; n++) {
+    int counter = 0;
+    boolean isPrime = true;
+    for (int i = 2; i &lt; n; i++) {
+        if (n % i == 0) {
+            counter++;
+            isPrime = false;
+        }
+    }
+    if (isPrime) {
+        System.out.print(n + " ");
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 </pre></div>
+        </div>
+
+        <p>The file runs to <code class="inl">n &lt; 300000</code>; the output above is the same loop stopped at 100 so it fits on the page. Read it from the inside out:</p>
+
+        <ul class="plain">
+          <li><strong>The inner loop</strong> tries every <code class="inl">i</code> from 2 to <code class="inl">n − 1</code>. If any of them divides <code class="inl">n</code>, the flag drops to <code class="inl">false</code>.</li>
+          <li><strong>The <code class="inl">if</code> after the inner loop</strong> — inside the outer body, after the inner brace — reads the flag once the search is over. Only then is it safe to say "prime".</li>
+          <li><strong><code class="inl">counter</code></strong> counts the divisors found. The program does not print it, but it is the same information in a different form: <code class="inl">counter == 0</code> and <code class="inl">isPrime</code> are always true together.</li>
+        </ul>
+
+        <p>This is the flag from Lesson 3's extras, put to work: it starts hopeful at <code class="inl">true</code> and one divisor is enough to knock it down for good. Nothing in the inner loop ever sets it back.</p>
+
+        <h3 id="l15-trace">16 and 17, by hand</h3>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">n</th><th class="mono">i tried</th><th>Divides?</th><th class="mono">counter</th><th class="mono">isPrime at the end</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">16</td><td class="mono">2 3 4 5 … 15</td><td>2, 4 and 8 do</td><td class="mono">3</td><td class="mono"><span class="fv">false</span> — not printed</td></tr>
+              <tr><td class="mono">17</td><td class="mono">2 3 4 5 … 16</td><td>none</td><td class="mono">0</td><td class="mono"><span class="tv">true</span> — printed</td></tr>
+              <tr><td class="mono">2</td><td class="mono"><span class="q">none — the inner loop runs 0 times</span></td><td>—</td><td class="mono">0</td><td class="mono"><span class="tv">true</span> — printed</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The last row is the one to remember. For <code class="inl">n = 2</code> the inner header is <code class="inl">i = 2; i &lt; 2</code>, false on the first check, so the inner loop does nothing at all and the flag is never touched. 2 is prime because nobody argued otherwise — which is exactly right, and it is why the outer loop is allowed to start at 2.</p>
+
+        <h3 id="l15-reset">Where the flag lives</h3>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p><code class="inl">boolean isPrime = true;</code> is declared <strong>inside the outer loop</strong>, so every candidate gets a fresh flag. Declare it once above the outer loop instead and it is set to <code class="inl">false</code> by the first composite number, 4, and stays there: the program prints <code class="inl">2 3</code> and then nothing, forever. The same goes for <code class="inl">counter</code>. Anything that describes <em>one candidate</em> has to be reset for each candidate, and the way to reset it is to declare it where the candidate begins.</p>
+        </div>
+
+        <p>This is Lesson 3's scope rule doing something useful. A variable declared inside a loop body is created fresh on every pass — in Part 8 that was the accumulator trap, here it is exactly what we want.</p>
+
+        <h3 id="l15-cost">What it costs</h3>
+
+        <p>For each candidate <code class="inl">n</code> the inner loop runs <code class="inl">n − 2</code> times, whether or not it finds a divisor early. So up to 100 that is 0 + 1 + 2 + … + 97 = 4,753 checks — nothing. Up to 300,000 as in the file it is about 45 <em>billion</em> checks — around half a minute on a laptop even before the printing — and you can watch the output slow down as the candidates get bigger.</p>
+
+        <p>Two things are wasteful here and both are fixable with what we know. The inner loop keeps searching after the first divisor has already settled the question; and it tries divisors like 15 for 16, when anything above half of <code class="inl">n</code> cannot divide it. Leaving the inner loop early is a tool we have not met yet; shrinking its range is question 6 territory.</p>
+
+        <div class="practice" id="p15">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 15</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>For <code class="inl">n = 9</code>, which values of <code class="inl">i</code> make <code class="inl">n % i == 0</code> true, and what are <code class="inl">counter</code> and <code class="inl">isPrime</code> after the inner loop?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">only i = 3 · counter = 1 · isPrime = false</span></p>
+                  <p>The inner loop tries 2 through 8. One divisor is enough — 9 is not printed.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Why does the inner loop start at 2 rather than 1, and stop <em>before</em> <code class="inl">n</code> rather than at it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>1 divides every number, and every number divides itself. Include either end and <code class="inl">n % i == 0</code> is true for every <code class="inl">n</code> — the flag drops for everything and nothing is printed. The two divisors a prime is <em>allowed</em> to have are exactly the two the loop must skip.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times does the inner body run for <code class="inl">n = 2</code>? Is 2 printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0 times · yes</span></p>
+                  <p><code class="inl">i = 2; i &lt; 2</code> fails on the first check. The flag is still <code class="inl">true</code> from its declaration, so 2 is printed — correctly.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Move <code class="inl">boolean isPrime = true;</code> to the line <em>above</em> the outer loop. With <code class="inl">n &lt; 20</code>, what is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>2 3 </pre></div>
+                  </div>
+                  <p>2 and 3 go through with the flag still <code class="inl">true</code>. Then 4 sets it to <code class="inl">false</code>, and since nothing ever sets it back, every later candidate is judged by 4's verdict.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is <code class="inl">counter</code> after the inner loop for <code class="inl">n = 12</code>? Could the <code class="inl">if</code> use <code class="inl">counter</code> instead of <code class="inl">isPrime</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4 · yes, as if (counter == 0)</span></p>
+                  <p>2, 3, 4 and 6 divide 12. A number is prime exactly when the count of divisors between 2 and <code class="inl">n − 1</code> is zero, so the two tests always agree — the flag is just the simpler way to say it.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>A student changes the inner header to <code class="inl">i &lt;= n</code>. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">nothing at all</span></p>
+                  <p>On the last inner pass <code class="inl">i</code> equals <code class="inl">n</code>, and <code class="inl">n % n</code> is 0 for every <code class="inl">n</code>. Every flag drops, every <code class="inl">if</code> is skipped. One character, empty console.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the three files</span>
+          <h2 class="lesson-title">The Same Loops, Other Jobs</h2>
+        </div>
+
+        <p>Nothing in this section was in the class files. Every example uses only what is already on this page and the three before it — nested <code class="inl">for</code> and <code class="inl">while</code>, <code class="inl">if</code>, accumulators and a flag.</p>
+
+        <h3 id="x-table">A multiplication table</h3>
+
+        <p>The rectangle with something useful in the cells. The row number times the column number is what goes in each cell:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>1 to 5, times 1 to 5</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    for (int j = 1; j &lt;= 5; j++) {
+        System.out.print(i * j + " ");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 2 3 4 5 
+2 4 6 8 10 
+3 6 9 12 15 
+4 8 12 16 20 
+5 10 15 20 25 </pre></div>
+        </div>
+
+        <p>The columns drift because 10 is wider than 9. Two <code class="inl">if</code>s fix that — pad every cell to three characters by printing a space or two before the small numbers:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>1 to 10, columns lined up</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 10; i++) {
+    for (int j = 1; j &lt;= 10; j++) {
+        int p = i * j;
+        if (p &lt; 100) {
+            System.out.print(" ");
+        }
+        if (p &lt; 10) {
+            System.out.print(" ");
+        }
+        System.out.print(p + " ");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>  1   2   3   4   5   6   7   8   9  10 
+  2   4   6   8  10  12  14  16  18  20 
+  3   6   9  12  15  18  21  24  27  30 
+  4   8  12  16  20  24  28  32  36  40 
+  5  10  15  20  25  30  35  40  45  50 
+  6  12  18  24  30  36  42  48  54  60 
+  7  14  21  28  35  42  49  56  63  70 
+  8  16  24  32  40  48  56  64  72  80 
+  9  18  27  36  45  54  63  72  81  90 
+ 10  20  30  40  50  60  70  80  90 100 </pre></div>
+        </div>
+
+        <p>A one-digit number gets two spaces (both <code class="inl">if</code>s fire), a two-digit number gets one, and 100 gets none. That is the same "spaces first" trick as the right-aligned triangle, decided by the size of the value instead of the row number.</p>
+
+        <h3 id="x-numbers">Numbers instead of stars</h3>
+
+        <p>Print the inner counter rather than a star and the triangle shows you its own loop variable:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Each row counts up to its own number</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 5; i++) {
+    for (int j = 1; j &lt;= i; j++) {
+        System.out.print(j);
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1
+12
+123
+1234
+12345</pre></div>
+        </div>
+
+        <p>Compare with question 1 of Part 14, which printed <code class="inl">i</code> and got <code class="inl">333</code> on row 3. Printing <code class="inl">j</code> gets <code class="inl">123</code>. Same loops, same shape; which counter you print decides what fills it.</p>
+
+        <h3 id="x-count">How many times does it run</h3>
+
+        <p>When the inner limit is fixed the answer is outer × inner. When the inner limit depends on the outer counter, add up the row lengths:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Loops</th><th>Inner body runs</th><th>How</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">i 1…3, j 1…4</td><td class="mono">12</td><td>3 × 4</td></tr>
+              <tr><td class="mono">i 1…5, j 1…i</td><td class="mono">15</td><td>1 + 2 + 3 + 4 + 5</td></tr>
+              <tr><td class="mono">i 1…5, j 1…6−i</td><td class="mono">15</td><td>5 + 4 + 3 + 2 + 1</td></tr>
+              <tr><td class="mono">i 1…10, j 1…2i−1</td><td class="mono">100</td><td>1 + 3 + 5 + … + 19</td></tr>
+              <tr><td class="mono">n 2…99, i 2…n−1</td><td class="mono">4753</td><td>0 + 1 + 2 + … + 97</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>When in doubt, add a counter inside the innermost braces and print it after both loops. That is a valid way to <em>check</em> an answer on a computer, and a tracing table is the way to get it on paper.</p>
+
+        <h3 id="x-while">A <code class="inl">while</code> inside a <code class="inl">for</code></h3>
+
+        <p>The inner loop does not have to be a <code class="inl">for</code>. Here the digit loop from Lesson 3 runs once for each number in a range:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Digit sum of every number from 95 to 100</span></div>
+          <pre class="code"><code>for (int n = 95; n &lt;= 100; n++) {
+    int number = n;
+    int sum = 0;
+    while (number != 0) {
+        sum += number % 10;
+        number /= 10;
+    }
+    System.out.println(n + " -&gt; " + sum);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>95 -&gt; 14
+96 -&gt; 15
+97 -&gt; 16
+98 -&gt; 17
+99 -&gt; 18
+100 -&gt; 1</pre></div>
+        </div>
+
+        <p>Two habits from earlier are visible. The <code class="inl">while</code> destroys its number, so the outer counter <code class="inl">n</code> is copied into <code class="inl">number</code> first — otherwise the outer loop's own counter would be wiped to 0 on every pass. And <code class="inl">sum</code> is declared inside the outer body, so it restarts at 0 for each <code class="inl">n</code>, the same reason <code class="inl">isPrime</code> lives where it does.</p>
+
+        <h3 id="x-primecount">Counting the primes</h3>
+
+        <p>Instead of printing each prime, count them. The count is an accumulator that lives <em>outside</em> both loops, because it describes the whole run — unlike the flag, which describes one candidate:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many primes below 100</span></div>
+          <pre class="code"><code>int count = 0;
+for (int n = 2; n &lt; 100; n++) {
+    boolean isPrime = true;
+    for (int i = 2; i &lt; n; i++) {
+        if (n % i == 0) {
+            isPrime = false;
+        }
+    }
+    if (isPrime) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>25</pre></div>
+        </div>
+
+        <p>Three variables, three different homes: <code class="inl">count</code> above everything, <code class="inl">isPrime</code> inside the outer loop, <code class="inl">i</code> inside the inner header. Each one is declared exactly where the thing it describes begins.</p>
+
+        <h3 id="x-trace">Tracing a nested loop on paper</h3>
+
+        <p>One row per <em>inner</em> pass, with a column for each counter. The outer counter repeats down its column; the inner counter restarts every time the outer one changes.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Trace this</span></div>
+          <pre class="code"><code>int total = 0;
+for (int i = 1; i &lt;= 3; i++) {
+    for (int j = 1; j &lt;= i; j++) {
+        total += j;
+    }
+}
+System.out.println(total);</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">i</th><th class="mono">j</th><th class="mono">total after total += j</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td></tr>
+              <tr><td class="mono">2</td><td class="mono">1</td><td class="mono">2</td></tr>
+              <tr><td class="mono">2</td><td class="mono">2</td><td class="mono">4</td></tr>
+              <tr><td class="mono">3</td><td class="mono">1</td><td class="mono">5</td></tr>
+              <tr><td class="mono">3</td><td class="mono">2</td><td class="mono">7</td></tr>
+              <tr><td class="mono">3</td><td class="mono">3</td><td class="mono"><span class="tv">10</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Six rows, because the inner body runs 1 + 2 + 3 = 6 times, and the answer is the last number in the last column. Row 1 has one entry, row 2 has two, row 3 has three — the table has the same shape as the triangle the loop draws.</p>
+
+        <div class="note note--task">
+          <span class="tag">Try it</span>
+          <p>Draw the same table for the same loop with <code class="inl">total += i</code> instead of <code class="inl">total += j</code>, before you run it. The answer is question 5 below.</p>
+        </div>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 3; i++) {
+    for (int j = 1; j &lt;= 3; j++) {
+        System.out.print(i * j + " ");
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>1 2 3 
+2 4 6 
+3 6 9 </pre></div>
+                  </div>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 1; i &lt;= 4; i++) {
+    for (int j = i; j &gt;= 1; j--) {
+        System.out.print(j);
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>1
+21
+321
+4321</pre></div>
+                  </div>
+                  <p>The inner loop starts at <code class="inl">i</code> and counts down to 1, so each row is the numbers 1 to <code class="inl">i</code> written backwards. The inner loop's <em>start</em> can depend on the outer counter too, not only its stop.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times does the inner body run?</p>
+              <div class="ex">
+                <pre class="code"><code>for (int i = 0; i &lt; 5; i++) {
+    for (int j = 0; j &lt; i; j++) {
+        System.out.print("x");
+    }
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">10</span></p>
+                  <p>For <code class="inl">i = 0</code> the inner loop runs 0 times; then 1, 2, 3, 4 times. 0 + 1 + 2 + 3 + 4 = 10. The first outer pass does nothing at all — easy to miss.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write a nested loop that prints a hollow rectangle, 4 rows by 6 columns: stars on the border, spaces inside.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>for (int i = 1; i &lt;= 4; i++) {
+    for (int j = 1; j &lt;= 6; j++) {
+        if (i == 1 || i == 4 || j == 1 || j == 6) {
+            System.out.print("*");
+        }
+        else {
+            System.out.print(" ");
+        }
+    }
+    System.out.println();
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>******
+*    *
+*    *
+******</pre></div>
+                  </div>
+                  <p>The loops visit every cell of the full rectangle; the <code class="inl">if</code> decides what to print there. A cell is on the border when it is in the first or last row <em>or</em> the first or last column — four conditions joined by <code class="inl">||</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>The trace-table loop with <code class="inl">total += i;</code> instead of <code class="inl">total += j;</code> — what is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">14</span></p>
+                  <p>Row 1 adds 1 once; row 2 adds 2 twice; row 3 adds 3 three times. 1 + 4 + 9 = 14. The table has the same six rows — only the last column changes.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Which numbers from 1 to 30 have <em>exactly three</em> divisors, counting 1 and the number itself? Write the loops, then say what they print.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>for (int n = 1; n &lt;= 30; n++) {
+    int counter = 0;
+    for (int i = 1; i &lt;= n; i++) {
+        if (n % i == 0) {
+            counter++;
+        }
+    }
+    if (counter == 3) {
+        System.out.print(n + " ");
+    }
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>4 9 25 </pre></div>
+                  </div>
+                  <p>The Part 15 loop with both ends of the inner range put back in, and <code class="inl">counter</code> finally doing the deciding. Three divisors means 1, the number, and one thing in between — which only happens for the square of a prime.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Nine traps to remember</h2>
+        <p>Eight of these compile and run — into the wrong shape, the wrong list, or no output at all. One refuses to compile.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">println("*") in the inner loop</td>
+                <td>a row of stars</td>
+                <td><span class="fv">one star per line</span></td>
+                <td>println ends the line; print does not</td>
+              </tr>
+              <tr>
+                <td class="mono">for (int i …) { for (int i …)</td>
+                <td>two counters</td>
+                <td><span class="err">will not compile</span></td>
+                <td>the outer i is still alive inside</td>
+              </tr>
+              <tr>
+                <td class="mono">println() inside the inner loop</td>
+                <td>one blank line per row</td>
+                <td><span class="fv">one per star</span></td>
+                <td>it runs once per inner pass, not per row</td>
+              </tr>
+              <tr>
+                <td class="mono">n++ above the inner loop</td>
+                <td class="mono">* ** ***</td>
+                <td class="mono"><span class="fv">** *** ****</span></td>
+                <td>the width changes before the row is drawn</td>
+              </tr>
+              <tr>
+                <td class="mono">k &lt; i for the spaces</td>
+                <td>a right-aligned triangle</td>
+                <td><span class="fv">a slanted one</span></td>
+                <td>spaces should shrink as stars grow</td>
+              </tr>
+              <tr>
+                <td class="mono">boolean isPrime above the outer loop</td>
+                <td>all the primes</td>
+                <td class="mono"><span class="fv">2 3</span></td>
+                <td>the flag is never reset after 4</td>
+              </tr>
+              <tr>
+                <td class="mono">for (int i = 2; i &lt;= n; i++)</td>
+                <td>all the primes</td>
+                <td><span class="fv">nothing</span></td>
+                <td>every number divides itself</td>
+              </tr>
+              <tr>
+                <td class="mono">if (reverse == number)</td>
+                <td>a palindrome check</td>
+                <td><span class="fv">never a palindrome</span></td>
+                <td>number is 0 when the loop ends — compare the copy</td>
+              </tr>
+              <tr>
+                <td class="mono">reverse of 1200</td>
+                <td class="mono">0021</td>
+                <td class="mono"><span class="fv">21</span></td>
+                <td>an int cannot hold leading zeros</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 4, parts 13–15. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson3.html">← Lesson 3</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
