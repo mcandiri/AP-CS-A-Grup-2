@@ -1,0 +1,1680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 5: methods and the Math class. Math.abs, pow, sqrt and random, simulating coins and dice, then writing our own methods: header, body, return, void, and isPrime rebuilt as a method.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 5 · Methods &amp; Math — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 5</p>
+    <h1>Methods &amp; Math</h1>
+    <p class="deck">Our fifth lesson. First the methods Java already gives us — <code class="inl">Math.abs</code>, <code class="inl">pow</code>, <code class="inl">sqrt</code> and <code class="inl">random</code> — and what a coin and two dice look like when a computer throws them a million times. Then the other side of the same idea: writing a method of our own. A header, a body, a <code class="inl">return</code>; what <code class="inl">void</code> means; and the prime-number loop from Lesson 4 rebuilt as a method that runs a thousand times faster.</p>
+    <ul class="facts">
+      <li>5 files</li>
+      <li>Java</li>
+      <li>36 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l16">16 · Built-in Math methods</a></li>
+        <li><a class="sub" href="#l16-call">What a call looks like</a></li>
+        <li><a class="sub" href="#l16-abs">Math.abs</a></li>
+        <li><a class="sub" href="#l16-tol">Comparing doubles, properly</a></li>
+        <li><a class="sub" href="#l16-pow">Math.pow</a></li>
+        <li><a class="sub" href="#l16-sqrt">Math.sqrt</a></li>
+        <li><a class="sub" href="#p16">Practice</a></li>
+        <li><a href="#l17">17 · Math.random</a></li>
+        <li><a class="sub" href="#l17-raw">What it gives you</a></li>
+        <li><a class="sub" href="#l17-steps">Stretch, cut, shift</a></li>
+        <li><a class="sub" href="#l17-formula">The formula</a></li>
+        <li><a class="sub" href="#l17-trap">The cast in the wrong place</a></li>
+        <li><a class="sub" href="#p17">Practice</a></li>
+        <li><a href="#l18">18 · Simulations &amp; constants</a></li>
+        <li><a class="sub" href="#l18-coin">A coin, fifty times</a></li>
+        <li><a class="sub" href="#l18-dice">Two dice, a million times</a></li>
+        <li><a class="sub" href="#l18-pi">Math.PI</a></li>
+        <li><a class="sub" href="#l18-int">Integer.MAX_VALUE</a></li>
+        <li><a class="sub" href="#p18">Practice</a></li>
+        <li><a href="#l19">19 · Writing your own method</a></li>
+        <li><a class="sub" href="#l19-anatomy">Header, body, return</a></li>
+        <li><a class="sub" href="#l19-call">What happens on a call</a></li>
+        <li><a class="sub" href="#l19-even">isEven, three ways</a></li>
+        <li><a class="sub" href="#l19-missing">Missing return statement</a></li>
+        <li><a class="sub" href="#l19-note">return ends the method</a></li>
+        <li><a class="sub" href="#l19-pow">Math.pow is the same shape</a></li>
+        <li><a class="sub" href="#p19">Practice</a></li>
+        <li><a href="#l20">20 · void &amp; methods calling methods</a></li>
+        <li><a class="sub" href="#l20-void">void</a></li>
+        <li><a class="sub" href="#l20-prime">isPrime as a method</a></li>
+        <li><a class="sub" href="#l20-chain">A method calling a method</a></li>
+        <li><a class="sub" href="#l20-cost">What it costs now</a></li>
+        <li><a class="sub" href="#p20">Practice</a></li>
+        <li><a href="#extras">Extras · beyond the files</a></li>
+        <li><a class="sub" href="#x-old">Old loops as methods</a></li>
+        <li><a class="sub" href="#x-copy">A parameter is a copy</a></li>
+        <li><a class="sub" href="#x-math">Math inside a method</a></li>
+        <li><a class="sub" href="#x-void">void calling void</a></li>
+        <li><a class="sub" href="#x-none">No parameters at all</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 16 ============ -->
+      <section class="lesson" id="l16">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 16 · Lesson16.java</span>
+          <h2 class="lesson-title">Built-in Math Methods</h2>
+        </div>
+
+        <h3 id="l16-call">What a call looks like</h3>
+
+        <p>A <strong>method</strong> — the file also calls it a <em>function</em>, the two words mean the same thing here — is a named piece of code. You use it by writing its name, handing it some inputs in parentheses, and taking back the value it produces. Java ships with a large collection of them already written, and the mathematical ones live together in a class called <code class="inl">Math</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The first call in the file</span></div>
+          <pre class="code"><code>System.out.println(Math.abs(-3));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3</pre></div>
+        </div>
+
+        <p>Read <code class="inl">Math.abs(-3)</code> in three pieces. <code class="inl">Math</code> is where the method lives; <code class="inl">abs</code> is its <strong>name</strong>; <code class="inl">-3</code> is the <strong>argument</strong>, the input you hand over. The whole thing is an <em>expression</em> — it has a value, <code class="inl">3</code> — and that value is what <code class="inl">println</code> receives. You have been doing this since Lesson 1: <code class="inl">System.out.println(...)</code> is itself a method call. This week's four are the ones on the exam.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Method</th><th>Takes</th><th>Gives back</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">Math.abs(x)</td><td class="mono">int <em>or</em> double</td><td class="mono">the same type as x</td><td>absolute value, |x|</td></tr>
+              <tr><td class="mono">Math.pow(base, exponent)</td><td class="mono">double, double</td><td class="mono">double</td><td>base<sup>exponent</sup></td></tr>
+              <tr><td class="mono">Math.sqrt(x)</td><td class="mono">double</td><td class="mono">double</td><td>square root</td></tr>
+              <tr><td class="mono">Math.random()</td><td>nothing</td><td class="mono">double</td><td>a random number, 0.0 up to but not including 1.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l16-abs">Math.abs</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Absolute value — with an int, then with a double</span></div>
+          <pre class="code"><code>// int
+System.out.println(Math.abs(-3));
+System.out.println(Math.abs(3));
+// double
+System.out.println(Math.abs(-3.2));
+System.out.println(Math.abs(3.2));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+3
+3.2
+3.2</pre></div>
+        </div>
+
+        <p>Strip the sign, keep the size. Notice the types: give <code class="inl">abs</code> an <code class="inl">int</code> and an <code class="inl">int</code> comes back (<code class="inl">3</code>, not <code class="inl">3.0</code>); give it a <code class="inl">double</code> and a <code class="inl">double</code> comes back. <code class="inl">abs</code> is the only one of the four that works this way — the other three always answer with a <code class="inl">double</code>, and that is where most of this part's traps come from.</p>
+
+        <h3 id="l16-tol">Comparing doubles, properly</h3>
+
+        <p>Lesson 1 left a piece of homework open: <em>write code that checks whether two doubles are equal correctly</em>. The file goes back to exactly the numbers that caused the trouble:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>0.6 + 0.1 against 0.8 − 0.1</span></div>
+          <pre class="code"><code>double val1 = 0.6;
+double val2 = 0.8;
+double val3 = val1 + 0.1;
+double val4 = val2 - 0.1;
+
+System.out.println(val3 == val4);
+System.out.println(val3);
+System.out.println(val4);
+
+double tolerance = 0.000001;
+System.out.println(Math.abs(val3 - val4) &lt;= tolerance); // close enough</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+0.7
+0.7000000000000001
+true</pre></div>
+        </div>
+
+        <p>Both should be 0.7 and <code class="inl">==</code> says no, because one of them is 0.7000000000000001. The fix is to stop asking "are they equal" and ask "are they <em>close</em>": subtract them, throw away the sign with <code class="inl">Math.abs</code>, and check that what is left is smaller than some tiny <code class="inl">tolerance</code>. The difference here is about 10<sup>−16</sup>; the tolerance is 10<sup>−6</sup>; so the answer is <code class="inl">true</code>.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Never compare two <code class="inl">double</code>s with <code class="inl">==</code>. Write <code class="inl">Math.abs(a - b) &lt;= tolerance</code> instead, with a tolerance small enough for the job. <code class="inl">Math.abs</code> is what makes the order of <code class="inl">a</code> and <code class="inl">b</code> not matter — without it, <code class="inl">a - b</code> could be a large negative number and slip under the tolerance.</p>
+        </div>
+
+        <h3 id="l16-pow">Math.pow</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Powers</span></div>
+          <pre class="code"><code>System.out.println(Math.pow(2, 3));       // 2.0, 3.0
+System.out.println((int) Math.pow(2, 3));
+System.out.println(Math.pow(2.56, 3.21));
+System.out.println(Math.pow(16, 0.25));
+System.out.println(Math.pow(16, 1 / 4));
+
+System.out.println(Math.pow(2, 0));
+System.out.println(Math.pow(-2, 5));
+System.out.println(Math.pow(127, -3));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>8.0
+8
+20.438559734333275
+2.0
+1.0
+1.0
+-32.0
+4.881899527578583E-7</pre></div>
+        </div>
+
+        <p>Line by line:</p>
+
+        <ul class="plain">
+          <li><strong><code class="inl">8.0</code>, not 8.</strong> <code class="inl">pow</code> takes two <code class="inl">double</code>s and returns a <code class="inl">double</code>, always. The <code class="inl">2</code> and <code class="inl">3</code> you typed are turned into <code class="inl">2.0</code> and <code class="inl">3.0</code> on the way in — the comment in the file says so — and the answer comes back as <code class="inl">8.0</code>. If you need an <code class="inl">int</code>, you cast: <code class="inl">(int) Math.pow(2, 3)</code> is <code class="inl">8</code>.</li>
+          <li><strong>16<sup>0.25</sup> is 2.0</strong> — a quarter power is a fourth root — <strong>but 16<sup>1/4</sup> is 1.0.</strong> Nothing to do with <code class="inl">pow</code>. <code class="inl">1 / 4</code> is two <code class="inl">int</code>s divided, so it is <code class="inl">0</code> before <code class="inl">pow</code> ever sees it, and 16<sup>0</sup> is 1. Lesson 1's integer division, hiding inside an argument.</li>
+          <li><strong>Anything to the power 0 is 1.0;</strong> a negative base to an odd power stays negative.</li>
+          <li><strong><code class="inl">4.881899527578583E-7</code></strong> is 127<sup>−3</sup> = 1 / 2 048 383, a very small number. Java prints small and large doubles in <em>scientific notation</em>: <code class="inl">E-7</code> means "move the decimal point seven places to the left", so this is 0.000 000 488 189…</li>
+        </ul>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">int r = Math.pow(2, 3);</code> does not compile — <em>incompatible types: possible lossy conversion from double to int</em>. The right side is a <code class="inl">double</code> and Java will not quietly drop the <code class="inl">.0</code>. Either the variable becomes a <code class="inl">double</code> or the call gets a cast in front of it.</p>
+        </div>
+
+        <h3 id="l16-sqrt">Math.sqrt</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Square roots</span></div>
+          <pre class="code"><code>System.out.println(Math.sqrt(16));
+System.out.println((int) Math.sqrt(16));
+System.out.println(Math.sqrt(19.6546));
+System.out.println(Math.sqrt(4353.664));
+System.out.println(Math.sqrt(-25)); // NaN --- not a number ---</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4.0
+4
+4.4333508771582695
+65.98230065707016
+NaN</pre></div>
+        </div>
+
+        <p>Same story as <code class="inl">pow</code>: a <code class="inl">double</code> comes back even when the root is a whole number, and a cast gets you the <code class="inl">int</code>. The last line is new. There is no real number whose square is −25, and Java does not crash or throw an exception the way <code class="inl">5 / 0</code> did in Lesson 1 — it hands back a special <code class="inl">double</code> value called <code class="inl">NaN</code>, <em>Not a Number</em>, and carries on. The program runs; the output is just useless from that point.</p>
+
+        <div class="practice" id="p16">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 16</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println(Math.abs(3 - 8));
+System.out.println(Math.abs(2.5 - 3.7));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>5
+1.2000000000000002</pre></div>
+                  </div>
+                  <p>The first is <code class="inl">int</code> in, <code class="inl">int</code> out. The second is <code class="inl">double</code> in, <code class="inl">double</code> out — and <code class="inl">2.5 - 3.7</code> is already <code class="inl">-1.2000000000000002</code> before <code class="inl">abs</code> touches it. Round-off error again; <code class="inl">abs</code> only removes the sign.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does <code class="inl">System.out.println(Math.pow(2, 10));</code> print? How would you print it as a whole number?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1024.0 · cast it: (int) Math.pow(2, 10)</span></p>
+                  <p><code class="inl">pow</code> returns a <code class="inl">double</code> no matter how whole the answer is. The cast turns <code class="inl">1024.0</code> into <code class="inl">1024</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does <code class="inl">Math.pow(4, 1 / 2)</code> print, and why? Fix it so it prints the square root of 4.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1.0 · write 0.5 or 1.0 / 2</span></p>
+                  <p><code class="inl">1 / 2</code> is integer division and equals <code class="inl">0</code>, so the call is really <code class="inl">Math.pow(4, 0)</code>. <code class="inl">Math.pow(4, 1 / 2.0)</code> prints <code class="inl">2.0</code>. The rule from Lesson 1 — make one side a <code class="inl">double</code> — applies inside the parentheses too.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Does this compile? If not, what is the error and the fix?</p>
+              <div class="ex">
+                <pre class="code"><code>int r = Math.sqrt(16);
+System.out.println(r);</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: incompatible types: possible lossy conversion from double to int</em></pre></div>
+                  </div>
+                  <p><code class="inl">sqrt</code> returns a <code class="inl">double</code>, and a <code class="inl">double</code> does not fit in an <code class="inl">int</code> without your permission. <code class="inl">int r = (int) Math.sqrt(16);</code> compiles and prints <code class="inl">4</code>; so does <code class="inl">double r = Math.sqrt(16);</code>, printing <code class="inl">4.0</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What is printed? Work from the inside out.</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println(Math.sqrt(Math.pow(3, 2) + Math.pow(4, 2)));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">5.0</span></p>
+                  <p><code class="inl">Math.pow(3, 2)</code> is <code class="inl">9.0</code>, <code class="inl">Math.pow(4, 2)</code> is <code class="inl">16.0</code>, their sum is <code class="inl">25.0</code>, and the square root of that is <code class="inl">5.0</code>. A call can be an argument to another call; the inner ones are worked out first, exactly like brackets in arithmetic.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What do these two lines print?</p>
+              <div class="ex">
+                <pre class="code"><code>System.out.println(Math.sqrt(10));
+System.out.println((int) Math.sqrt(10));</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>3.1622776601683795
+3</pre></div>
+                  </div>
+                  <p>The cast <em>truncates</em> — it chops off everything after the decimal point, it does not round. <code class="inl">(int) 3.9</code> would be 3 as well. Same rule as Lesson 1.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 17 ============ -->
+      <section class="lesson" id="l17">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 17 · Lesson17.java</span>
+          <h2 class="lesson-title">Math.random</h2>
+        </div>
+
+        <h3 id="l17-raw">What it gives you</h3>
+
+        <p><code class="inl">Math.random()</code> takes no arguments — the parentheses are empty, but they are still there — and gives back a <code class="inl">double</code> somewhere in the range <strong>[0.0, 1.0)</strong>: 0.0 is possible, 1.0 is not, and every value in between is equally likely. Every call gives a fresh number.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten calls — one run; yours will differ</span></div>
+          <pre class="code"><code>// Math.random()    [0.0    1.0)
+for (int i = 0; i &lt; 10; i++)
+    System.out.println(Math.random());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0.5208045208678257
+0.9222948387774556
+0.12068982117120708
+0.6447185777053666
+0.8355961965605514
+0.18329607274511173
+0.9761844981215694
+0.9726834316728764
+0.24822326227792935
+0.312380378493456</pre></div>
+        </div>
+
+        <p>Every console box in Parts 17 and 18 shows <em>one</em> run of the program. Run it yourself and the numbers change — that is the point of <code class="inl">random</code>. What does not change is the <em>range</em>, and the range is what the questions are about.</p>
+
+        <p>Notice, too, that this <code class="inl">for</code> has no braces. A loop whose body is a single statement may leave them off — the one line after the header is the body. It is legal and the file uses it; with two statements the braces come back or only the first one is inside the loop.</p>
+
+        <h3 id="l17-steps">Stretch, cut, shift</h3>
+
+        <p>Nobody wants numbers between 0 and 1. To get a die, three operations are applied in order — and the file builds them up one at a time:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Multiply: [0.0, 5.0)</span></div>
+          <pre class="code"><code>// Math.random() * 5   [0.0    5.0)
+for (int i = 0; i &lt; 10; i++)
+    System.out.println(Math.random() * 5);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4.438729131561379
+4.549185784385569
+3.7501069314600817
+2.1587018429471394
+0.19449055381968228
+1.2028468506451695
+0.6313189859530166
+1.9397942224034188
+3.0166432053079504
+0.04076623472540897</pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Cast: 0 1 2 3 4</span></div>
+          <pre class="code"><code>// (int) (Math.random() * 5)   [0   5)   --->  0 1 2 3 4
+for (int i = 0; i &lt; 10; i++)
+    System.out.println((int) (Math.random() * 5));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4
+2
+2
+3
+0
+1
+4
+4
+0
+0</pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Add: 1 2 3 4 5 6</span></div>
+          <pre class="code"><code>// (int) (Math.random() * 6) + 1   [1   7)   ---> 1 2 3 4 5 6
+for (int i = 0; i &lt; 10; i++)
+    System.out.println((int) (Math.random() * 6) + 1);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6
+4
+6
+4
+1
+2
+6
+4
+2
+4</pre></div>
+        </div>
+
+        <figure class="fig">
+          <svg viewBox="0 0 700 235" role="img" aria-label="Three steps: Math.random() gives a double in [0, 1); multiplying by 6 stretches it to [0, 6); the cast to int cuts it down to the whole numbers 0 to 5; adding 1 shifts those to 1 to 6.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <text class="fig-m" x="20" y="34">Math.random()</text>
+            <line x1="200" y1="30" x2="680" y2="30" stroke="currentColor" stroke-width="1.2" opacity=".35"/>
+            <rect class="fig-hit" x="200" y="22" width="80" height="16" rx="3"/>
+            <text class="fig-lbl" x="200" y="56">0.0</text>
+            <text class="fig-lbl" x="272" y="56">1.0 (never reached)</text>
+            <text class="fig-lbl" x="420" y="56">stretch it: × 6</text>
+
+            <text class="fig-m" x="20" y="104">Math.random() * 6</text>
+            <line x1="200" y1="100" x2="680" y2="100" stroke="currentColor" stroke-width="1.2" opacity=".35"/>
+            <rect class="fig-hit" x="200" y="92" width="480" height="16" rx="3"/>
+            <text class="fig-lbl" x="200" y="126">0.0</text>
+            <text class="fig-lbl" x="640" y="126">6.0 (never)</text>
+            <text class="fig-lbl" x="380" y="126">cut it: (int)</text>
+
+            <text class="fig-m" x="20" y="174">(int)(Math.random() * 6)</text>
+            <rect class="fig-box" x="200" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="235" y="178" text-anchor="middle">0</text>
+            <rect class="fig-box" x="282" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="317" y="178" text-anchor="middle">1</text>
+            <rect class="fig-box" x="364" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="399" y="178" text-anchor="middle">2</text>
+            <rect class="fig-box" x="446" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="481" y="178" text-anchor="middle">3</text>
+            <rect class="fig-box" x="528" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="563" y="178" text-anchor="middle">4</text>
+            <rect class="fig-box" x="610" y="160" width="70" height="26" rx="5"/><text class="fig-m" x="645" y="178" text-anchor="middle">5</text>
+            <text class="fig-lbl" x="380" y="204">shift it: + 1</text>
+
+            <text class="fig-m" x="20" y="226">… + 1</text>
+            <text class="fig-run" x="235" y="228" text-anchor="middle">1</text>
+            <text class="fig-run" x="317" y="228" text-anchor="middle">2</text>
+            <text class="fig-run" x="399" y="228" text-anchor="middle">3</text>
+            <text class="fig-run" x="481" y="228" text-anchor="middle">4</text>
+            <text class="fig-run" x="563" y="228" text-anchor="middle">5</text>
+            <text class="fig-run" x="645" y="228" text-anchor="middle">6</text>
+          </svg>
+          <figcaption>Multiplying decides <em>how many</em> different values there are; the cast turns the stretch into whole numbers; adding decides <em>where they start</em>.</figcaption>
+        </figure>
+
+        <p>Because 1.0 is never reached, <code class="inl">Math.random() * 6</code> never reaches 6.0, and the cast never produces 6. That is why six faces come from multiplying by 6 and not by 7, and why the smallest result before the shift is always 0.</p>
+
+        <h3 id="l17-formula">The formula</h3>
+
+        <p>The file writes the general rule down twice, and both forms are worth memorising:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>From the file's comments</span></div>
+          <pre class="code"><code>// (int) (Math.random() * A + B)   --->  [B, A+B-1]
+// (int) (Math.random() * 12 + 9)  --->  [9, 20]
+
+// min = 5   max = 24   [min, max]
+// (int) (Math.random() * (max - min + 1) + min)  --->  [5, 24]</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong>A</strong> is the number of different values you want. From 9 to 20 there are twelve numbers, so multiply by 12.</li>
+          <li><strong>B</strong> is the smallest one, so add 9. The largest is then <code class="inl">A + B − 1</code> = 20.</li>
+          <li>If you are given <code class="inl">min</code> and <code class="inl">max</code> instead, the count is <code class="inl">max − min + 1</code> — the <code class="inl">+ 1</code> because both ends are included — and the shift is <code class="inl">min</code>.</li>
+        </ul>
+
+        <p>Whether the <code class="inl">+ B</code> sits inside the cast's parentheses (as in these comments) or outside them (as in the dice line above) makes no difference: adding a whole number does not change what the cast chops off. What matters is that the <em>multiplication</em> is inside.</p>
+
+        <h3 id="l17-trap">The cast in the wrong place</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Meant to give 4 to 8 — the trap the file spells out</span></div>
+          <pre class="code"><code>// (int) Math.random() * 5 + 4
+// 0     *  5  +  4
+// 4</code></pre>
+        </div>
+
+        <p>Without the inner parentheses the cast applies to <code class="inl">Math.random()</code> alone. That is a number below 1.0, so <code class="inl">(int)</code> of it is <em>always</em> 0; then 0 × 5 + 4 is 4, every time. The program compiles, runs, and prints a hundred fours. The version with the parentheses in the right place is what the file actually runs:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A hundred numbers from 4 to 8 — one run</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; 100; i++) {
+    System.out.println((int) (Math.random() * 5) + 4);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6
+7
+6
+4
+4
+7
+7
+8
+4
+7
+<span class="q">… 90 more lines, every one of them 4, 5, 6, 7 or 8 …</span></pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">(int) Math.random() * 5</code> and <code class="inl">(int) (Math.random() * 5)</code> look almost the same and behave completely differently. The cast binds to whatever is immediately after it. Put the parentheses around the whole product, every time.</p>
+        </div>
+
+        <div class="practice" id="p17">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 17</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Which whole numbers can <code class="inl">(int) (Math.random() * 10) + 1</code> produce?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1 to 10</span></p>
+                  <p>Ten different values (A = 10), starting from 1 (B = 1), ending at 10 + 1 − 1 = 10.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write an expression that gives a random whole number from 51 to 100.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(int) (Math.random() * 50) + 51</span></p>
+                  <p>From 51 to 100 there are 100 − 51 + 1 = 50 numbers, so multiply by 50; the smallest is 51, so add 51.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What are the possible outputs of <code class="inl">(int) (Math.random() * 3) + 7</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">7, 8 or 9</span></p>
+                  <p>Three values starting at 7. Not 10 — <code class="inl">Math.random() * 3</code> never reaches 3.0.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>A student writes <code class="inl">(int) Math.random() * 6 + 1</code> for a die. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1, every single time</span></p>
+                  <p>The cast applies only to <code class="inl">Math.random()</code>, which is always below 1.0, so it becomes 0. Then 0 × 6 + 1. The die is loaded. The parentheses around <code class="inl">Math.random() * 6</code> are not decoration.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Does this compile?</p>
+              <div class="ex">
+                <pre class="code"><code>int x = Math.random() * 6;</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: incompatible types: possible lossy conversion from double to int</em></pre></div>
+                  </div>
+                  <p><code class="inl">Math.random() * 6</code> is a <code class="inl">double</code>. It needs the cast before it can be stored in an <code class="inl">int</code> — which is the cast that turns it into whole numbers anyway.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write an expression that gives a random whole number from −5 to 5, both included.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(int) (Math.random() * 11) - 5</span></p>
+                  <p>Count the values first: −5, −4, …, 4, 5 is eleven numbers, so A = 11. The smallest is −5, so B = −5, and adding −5 is subtracting 5. The formula does not mind a negative shift.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 18 ============ -->
+      <section class="lesson" id="l18">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 18 · Lesson18.java</span>
+          <h2 class="lesson-title">Simulations &amp; Constants</h2>
+        </div>
+
+        <p>Once you can produce a random whole number in a range, you can make the computer throw things. A coin is a random 1 or 2; a die is a random 1 to 6. Put the throw inside a loop, count what you care about, and you have a <strong>simulation</strong>.</p>
+
+        <h3 id="l18-coin">A coin, fifty times</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Fifty flips, counting heads — one run</span></div>
+          <pre class="code"><code>int counter = 0;
+
+for (int i = 0; i &lt; 50; i++) {
+    int n = (int) (Math.random() * 2) + 1;
+    if (n == 1) {
+        System.out.println("TURA");
+        counter++;
+    }
+}
+
+System.out.println(counter);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>TURA
+TURA
+TURA
+<span class="q">… 20 more lines of TURA …</span>
+23</pre></div>
+        </div>
+
+        <p><code class="inl">n</code> is 1 or 2, each with the same chance; the program treats 1 as heads. Fifty flips should give <em>about</em> 25 heads, and this run gave 23. Run it again and you will get 27, or 24, or 21 — never exactly 25 every time. That "about" is what randomness means, and it is the reason the next simulation uses a much bigger number.</p>
+
+        <h3 id="l18-dice">Two dice, a million times</h3>
+
+        <p>How often do two dice show a 2 and a 4? The file rolls them a million times and counts:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counting the (2, 4) and (4, 2) rolls — one run</span></div>
+          <pre class="code"><code>counter = 0;
+
+for (int i = 0; i &lt; 1000000; i++) {
+    int n = (int) (Math.random() * 6) + 1;
+    int m = (int) (Math.random() * 6) + 1;
+
+    if ((n == 2 &amp;&amp; m == 4) || (n == 4 &amp;&amp; m == 2)) {
+        System.out.println(m + " " + n);
+        counter++;
+    }
+}
+
+System.out.println(counter / 1000000.0);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2 4
+4 2
+2 4
+2 4
+4 2
+<span class="q">… about 55 000 more lines …</span>
+0.05563</pre></div>
+        </div>
+
+        <p>Two dice have 6 × 6 = 36 equally likely outcomes, and exactly two of them are "a 2 and a 4": (2, 4) and (4, 2). So the true probability is 2/36 = 0.0555…, the number the file writes in its comment. The simulation's 0.05563 is close — and the more rolls, the closer it gets. Both orders have to be in the <code class="inl">if</code>; leave out the <code class="inl">||</code> half and the count falls to about 0.0278.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The last line divides by <code class="inl">1000000.0</code>, not <code class="inl">1000000</code>. <code class="inl">counter</code> is an <code class="inl">int</code>, and 55630 divided by the <code class="inl">int</code> 1000000 is <code class="inl">0</code> — integer division, Lesson 1. The <code class="inl">.0</code> is the only thing standing between you and a probability of zero.</p>
+        </div>
+
+        <p>Notice <code class="inl">counter = 0;</code> at the top — no <code class="inl">int</code>. The variable was declared for the coin; this line just resets it for the dice. Declaring it a second time would be the "already defined" error from Lesson 4.</p>
+
+        <h3 id="l18-pi">Math.PI</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>A constant, not a method</span></div>
+          <pre class="code"><code>System.out.println(Math.PI); // 3.141592653589793
+// Math.PI++;
+// Math.PI = 5;</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3.141592653589793</pre></div>
+        </div>
+
+        <p><code class="inl">Math.PI</code> has no parentheses because it is not something you <em>call</em> — it is a value, a <code class="inl">double</code> holding π to as many digits as a <code class="inl">double</code> can carry. Use it in arithmetic like any other number: <code class="inl">2 * Math.PI * r</code> is a circumference. The two commented-out lines show what you cannot do with it — either one, uncommented, refuses to compile:</p>
+
+        <div class="ex">
+          <div class="out"><span class="out-label">Console</span><pre><em>error: cannot assign a value to static final variable PI</em></pre></div>
+        </div>
+
+        <p><code class="inl">final</code> is Lesson 2's word: a variable that is set once and locked. <code class="inl">PI</code> was declared that way inside <code class="inl">Math</code>, so <code class="inl">++</code> and <code class="inl">=</code> are both refused. The capital letters are the convention for constants — the same reason Lesson 2 wrote <code class="inl">final int MAX_VALUE</code>.</p>
+
+        <h3 id="l18-int">Integer.MAX_VALUE</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>The edges of an int</span></div>
+          <pre class="code"><code>System.out.println(Integer.MAX_VALUE);
+System.out.println(Integer.MIN_VALUE);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2147483647
+-2147483648</pre></div>
+        </div>
+
+        <p>Two more built-in constants, this time from the class <code class="inl">Integer</code>. They are the two numbers Lesson 2 typed out by hand to show overflow, and now you can name them instead of remembering ten digits. The behaviour at the edge is unchanged: <code class="inl">Integer.MAX_VALUE + 1</code> wraps round to <code class="inl">-2147483648</code>.</p>
+
+        <div class="practice" id="p18">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 18</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>In the coin program, what values can <code class="inl">n</code> take? If you run it and get 31 heads out of 50, is the program wrong?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">1 or 2 · no</span></p>
+                  <p><code class="inl">Math.random() * 2</code> is in [0, 2), the cast gives 0 or 1, adding 1 gives 1 or 2. Fifty is a small sample; 31 is unusual but perfectly possible. Run it a million times and the fraction settles near 0.5 — that is what the dice example is showing.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change the last line of the dice program to <code class="inl">System.out.println(counter / 1000000);</code> — no <code class="inl">.0</code>. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0</span></p>
+                  <p><code class="inl">int</code> divided by <code class="inl">int</code>. 55630 / 1000000 is 0 with a remainder, and the remainder is thrown away. A million rolls, one missing <code class="inl">.0</code>, answer zero.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Why is the theoretical answer 2/36 and not 1/36?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The dice are different objects. <code class="inl">n = 2, m = 4</code> and <code class="inl">n = 4, m = 2</code> are two different outcomes out of the 36, and the <code class="inl">||</code> in the <code class="inl">if</code> counts both. If the condition were only <code class="inl">n == 2 &amp;&amp; m == 4</code>, the answer would be 1/36 ≈ 0.0278.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change the condition to <code class="inl">n + m == 7</code>. Roughly what does the program print at the end?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">about 0.1667</span></p>
+                  <p>Six of the 36 outcomes add up to 7: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1). 6/36 = 0.1666…; one run of the program gave 0.166189.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Does <code class="inl">Math.PI = 3.14;</code> compile? Why or why not?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No — cannot assign a value to static final variable PI</span></p>
+                  <p><code class="inl">PI</code> is <code class="inl">final</code>. Like the <code class="inl">final int</code> in Lesson 2, it can be read as often as you like and written never. If you want a rougher π, declare your own <code class="inl">double</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does <code class="inl">System.out.println(Integer.MAX_VALUE + 1);</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-2147483648</span></p>
+                  <p>Overflow, Lesson 2: one past the largest <code class="inl">int</code> wraps round to the smallest. <code class="inl">Integer.MAX_VALUE + 1 == Integer.MIN_VALUE</code> is <code class="inl">true</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 19 ============ -->
+      <section class="lesson" id="l19">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 19 · Lesson19.java</span>
+          <h2 class="lesson-title">Writing Your Own Method</h2>
+        </div>
+
+        <p>Everything so far has been <em>calling</em> methods that someone at Oracle wrote. This file turns that around. The file's own summary sits at the top as a comment — <code class="inl">HEADER</code>, <code class="inl">BODY</code>, <code class="inl">RETURN STATEMENT</code> — and every method on this page has those three pieces.</p>
+
+        <h3 id="l19-anatomy">Header, body, return</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson19.java — the first method we wrote</span></div>
+          <pre class="code"><code>public static int sum(int a, int b) {
+    int total = a + b;
+
+    return total;
+}</code></pre>
+        </div>
+
+        <figure class="fig">
+          <svg viewBox="0 0 700 150" role="img" aria-label="The header public static int sum(int a, int b), with labels: int is the return type, sum is the name, and int a, int b are the parameters. The body and return statement follow between braces.">
+            <text class="fig-m" x="40" y="50" style="font-size:17px" textLength="146" lengthAdjust="spacingAndGlyphs">public static </text>
+            <rect class="fig-cond" x="184" y="30" width="36" height="30" rx="5"/>
+            <text class="fig-m" x="188" y="50" style="font-size:17px" textLength="28" lengthAdjust="spacingAndGlyphs">int</text>
+            <rect class="fig-hit" x="226" y="30" width="36" height="30" rx="5"/>
+            <text class="fig-m" x="230" y="50" style="font-size:17px" textLength="28" lengthAdjust="spacingAndGlyphs">sum</text>
+            <rect class="fig-box" x="268" y="30" width="136" height="30" rx="5"/>
+            <text class="fig-m" x="272" y="50" style="font-size:17px" textLength="128" lengthAdjust="spacingAndGlyphs">(int a, int b)</text>
+            <text class="fig-m" x="410" y="50" style="font-size:17px">{</text>
+
+            <line x1="202" y1="62" x2="202" y2="86" stroke="currentColor" stroke-width="1.2"/>
+            <text class="fig-t" x="202" y="102" text-anchor="middle">return type</text>
+            <text class="fig-lbl" x="202" y="117" text-anchor="middle">what comes back</text>
+
+            <line x1="244" y1="62" x2="244" y2="126" stroke="currentColor" stroke-width="1.2"/>
+            <text class="fig-t" x="244" y="142" text-anchor="middle">name</text>
+
+            <line x1="336" y1="62" x2="336" y2="86" stroke="currentColor" stroke-width="1.2"/>
+            <text class="fig-t" x="336" y="102" text-anchor="middle">parameters</text>
+            <text class="fig-lbl" x="336" y="117" text-anchor="middle">what goes in — type and name, each</text>
+
+            <text class="fig-lbl" x="460" y="50">← the header</text>
+            <text class="fig-m" x="60" y="82" style="font-size:14px;opacity:.55">int total = a + b;</text>
+            <text class="fig-m" x="60" y="104" style="font-size:14px;opacity:.55">return total;</text>
+            <text class="fig-m" x="40" y="126" style="font-size:14px;opacity:.55">}</text>
+            <text class="fig-lbl" x="460" y="82">← the body</text>
+            <text class="fig-lbl" x="460" y="104">← the return statement</text>
+          </svg>
+          <figcaption>The header promises three things: what the method is called, what it needs, and what type it will hand back. The body does the work. <code class="inl">return</code> hands the value back and ends the method.</figcaption>
+        </figure>
+
+        <ul class="plain">
+          <li><strong><code class="inl">public static</code></strong> — write these two words on every method this year. What they mean is a later topic; for now they are part of the spelling, the same way they have been on <code class="inl">main</code> since day one.</li>
+          <li><strong>Return type</strong> — the type of value the method gives back. <code class="inl">int</code> here, because a sum of two <code class="inl">int</code>s is an <code class="inl">int</code>. Whatever follows <code class="inl">return</code> has to be of this type.</li>
+          <li><strong>Name</strong> — chosen like a variable name: lowercase first letter, says what it does.</li>
+          <li><strong>Parameters</strong> — the inputs, each with a type and a name, separated by commas. Inside the body <code class="inl">a</code> and <code class="inl">b</code> are ordinary variables that already hold values when the body starts.</li>
+          <li><strong>Body</strong> — any statements. Variables declared here, like <code class="inl">total</code>, exist only until the closing brace, the same scope rule as a loop body.</li>
+          <li><strong><code class="inl">return total;</code></strong> — the value the call is worth. The moment this line runs, the method is over.</li>
+        </ul>
+
+        <p>The method is written <em>outside</em> <code class="inl">main</code> — a sibling of it inside the class, not inside its braces. A method cannot live inside another method.</p>
+
+        <h3 id="l19-call">What happens on a call</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four calls from main</span></div>
+          <pre class="code"><code>System.out.println(sum(2, 3));
+System.out.println(sum(6, -3));
+System.out.println(sum(1232, 4353));
+System.out.println(sum(0, 0));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+3
+5585
+0</pre></div>
+        </div>
+
+        <p>Take the first line slowly. <code class="inl">main</code> reaches <code class="inl">sum(2, 3)</code> and stops. Java jumps to <code class="inl">sum</code>, sets <code class="inl">a = 2</code> and <code class="inl">b = 3</code> — the <strong>arguments</strong> in the call are copied into the <strong>parameters</strong> in the header, in order — runs the body, reaches <code class="inl">return total</code> with <code class="inl">total</code> equal to 5, and jumps back. Back in <code class="inl">main</code>, the expression <code class="inl">sum(2, 3)</code> is now simply <code class="inl">5</code>, and <code class="inl">println</code> prints it.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Word</th><th>Where</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>parameter</strong></td><td>in the header — a variable waiting for a value</td><td class="mono">int a, int b</td></tr>
+              <tr><td><strong>argument</strong></td><td>in the call — the value actually sent</td><td class="mono">2, 3</td></tr>
+              <tr><td><strong>return value</strong></td><td>what the call is worth once it is done</td><td class="mono">5</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A call to a method with a return type is an <strong>expression</strong>, and it can go anywhere a value of that type can go. <code class="inl">System.out.println(sum(2, 3))</code> prints it; <code class="inl">int r = sum(2, 3);</code> stores it; <code class="inl">sum(2, 3) * 2</code> is 10; <code class="inl">sum(sum(1, 2), 3)</code> is 6, inner call first. It is no different from the way <code class="inl">Math.abs(-3)</code> was used in Part 16.</p>
+        </div>
+
+        <p>The arguments must match the parameters in number and in type: <code class="inl">sum(2)</code> is refused (<em>actual and formal argument lists differ in length</em>), and so is <code class="inl">sum(2.5, 3)</code> — a <code class="inl">double</code> does not fit an <code class="inl">int</code> parameter any more than it fits an <code class="inl">int</code> variable.</p>
+
+        <h3 id="l19-even">isEven, three ways</h3>
+
+        <p>A method that answers a yes/no question returns a <code class="inl">boolean</code>. The file writes the same one three times, each shorter than the last:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>if / else</span></div>
+          <pre class="code"><code>public static boolean isEven(int number) {
+    if (number % 2 == 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>if, then a return that catches everything else</span></div>
+          <pre class="code"><code>public static boolean isEven2(int number) {
+    if (number % 2 == 0) {
+        return true;
+    }
+    return false;
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>return the condition itself</span></div>
+          <pre class="code"><code>public static boolean isEven3(int number) {
+    return number % 2 == 0;
+}</code></pre>
+        </div>
+
+        <p>The second version works because <code class="inl">return</code> ends the method: if the <code class="inl">if</code> fires, <code class="inl">return true</code> runs and the line after the <code class="inl">if</code> is never reached; if it does not fire, execution falls through to <code class="inl">return false</code>. No <code class="inl">else</code> needed. The third version notices that <code class="inl">number % 2 == 0</code> is <em>already</em> a <code class="inl">boolean</code> — <code class="inl">true</code> or <code class="inl">false</code> — so it can be returned directly. Writing <code class="inl">if (x) return true; else return false;</code> is always replaceable by <code class="inl">return x;</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Called from main</span></div>
+          <pre class="code"><code>System.out.println(isEven2(25));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <h3 id="l19-missing">Missing return statement</h3>
+
+        <p>Two more versions are in the file, commented out, because they do not compile. The first is <code class="inl">isEven</code> with the <code class="inl">else</code> deleted:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Only the true case</span></div>
+          <pre class="code"><code>public static boolean isEven(int number) {
+    if (number % 2 == 0) {
+        return true;
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>error: missing return statement</em></pre></div>
+        </div>
+
+        <p>The header promised a <code class="inl">boolean</code>. If <code class="inl">number</code> is odd, the <code class="inl">if</code> is skipped, the closing brace is reached, and nothing has been returned — the promise is broken. Java checks this <em>before</em> the program runs, and refuses. The second version tries to patch it with a second <code class="inl">if</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two ifs that between them cover every number — as far as we can tell</span></div>
+          <pre class="code"><code>public static boolean isEven(int number) {
+    if (number % 2 == 0) {
+        return true;
+    }
+    if (number % 2 != 0) {
+        return false;
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>error: missing return statement</em></pre></div>
+        </div>
+
+        <p>Still refused, and this one surprises people. <em>We</em> know one of the two conditions must be true. The compiler does not do arithmetic; it sees two independent <code class="inl">if</code>s and a path in which both are skipped, and on that path there is no <code class="inl">return</code>. It does not matter that the path is impossible.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>In a method with a return type, <strong>every possible path</strong> through the body has to end in a <code class="inl">return</code> — and "possible" is judged by the shape of the code, not by the maths. An <code class="inl">if</code> / <code class="inl">else</code> where both branches return is fine. A bare <code class="inl">return</code> after the last <code class="inl">if</code> is fine. Two <code class="inl">if</code>s and nothing after them is not.</p>
+        </div>
+
+        <h3 id="l19-note">return ends the method</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>A grade from a score — no else anywhere</span></div>
+          <pre class="code"><code>public static int getNote(int note) {
+    if (note &gt; 80) {
+        return 5;
+    }
+    if (note &gt; 60) {
+        return 4;
+    }
+    if (note &gt; 40) {
+        return 3;
+    }
+    return 0;
+}</code></pre>
+        </div>
+
+        <p>This looks like it needs <code class="inl">else if</code> — a score of 95 is greater than 80 <em>and</em> greater than 60 <em>and</em> greater than 40. It does not, because <code class="inl">return 5</code> leaves the method on the spot. The second and third <code class="inl">if</code> are never even looked at for 95. For 70 the first test fails, the second fires, <code class="inl">return 4</code>. For 20 all three fail and the final <code class="inl">return 0</code> catches it. Reading top to bottom, each <code class="inl">if</code> only ever sees the scores the ones above it let through.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">note</th><th class="mono">note &gt; 80</th><th class="mono">note &gt; 60</th><th class="mono">note &gt; 40</th><th>Returns</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">95</td><td class="mono"><span class="tv">true</span> → return 5</td><td class="mono"><span class="q">not reached</span></td><td class="mono"><span class="q">not reached</span></td><td class="mono">5</td></tr>
+              <tr><td class="mono">80</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="tv">true</span> → return 4</td><td class="mono"><span class="q">not reached</span></td><td class="mono">4</td></tr>
+              <tr><td class="mono">41</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="tv">true</span> → return 3</td><td class="mono">3</td></tr>
+              <tr><td class="mono">40</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="fv">false</span></td><td class="mono">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The second row is the one to check on the exam: 80 is <em>not</em> greater than 80, so it gets a 4. Boundaries are decided by <code class="inl">&gt;</code> against <code class="inl">&gt;=</code>, exactly as in Lesson 2's <code class="inl">else if</code> chains.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Because <code class="inl">return</code> ends the method, any statement written after a <code class="inl">return</code> that always runs can never execute — and Java refuses to compile it: <em>error: unreachable statement</em>. Put the <code class="inl">println</code> before the <code class="inl">return</code>, not after.</p>
+        </div>
+
+        <h3 id="l19-pow">Math.pow is the same shape</h3>
+
+        <p>The file closes the loop with a comment worth copying into your notes:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Reading a built-in method with the new words</span></div>
+          <pre class="code"><code>// Math.pow(base, expo) --->  value
+
+// method's name          -> pow
+// parameters, arguments  -> base, expo
+// return                 -> value
+
+double answer = Math.pow(2, 3);
+System.out.println(answer);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>8.0</pre></div>
+        </div>
+
+        <p><code class="inl">pow</code> is a method somebody wrote with a header very like ours: name <code class="inl">pow</code>, two <code class="inl">double</code> parameters, return type <code class="inl">double</code>. That is <em>why</em> <code class="inl">Math.pow(2, 3)</code> is <code class="inl">8.0</code>: the return type in the header decides, and the header says <code class="inl">double</code>. Every fact in Part 16 about what comes back is a fact about a header you never saw.</p>
+
+        <div class="note note--task">
+          <span class="tag">Try it</span>
+          <p>The last line of the file is a comment: <code class="inl">// f(x) = 2 * x + 3</code>. A method <em>is</em> a function in the maths sense — one input, one output. Write <code class="inl">f</code> as a Java method, decide what its return type should be, and call it with 2, 0 and −1.5. We will compare answers in class.</p>
+        </div>
+
+        <div class="practice" id="p19">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 19</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">System.out.println(sum(sum(1, 2), 3));</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6</span></p>
+                  <p>The inner call happens first: <code class="inl">sum(1, 2)</code> becomes <code class="inl">3</code>, so the outer call is <code class="inl">sum(3, 3)</code>. A return value can be an argument.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Does <code class="inl">System.out.println(sum(2.5, 3));</code> compile?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: incompatible types: possible lossy conversion from double to int</em></pre></div>
+                  </div>
+                  <p>The parameter <code class="inl">a</code> is an <code class="inl">int</code>, and <code class="inl">2.5</code> is a <code class="inl">double</code>. Passing an argument is an assignment into the parameter, and the same rules apply.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does <code class="inl">System.out.println(isEven3(sum(3, 4)));</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false</span></p>
+                  <p><code class="inl">sum(3, 4)</code> is 7; <code class="inl">7 % 2 == 0</code> is <code class="inl">false</code>; <code class="inl">isEven3</code> returns that <code class="inl">boolean</code> and <code class="inl">println</code> prints it.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does <code class="inl">getNote(80)</code> return? And <code class="inl">getNote(100)</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4 · 5</span></p>
+                  <p>80 is not greater than 80, so the first <code class="inl">if</code> is skipped; 80 is greater than 60, <code class="inl">return 4</code>. 100 passes the first test immediately. A score gets the grade of the first test it passes.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Does this compile? If not, why, and give two different fixes.</p>
+              <div class="ex">
+                <pre class="code"><code>public static int half(int n) {
+    return n / 2.0;
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No — possible lossy conversion from double to int</span></p>
+                  <p><code class="inl">n / 2.0</code> is a <code class="inl">double</code> and the header promised an <code class="inl">int</code>. Either change the promise — <code class="inl">public static double half(int n)</code>, and <code class="inl">half(5)</code> is <code class="inl">2.5</code> — or keep <code class="inl">int</code> and return <code class="inl">n / 2</code>, and <code class="inl">half(5)</code> is <code class="inl">2</code>. Which one is right depends on what you wanted; what is not allowed is a header that says one thing and a <code class="inl">return</code> that says another.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Inside <code class="inl">main</code>, after calling <code class="inl">sum(1, 2);</code>, a student writes <code class="inl">System.out.println(total);</code> to see the result. What happens?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">It does not compile</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: cannot find symbol
+  symbol:   variable total</em></pre></div>
+                  </div>
+                  <p><code class="inl">total</code> was declared inside <code class="inl">sum</code>'s body and died at <code class="inl">sum</code>'s closing brace — Lesson 3's scope rule. The only thing that leaves a method is the value after <code class="inl">return</code>, and the caller has to catch it: <code class="inl">int result = sum(1, 2);</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 20 ============ -->
+      <section class="lesson" id="l20">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 20 · Lesson20.java</span>
+          <h2 class="lesson-title">void &amp; Methods Calling Methods</h2>
+        </div>
+
+        <h3 id="l20-void">void</h3>
+
+        <p>Not every method has a value to hand back. Some just <em>do</em> something — print a line, draw a shape. Their return type is the word <code class="inl">void</code>, which means "nothing comes back", and their body has no <code class="inl">return</code> at all:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A void method and three calls</span></div>
+          <pre class="code"><code>// VOID --&gt; void methods cannot return a value
+public static void greetings(String name) {
+    System.out.println("Hi " + name);
+}
+
+public static void main(String[] args) {
+    greetings("Mehmet");
+    greetings("Asya");
+    greetings("Mert");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Hi Mehmet
+Hi Asya
+Hi Mert</pre></div>
+        </div>
+
+        <p>Two things change. The call is a <strong>statement on its own</strong> — <code class="inl">greetings("Asya");</code> and a semicolon — because there is no value to put anywhere. And the parameter is a <code class="inl">String</code>; parameters can be any type, and the argument <code class="inl">"Asya"</code> is copied into <code class="inl">name</code> like any other. You have been calling a <code class="inl">void</code> method since Lesson 1: <code class="inl">System.out.println</code> prints and gives nothing back, which is why it always sits on a line by itself. And <code class="inl">main</code> is one too — look at its header.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">System.out.println(greetings("Ali"));</code> does not compile: <em>'void' type not allowed here</em>. There is no value for <code class="inl">println</code> to print. And putting <code class="inl">return 5;</code> inside a <code class="inl">void</code> method is refused too: <em>incompatible types: unexpected return value</em>. <code class="inl">void</code> means no value out, in both directions.</p>
+        </div>
+
+        <h3 id="l20-prime">isPrime as a method</h3>
+
+        <p>Lesson 4 ended with a nested loop that listed primes, and two complaints about it: it kept searching after the first divisor had already answered the question, and it tried divisors far bigger than they needed to be. The file copies that loop into a comment for comparison and writes the replacement as a method:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One candidate, one answer</span></div>
+          <pre class="code"><code>public static boolean isPrime(int number) {
+    for (int i = 2; i &lt;= Math.sqrt(number); i++) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}</code></pre>
+        </div>
+
+        <p>Three things are different from Lesson 4, and each one is this week's material:</p>
+
+        <ul class="plain">
+          <li><strong><code class="inl">return false</code> inside the loop.</strong> The moment a divisor turns up, the method returns — and returning ends the method, which ends the loop with it. This is the "leave the loop early" tool Lesson 4 said we had not met yet. It was <code class="inl">return</code>.</li>
+          <li><strong>No flag.</strong> Lesson 4 needed <code class="inl">boolean isPrime = true</code> and an <code class="inl">if</code> after the loop to read it. Here, if the loop runs all the way to its end, that <em>is</em> the information: nothing divided <code class="inl">number</code>, so <code class="inl">return true</code>. The flag was only there because the old code could not stop.</li>
+          <li><strong><code class="inl">i &lt;= Math.sqrt(number)</code>.</strong> If a number has a divisor bigger than its square root, it also has one smaller — 36 is 2 × 18, 3 × 12, 4 × 9 and 6 × 6; every pair has one side at or below 6. So a search that reaches the square root and finds nothing has found everything. For 97 the old loop tried 95 divisors; this one tries 8.</li>
+        </ul>
+
+        <p>The loop condition calls a method — <code class="inl">Math.sqrt</code> is worked out on every pass, and <code class="inl">i</code>, an <code class="inl">int</code>, is compared with a <code class="inl">double</code>. That is allowed; the <code class="inl">int</code> is widened for the comparison.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The <code class="inl">&lt;=</code> is doing real work. With <code class="inl">&lt;</code>, perfect squares of primes slip through: for 9, <code class="inl">Math.sqrt(9)</code> is 3.0, and <code class="inl">i &lt; 3.0</code> stops before <code class="inl">i</code> reaches 3 — the only divisor there is. The method would call 4, 9, 25 and 49 prime.</p>
+        </div>
+
+        <h3 id="l20-chain">A method calling a method</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson20.java — the whole chain</span></div>
+          <pre class="code"><code>public static void printPrimeNumbers(int end) {
+    for (int n = 2; n &lt; end; n++) {
+        if (isPrime(n)) {
+            System.out.print(n + " ");
+        }
+    }
+    System.out.println();
+}
+
+public static void main(String[] args) {
+    printPrimeNumbers(100);
+}
+
+public static boolean isPrime(int number) {
+    for (int i = 2; i &lt;= Math.sqrt(number); i++) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 </pre></div>
+        </div>
+
+        <p>Read it as a chain of calls. <code class="inl">main</code> calls <code class="inl">printPrimeNumbers(100)</code>. That method's loop calls <code class="inl">isPrime(n)</code> once for every <code class="inl">n</code> from 2 to 99 — 98 calls — and uses each <code class="inl">boolean</code> answer directly as the condition of an <code class="inl">if</code>. Lesson 4's nested loop is still here, but it has been cut in two along the seam: the outer loop lives in one method, the inner loop in another, and the question "is this one prime?" has a name.</p>
+
+        <p>Two details of the layout. <code class="inl">isPrime</code> is written <em>below</em> <code class="inl">main</code>, and <code class="inl">printPrimeNumbers</code> above it — the order of methods inside a class does not matter, Java reads the whole file before running anything. And the <code class="inl">println()</code> with nothing in it, after the loop, ends the line of primes — the same job it had at the end of every row in Lesson 4.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A method with a <code class="inl">boolean</code> return type can be used <strong>directly as a condition</strong>: <code class="inl">if (isPrime(n))</code>, not <code class="inl">if (isPrime(n) == true)</code>. The call already <em>is</em> <code class="inl">true</code> or <code class="inl">false</code>; comparing it with <code class="inl">true</code> adds nothing.</p>
+        </div>
+
+        <h3 id="l20-cost">What it costs now</h3>
+
+        <p>Lesson 4 counted the work: to 100, the old loop made 4,753 division checks. The new method makes 235. The class file used to run the old loop to 300,000 and has since been cut to 150,000, because at that size it takes about five seconds of solid computing — 11 billion checks. The method version finds the same 13,848 primes below 150,000 in about five <em>milliseconds</em>. Same answers; a thousand times less work; and the two ideas that did it were <code class="inl">return</code> and <code class="inl">Math.sqrt</code>.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">isPrime(1)</code> returns <code class="inl">true</code>, and so does <code class="inl">isPrime(0)</code>. <code class="inl">Math.sqrt(1)</code> is 1.0, so the loop header <code class="inl">i = 2; i &lt;= 1.0</code> is false at once, nothing runs, and the method falls through to <code class="inl">return true</code>. The file never notices because <code class="inl">printPrimeNumbers</code> starts counting at 2 — but a method should be right on its own, not only for the arguments one caller happens to send. Question 2 below asks for the fix.</p>
+        </div>
+
+        <div class="practice" id="p20">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 20</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">printPrimeNumbers(20);</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre>2 3 5 7 11 13 17 19 </pre></div>
+                  </div>
+                  <p><code class="inl">n</code> runs from 2 up to 19 — <code class="inl">n &lt; end</code> excludes 20 itself, which is not prime anyway.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p><code class="inl">isPrime(1)</code> wrongly returns <code class="inl">true</code>. Add one <code class="inl">if</code> to the method so that anything below 2 returns <code class="inl">false</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>public static boolean isPrime(int number) {
+    if (number &lt; 2) {
+        return false;
+    }
+    for (int i = 2; i &lt;= Math.sqrt(number); i++) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}</code></pre>
+                  </div>
+                  <p>A <code class="inl">return</code> at the top handles the special case and leaves; the rest of the method never sees a 0, a 1 or a negative number. This "check the bad inputs first and return" shape is one you will write again and again.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What happens with <code class="inl">System.out.println(greetings("Ali"));</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">It does not compile</span></p>
+                  <div class="ex">
+                    <div class="out"><span class="out-label">Console</span><pre><em>error: 'void' type not allowed here</em></pre></div>
+                  </div>
+                  <p><code class="inl">greetings</code> prints its own line and returns nothing, so there is nothing for the outer <code class="inl">println</code> to print. Call it on its own line.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Change the loop condition in <code class="inl">isPrime</code> to <code class="inl">i &lt; Math.sqrt(number)</code>. Which numbers below 50 does <code class="inl">printPrimeNumbers(50)</code> now print that it should not?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4, 9, 25 and 49</span></p>
+                  <p>The squares of primes. Their only useful divisor is exactly the square root, and <code class="inl">&lt;</code> stops one short of it. For 4, <code class="inl">i = 2; i &lt; 2.0</code> is false immediately, the loop never runs, and the method says <code class="inl">true</code>.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>How many times does the <code class="inl">if</code> inside <code class="inl">isPrime</code> run for <code class="inl">isPrime(97)</code>? How many did the Lesson 4 loop run for the same number?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">8 · 95</span></p>
+                  <p><code class="inl">Math.sqrt(97)</code> is 9.84…, so <code class="inl">i</code> takes the values 2 through 9 — eight passes, none of them dividing 97. Lesson 4 tried 2 through 96.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write <code class="inl">countPrimes(int end)</code>, a method that <em>returns</em> how many primes there are below <code class="inl">end</code>, using <code class="inl">isPrime</code>. What does <code class="inl">countPrimes(100)</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>public static int countPrimes(int end) {
+    int count = 0;
+    for (int n = 2; n &lt; end; n++) {
+        if (isPrime(n)) {
+            count++;
+        }
+    }
+    return count;
+}</code></pre>
+                    <div class="out"><span class="out-label">Console</span><pre>25</pre></div>
+                  </div>
+                  <p>The same loop as <code class="inl">printPrimeNumbers</code>, with a counter instead of a <code class="inl">print</code> and an <code class="inl">int</code> return type instead of <code class="inl">void</code>. The <code class="inl">return</code> comes after the loop, once the count is complete.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the five files</span>
+          <h2 class="lesson-title">Old Loops, New Names</h2>
+        </div>
+
+        <p>Nothing in this section was in the class files. Every example uses only what is on this page and the four before it — the difference is that code you have already written as a loop in <code class="inl">main</code> now gets a header, a name and a <code class="inl">return</code>.</p>
+
+        <h3 id="x-old">Old loops as methods</h3>
+
+        <p>Lesson 3's leap-year test was an <code class="inl">if</code> with a long condition. As a method, the condition <em>is</em> the return value — the <code class="inl">isEven3</code> trick:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Leap years, from Lesson 3</span></div>
+          <pre class="code"><code>public static boolean isLeapYear(int year) {
+    return (year % 4 == 0 &amp;&amp; year % 100 != 0) || year % 400 == 0;
+}
+
+System.out.println(isLeapYear(2024));
+System.out.println(isLeapYear(1900));
+System.out.println(isLeapYear(2000));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false
+true</pre></div>
+        </div>
+
+        <p>The accumulator loops from Lesson 3 become methods with the accumulator declared in the body and returned at the end:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Factorial and Euclid's GCD</span></div>
+          <pre class="code"><code>public static int factorial(int n) {
+    int product = 1;
+    for (int i = 1; i &lt;= n; i++) {
+        product *= i;
+    }
+    return product;
+}
+
+public static int gcd(int a, int b) {
+    while (b != 0) {
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+System.out.println(factorial(5));
+System.out.println(gcd(48, 18));
+System.out.println(gcd(factorial(4), 18));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>120
+6
+6</pre></div>
+        </div>
+
+        <p>Look at <code class="inl">gcd</code>: it assigns to its own parameters, <code class="inl">a = b</code> and <code class="inl">b = r</code>. That is allowed — inside the body, parameters are ordinary variables — and it raises a question the next example answers.</p>
+
+        <h3 id="x-copy">A parameter is a copy</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Changing the parameter does not change the argument</span></div>
+          <pre class="code"><code>public static int twice(int n) {
+    n = n * 2;
+    return n;
+}
+
+int n = 5;
+int t = twice(n);
+System.out.println(n + " " + t);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 10</pre></div>
+        </div>
+
+        <p>The <code class="inl">n</code> in <code class="inl">main</code> and the <code class="inl">n</code> in <code class="inl">twice</code> are two different variables that happen to share a name. When the call happens, the <em>value</em> 5 is copied into the parameter; the method doubles its copy and returns 10; <code class="inl">main</code>'s <code class="inl">n</code> was never touched. The only way a method's work gets out is through <code class="inl">return</code>. This is also why Lesson 3's digit loop can be a method without the <code class="inl">temp</code> copy: it may destroy its parameter freely.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Digit sum, from Lesson 3 — the parameter is the working copy</span></div>
+          <pre class="code"><code>public static int sumDigits(int number) {
+    int sum = 0;
+    while (number != 0) {
+        sum += number % 10;
+        number /= 10;
+    }
+    return sum;
+}
+
+int x = 1234;
+System.out.println(sumDigits(x));
+System.out.println(x);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>10
+1234</pre></div>
+        </div>
+
+        <h3 id="x-math">Math inside a method</h3>
+
+        <p>A method of ours can call the built-in ones. The distance between two points needs four parameters, a <code class="inl">pow</code>, a <code class="inl">sqrt</code>, and a <code class="inl">double</code> return type because <code class="inl">sqrt</code> gives a <code class="inl">double</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Distance formula</span></div>
+          <pre class="code"><code>public static double distance(double x1, double y1, double x2, double y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+System.out.println(distance(0, 0, 3, 4));
+System.out.println(distance(0, 0, 1, 1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5.0
+1.4142135623730951</pre></div>
+        </div>
+
+        <p>The arguments <code class="inl">0, 0, 3, 4</code> are <code class="inl">int</code>s and the parameters are <code class="inl">double</code>s. That direction is fine: an <code class="inl">int</code> fits in a <code class="inl">double</code> without loss, the same widening that let <code class="inl">Math.pow(2, 3)</code> accept whole numbers in Part 16. The other direction — a <code class="inl">double</code> argument into an <code class="inl">int</code> parameter — is the compile error from Part 19.</p>
+
+        <h3 id="x-void">void calling void</h3>
+
+        <p>Lesson 4's growing triangle, cut along its seam like <code class="inl">isPrime</code> was: one <code class="inl">void</code> method draws a row, another calls it once per row.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The inner loop gets a name</span></div>
+          <pre class="code"><code>public static void printStars(int n) {
+    for (int i = 0; i &lt; n; i++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+public static void printTriangle(int rows) {
+    for (int i = 1; i &lt;= rows; i++) {
+        printStars(i);
+    }
+}
+
+printTriangle(4);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>*
+**
+***
+****</pre></div>
+        </div>
+
+        <p>The nested loop is still there — <code class="inl">printTriangle</code>'s loop calls <code class="inl">printStars</code>, which has a loop — but each method is now four lines long and does one thing. <code class="inl">printStars(20)</code> on its own is a row of the Lesson 4 rectangle; <code class="inl">printStars(2 * i - 1)</code> inside a loop is most of the pyramid.</p>
+
+        <h3 id="x-none">No parameters at all</h3>
+
+        <p><code class="inl">Math.random()</code> has empty parentheses. So can a method of ours: a die that needs no input to roll.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Part 17's formula, given a name — one run</span></div>
+          <pre class="code"><code>public static int rollDie() {
+    return (int) (Math.random() * 6) + 1;
+}
+
+for (int i = 0; i &lt; 10; i++) {
+    System.out.print(rollDie() + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 6 3 6 4 3 3 4 4 1 </pre></div>
+        </div>
+
+        <p>The parentheses stay even when there is nothing between them — <code class="inl">rollDie</code> without them is not a call. And the Part 18 dice simulation reads better as <code class="inl">int n = rollDie(); int m = rollDie();</code> than as two copies of the cast formula.</p>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>With <code class="inl">square(int n)</code> returning <code class="inl">n * n</code> and <code class="inl">max(int a, int b)</code> returning the larger of the two, what does <code class="inl">System.out.println(max(sum(1, 2), square(2)));</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4</span></p>
+                  <p>Arguments first: <code class="inl">sum(1, 2)</code> is 3 and <code class="inl">square(2)</code> is 4. Then <code class="inl">max(3, 4)</code> is 4.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write <code class="inl">max</code>. It needs an <code class="inl">if</code> — does it need an <code class="inl">else</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>public static int max(int a, int b) {
+    if (a &gt; b) {
+        return a;
+    }
+    return b;
+}</code></pre>
+                  </div>
+                  <p>No <code class="inl">else</code>: if <code class="inl">a &gt; b</code> the method has already returned, so <code class="inl">return b</code> only runs when it should. Both paths end in a <code class="inl">return</code>, so the compiler is satisfied. <code class="inl">max(4, 4)</code> returns 4 either way.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>What does this method return for −5, 0 and 42?</p>
+              <div class="ex">
+                <pre class="code"><code>public static int mystery(int n) {
+    if (n &lt; 0) {
+        return -1;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    return 1;
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-1 · 0 · 1</span></p>
+                  <p>The sign of the number. Same shape as <code class="inl">getNote</code>: each <code class="inl">return</code> leaves, so the tests below it only see what got past.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write <code class="inl">sumTo(int n)</code>, returning 1 + 2 + … + n. What does <code class="inl">sumTo(10)</code> return, and <code class="inl">sumTo(0)</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>public static int sumTo(int n) {
+    int sum = 0;
+    for (int i = 1; i &lt;= n; i++) {
+        sum += i;
+    }
+    return sum;
+}</code></pre>
+                  </div>
+                  <p><span class="outline">55 · 0</span></p>
+                  <p>For <code class="inl">n = 0</code> the loop header <code class="inl">i = 1; i &lt;= 0</code> is false immediately, so <code class="inl">sum</code> is returned untouched. Lesson 3's accumulator, with the two extra lines that make it a method.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>Write <code class="inl">absValue(int n)</code> without using <code class="inl">Math.abs</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex">
+                    <pre class="code"><code>public static int absValue(int n) {
+    if (n &lt; 0) {
+        return -n;
+    }
+    return n;
+}</code></pre>
+                  </div>
+                  <p><code class="inl">absValue(-8)</code> is 8, <code class="inl">absValue(8)</code> is 8, <code class="inl">absValue(0)</code> is 0. This is roughly what <code class="inl">Math.abs</code> looks like on the inside — the built-in methods are not magic, they are methods.</p>
+                </div>
+              </details>
+            </li>
+
+            <li>
+              <p>This compiles. What does <code class="inl">avg(3, 4)</code> print, and why is it not 3.5?</p>
+              <div class="ex">
+                <pre class="code"><code>public static double avg(int a, int b) {
+    return (a + b) / 2;
+}</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3.0</span></p>
+                  <p><code class="inl">(a + b) / 2</code> is <code class="inl">int</code> divided by <code class="inl">int</code>: 7 / 2 is 3. Only <em>then</em> is the 3 widened to <code class="inl">3.0</code> to match the <code class="inl">double</code> return type — the damage is already done. Lesson 3's average trap, wearing a header. Return <code class="inl">(a + b) / 2.0</code> and you get 3.5.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Fourteen traps to remember</h2>
+        <p>Six of these refuse to compile — which is the good kind of trap. The other eight compile, run, and give you the wrong number.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">Math.pow(2, 3)</td>
+                <td class="mono">8</td>
+                <td class="mono"><span class="fv">8.0</span></td>
+                <td>pow always returns a double</td>
+              </tr>
+              <tr>
+                <td class="mono">Math.pow(16, 1 / 4)</td>
+                <td class="mono">2.0</td>
+                <td class="mono"><span class="fv">1.0</span></td>
+                <td>1 / 4 is 0 before pow sees it</td>
+              </tr>
+              <tr>
+                <td class="mono">int r = Math.sqrt(16);</td>
+                <td class="mono">r = 4</td>
+                <td><span class="err">will not compile</span></td>
+                <td>double into int needs a cast</td>
+              </tr>
+              <tr>
+                <td class="mono">val3 == val4</td>
+                <td class="mono">true</td>
+                <td class="mono"><span class="fv">false</span></td>
+                <td>round-off — use Math.abs(a - b) &lt;= tolerance</td>
+              </tr>
+              <tr>
+                <td class="mono">Math.sqrt(-25)</td>
+                <td>a crash</td>
+                <td class="mono"><span class="fv">NaN</span></td>
+                <td>no exception, just Not a Number</td>
+              </tr>
+              <tr>
+                <td class="mono">(int) Math.random() * 5 + 4</td>
+                <td>4 to 8</td>
+                <td class="mono"><span class="fv">always 4</span></td>
+                <td>the cast applies to Math.random() alone</td>
+              </tr>
+              <tr>
+                <td class="mono">counter / 1000000</td>
+                <td class="mono">0.0556</td>
+                <td class="mono"><span class="fv">0</span></td>
+                <td>integer division — divide by 1000000.0</td>
+              </tr>
+              <tr>
+                <td class="mono">Math.PI = 5;</td>
+                <td>a rougher π</td>
+                <td><span class="err">will not compile</span></td>
+                <td>PI is final</td>
+              </tr>
+              <tr>
+                <td class="mono">if (…) { return true; }  and nothing after</td>
+                <td>an isEven method</td>
+                <td><span class="err">missing return statement</span></td>
+                <td>every path must return, judged by shape not maths</td>
+              </tr>
+              <tr>
+                <td class="mono">a statement after return</td>
+                <td>it runs</td>
+                <td><span class="err">unreachable statement</span></td>
+                <td>return ends the method on the spot</td>
+              </tr>
+              <tr>
+                <td class="mono">println(greetings("Ali"))</td>
+                <td class="mono">Hi Ali</td>
+                <td><span class="err">'void' type not allowed here</span></td>
+                <td>a void method has no value to print</td>
+              </tr>
+              <tr>
+                <td class="mono">sum(2.5, 3)</td>
+                <td class="mono">5</td>
+                <td><span class="err">will not compile</span></td>
+                <td>a double argument into an int parameter</td>
+              </tr>
+              <tr>
+                <td class="mono">i &lt; Math.sqrt(number)</td>
+                <td>the primes</td>
+                <td class="mono"><span class="fv">… 4 9 25 49 …</span></td>
+                <td>&lt;= — the root itself may be the divisor</td>
+              </tr>
+              <tr>
+                <td class="mono">return (a + b) / 2;  in a double method</td>
+                <td class="mono">3.5</td>
+                <td class="mono"><span class="fv">3.0</span></td>
+                <td>int division happens before the widening</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 5, parts 16–20. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson4.html">← Lesson 4</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
