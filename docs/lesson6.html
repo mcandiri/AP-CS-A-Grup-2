@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 6: Strings. Indexes and length, indexOf, substring with one and two arguments, equals and counting, compareTo and character codes — with drawings of every call and a String lab to try your own.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 6 · Strings — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 6</p>
+    <h1>Strings</h1>
+    <p class="deck">A <code class="inl">String</code> is a row of letters, and every letter has a number. This lesson is about the five methods the AP exam gives you for working with that row: <code class="inl">length</code>, <code class="inl">indexOf</code>, <code class="inl">substring</code>, <code class="inl">equals</code> and <code class="inl">compareTo</code>. Every call on this page comes with a drawing of the letters it touches, and a String lab in each part lets you type your own word and watch Java's answer change. Near the end: where these methods show up in the programs you use every day.</p>
+    <ul class="facts">
+      <li>4 files</li>
+      <li>Java</li>
+      <li>34 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l21">21 · length &amp; indexOf</a></li>
+        <li><a class="sub" href="#l21-five">The five methods</a></li>
+        <li><a class="sub" href="#l21-index">Every letter has a number</a></li>
+        <li><a class="sub" href="#l21-length">length()</a></li>
+        <li><a class="sub" href="#l21-indexof">indexOf</a></li>
+        <li><a class="sub" href="#l21-first">The first match wins</a></li>
+        <li><a class="sub" href="#l21-minus">−1 means “not there”</a></li>
+        <li><a class="sub" href="#l21-if">indexOf inside an if</a></li>
+        <li><a class="sub" href="#p21">Practice</a></li>
+        <li><a href="#l22">22 · substring</a></li>
+        <li><a class="sub" href="#l22-cut">Cutting between letters</a></li>
+        <li><a class="sub" href="#l22-six">Six cuts from the file</a></li>
+        <li><a class="sub" href="#l22-ends">First and last letter</a></li>
+        <li><a class="sub" href="#l22-loop">One letter at a time</a></li>
+        <li><a class="sub" href="#l22-boom">When it breaks</a></li>
+        <li><a class="sub" href="#l22-empty">The empty String</a></li>
+        <li><a class="sub" href="#l22-back">Backwards</a></li>
+        <li><a class="sub" href="#l22-pairs">Pairs and triples</a></li>
+        <li><a class="sub" href="#l22-one">substring(start)</a></li>
+        <li><a class="sub" href="#l22-name">Splitting a full name</a></li>
+        <li><a class="sub" href="#p22">Practice</a></li>
+        <li><a href="#l23">23 · equals &amp; counting</a></li>
+        <li><a class="sub" href="#l23-equals">equals</a></li>
+        <li><a class="sub" href="#l23-letter">Counting a letter</a></li>
+        <li><a class="sub" href="#l23-word">Counting a word</a></li>
+        <li><a class="sub" href="#l23-end">Back to “ends with”</a></li>
+        <li><a class="sub" href="#p23">Practice</a></li>
+        <li><a href="#l24">24 · compareTo</a></li>
+        <li><a class="sub" href="#l24-sign">What the number means</a></li>
+        <li><a class="sub" href="#l24-codes">Letters are numbers</a></li>
+        <li><a class="sub" href="#l24-file">The file, line by line</a></li>
+        <li><a class="sub" href="#l24-long">Longer words</a></li>
+        <li><a class="sub" href="#p24">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a class="sub" href="#life-date">Turning a date around</a></li>
+        <li><a class="sub" href="#life-file">A file's extension</a></li>
+        <li><a class="sub" href="#life-card">Hiding a card number</a></li>
+        <li><a class="sub" href="#life-initials">Initials</a></li>
+        <li><a class="sub" href="#life-pass">A password rule</a></li>
+        <li><a class="sub" href="#life-mail">Does it look like an e-mail?</a></li>
+        <li><a class="sub" href="#plife">Practice</a></li>
+        <li><a href="#extras">Extras · beyond the files</a></li>
+        <li><a class="sub" href="#x-rev">Reverse a String</a></li>
+        <li><a class="sub" href="#x-pal">Palindromes, again</a></li>
+        <li><a class="sub" href="#x-count">countOf, for any piece</a></li>
+        <li><a class="sub" href="#x-vowel">The vowel trick</a></li>
+        <li><a class="sub" href="#x-space">Removing spaces</a></li>
+        <li><a class="sub" href="#x-first">First in the dictionary</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 21 ============ -->
+      <section class="lesson" id="l21">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 21 · Lesson21.java</span>
+          <h2 class="lesson-title">length &amp; indexOf</h2>
+        </div>
+
+        <h3 id="l21-five">The five methods</h3>
+
+        <p>Java's <code class="inl">String</code> has dozens of methods. The AP exam uses five of them — the ones printed on the <strong>Java Quick Reference</strong> sheet you get in the exam room — and those five are exactly what this lesson covers. If a method is not in this table, you do not need it.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Method</th><th>Gives back</th><th>Meaning</th><th>Part</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">word.length()</td><td class="mono">int</td><td>how many characters</td><td>21</td></tr>
+              <tr><td class="mono">word.indexOf(part)</td><td class="mono">int</td><td>where <em>part</em> first starts, or −1</td><td>21</td></tr>
+              <tr><td class="mono">word.substring(start, end)</td><td class="mono">String</td><td>the characters from <em>start</em> up to, not including, <em>end</em></td><td>22</td></tr>
+              <tr><td class="mono">word.substring(start)</td><td class="mono">String</td><td>from <em>start</em> to the end</td><td>22</td></tr>
+              <tr><td class="mono">word.equals(other)</td><td class="mono">boolean</td><td>same characters, in the same order?</td><td>23</td></tr>
+              <tr><td class="mono">word.compareTo(other)</td><td class="mono">int</td><td>negative, zero or positive: which comes first?</td><td>24</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Look at how they are called. Last week it was <code class="inl">Math.abs(-3)</code>: the class name, a dot, the method. Now the <em>String itself</em> goes in front of the dot — <code class="inl">word.length()</code> means “the length of <code class="inl">word</code>”. The method works on whatever String is before the dot.</p>
+
+        <h3 id="l21-index">Every letter has a number</h3>
+
+        <p>The comment at the top of the file draws it: the letters of <code class="inl">"computer"</code>, and under each one its <strong>index</strong>. This drawing is the key to the whole lesson.</p>
+
+        <div class="strip-wrap" data-word="computer"><code class="inl">c o m p u t e r · 0 1 2 3 4 5 6 7</code></div>
+
+        <ul class="plain">
+          <li><strong>Counting starts at 0.</strong> <code class="inl">c</code> is at index 0, not 1.</li>
+          <li><strong>The last index is <code class="inl">length() - 1</code>.</strong> Eight letters, indexes 0 to 7. There is no index 8.</li>
+          <li><strong>Spaces are characters too.</strong> They get an index and they count in the length. On this page a space is drawn as <code class="inl">␣</code>.</li>
+        </ul>
+
+        <h3 id="l21-length">length()</h3>
+
+        <p>The file does not quite use <code class="inl">"computer"</code>. It uses <code class="inl">"computere"</code>, with a second <code class="inl">e</code> on the end — and that extra letter matters later.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many characters?</span></div>
+          <pre class="code"><code>String word = "computere";
+System.out.println(word.length());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>9</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computere"><code class="inl">c o m p u t e r e</code></div>
+
+        <p>Nine letters, indexes 0 to 8. <code class="inl">length()</code> counts; it does not give the last index. Those two numbers are always one apart.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The parentheses are part of the call: <code class="inl">word.length()</code>. Write <code class="inl">word.length</code> and the file will not compile — <em>cannot find symbol · symbol: variable length</em>. Java thinks you mean a variable called <code class="inl">length</code>, and there is none.</p>
+        </div>
+
+        <h3 id="l21-indexof">indexOf</h3>
+
+        <p>The comment in the file gives the whole contract in one line: <code class="inl">indexOf(String part)</code> answers with a number in <code class="inl">[0, length)</code> if <em>part</em> is found, and <code class="inl">-1</code> if it is not. First, single letters:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Where is each letter?</span></div>
+          <pre class="code"><code>System.out.println(word.indexOf("p"));  // 3
+System.out.println(word.indexOf("o"));  // 1
+System.out.println(word.indexOf("c"));  // 0
+System.out.println(word.indexOf("r"));  // 7
+System.out.println(word.indexOf("t"));  // 5</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+1
+0
+7
+5</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computere" data-marks="3" data-mlen="1"><span class="strip-cap">word.indexOf("p") → 3</span></div>
+
+        <p>Then longer pieces. For a piece of several letters, the answer is the index of the piece's <strong>first letter</strong>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Where does each piece start?</span></div>
+          <pre class="code"><code>System.out.println(word.indexOf("mpu"));  // 2
+System.out.println(word.indexOf("ter"));  // 5
+System.out.println(word.indexOf("co"));   // 0</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2
+5
+0</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computere" data-marks="2" data-mlen="3"><span class="strip-cap">word.indexOf("mpu") → 2 · the piece covers 2, 3, 4 — the answer is where it starts</span></div>
+        <div class="strip-wrap" data-word="computere" data-marks="5" data-mlen="3"><span class="strip-cap">word.indexOf("ter") → 5</span></div>
+
+        <h3 id="l21-first">The first match wins</h3>
+
+        <p>Here is why the file says <code class="inl">"computere"</code>. There are now two <code class="inl">e</code>s, at 6 and at 8. <code class="inl">indexOf</code> searches from the left and stops at the first one it finds:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two e's, one answer</span></div>
+          <pre class="code"><code>System.out.println(word.indexOf("e")); // 6</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computere" data-marks="6" data-mlen="1"><span class="strip-cap">search goes left to right and stops at 6 · the e at 8 is never reached</span></div>
+
+        <h3 id="l21-minus">−1 means “not there”</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three misses</span></div>
+          <pre class="code"><code>System.out.println(word.indexOf("C")); // -1
+System.out.println(word.indexOf("x"));  // -1
+System.out.println(word.indexOf("computers"));  // -1</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-1
+-1
+-1</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">"C"</code> is not <code class="inl">"c"</code>.</strong> Uppercase and lowercase are different characters. Every String method on this page is case-sensitive.</li>
+          <li><strong><code class="inl">"x"</code></strong> is simply not in the word.</li>
+          <li><strong><code class="inl">"computers"</code></strong> — every letter up to the <code class="inl">s</code> matches, but a piece is found only if <em>all</em> of it is there, in order, side by side.</li>
+        </ul>
+
+        <p>Why −1? Because every number from 0 upward could be a real index. −1 can never be one, so it is safe to use as the signal for “not found”.</p>
+
+        <h3 id="l21-if">indexOf inside an if</h3>
+
+        <p>The answer to <code class="inl">indexOf</code> is an <code class="inl">int</code>, so you can compare it. The file ends with two questions you can ask that way:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two questions, asked with indexOf</span></div>
+          <pre class="code"><code>String letter = "e";
+
+if (word.indexOf(letter) == 0) {
+    // word starts with letter
+}
+
+if (word.indexOf(letter) == -1) {
+    // letter is not in word
+}</code></pre>
+        </div>
+
+        <p>And a third, commented out in the file: <em>does the word <strong>end</strong> with the letter?</em></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The commented-out check — try it on "computere"</span></div>
+          <pre class="code"><code>String word = "computere";
+String letter = "e";
+System.out.println(word.indexOf(letter) == word.length() - 1);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <p>The word ends in <code class="inl">e</code>, and the check says <code class="inl">false</code>. <code class="inl">word.length() - 1</code> is 8, the last index — but <code class="inl">indexOf</code> reported the <em>first</em> <code class="inl">e</code>, at 6. 6 is not 8. The idea only works when the letter appears once. That is why it is commented out; Part 23 fixes it.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Every <em>Find</em> box — Ctrl+F in a browser, the search in Word or WhatsApp — asks the same question as <code class="inl">indexOf</code>: <em>where does this piece start, if it is there at all?</em> A form that says “your password must be at least 8 characters” is checking <code class="inl">length()</code>.</p>
+        </div>
+
+        <div class="lab" data-mode="index">
+          <div class="lab-head"><b>String lab · indexOf</b><span>Type a word and a piece. The drawing and the console update as you type.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab21-word">word<input id="lab21-word" data-f="word" value="computere" maxlength="24" autocomplete="off" spellcheck="false"></label>
+              <label for="lab21-part">part<input id="lab21-part" data-f="part" value="ter" maxlength="24" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="strip-wrap lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">e</code>, then <code class="inl">E</code>, then <code class="inl">computers</code>. Try a piece that appears twice.</p>
+          </div>
+        </div>
+
+        <div class="practice" id="p21">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 21</h3>
+          <p class="practice-lede">Draw the boxes and the indexes first. Then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String s = "banana";
+System.out.println(s.length());
+System.out.println(s.indexOf("a"));
+System.out.println(s.indexOf("na"));
+System.out.println(s.indexOf("nab"));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="strip-wrap" data-word="banana"></div>
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6
+1
+2
+-1</pre></div></div>
+                  <p>Three <code class="inl">a</code>s, but only the first counts: 1. <code class="inl">"na"</code> appears at 2 and at 4; the first is 2. <code class="inl">"nab"</code> needs a <code class="inl">b</code> after <code class="inl">na</code>, and there is none.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A String has length 12. What is the index of its last character? Is 12 a valid index?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">11 · no</span></p>
+                  <p>Indexes run from 0 to <code class="inl">length() - 1</code>. Twelve characters use the indexes 0 to 11.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">"Java".indexOf("j")</code> give? And <code class="inl">"Java".indexOf("J")</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">-1 · 0</span></p>
+                  <p>Lowercase <code class="inl">j</code> is not in the word. Uppercase <code class="inl">J</code> is, at the start.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String h = "hello world";
+System.out.println(h.indexOf(" "));
+System.out.println(h.length());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="strip-wrap" data-word="hello world" data-marks="5" data-mlen="1"></div>
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5
+11</pre></div></div>
+                  <p>The space is a character: it sits at index 5 and it is counted in the length.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does this print for <code class="inl">letter = "p"</code>? For <code class="inl">letter = "z"</code>? For <code class="inl">letter = "a"</code>?</p>
+              <div class="ex"><pre class="code"><code>String word = "apple";
+if (word.indexOf(letter) == 0) {
+    System.out.println("starts");
+} else if (word.indexOf(letter) == -1) {
+    System.out.println("missing");
+} else {
+    System.out.println("inside");
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">inside · missing · starts</span></p>
+                  <p><code class="inl">"p"</code> is first found at 1, which is neither 0 nor −1. <code class="inl">"z"</code> gives −1. <code class="inl">"a"</code> gives 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String m = "Mississippi";
+System.out.println(m.indexOf("ss"));
+System.out.println(m.indexOf("i"));
+System.out.println(m.indexOf("ssi"));
+System.out.println(m.indexOf("sip"));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="strip-wrap" data-word="Mississippi" data-marks="6" data-mlen="3"><span class="strip-cap">"sip" starts at 6</span></div>
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>2
+1
+2
+6</pre></div></div>
+                  <p><code class="inl">"ss"</code> and <code class="inl">"ssi"</code> both appear twice (at 2 and 5); the first wins. <code class="inl">"sip"</code> only appears once, at 6.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 22 ============ -->
+      <section class="lesson" id="l22">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 22 · Lesson22.java</span>
+          <h2 class="lesson-title">substring</h2>
+        </div>
+
+        <h3 id="l22-cut">Cutting between letters</h3>
+
+        <p><code class="inl">indexOf</code> tells you <em>where</em> something is. <code class="inl">substring</code> takes a piece <em>out</em>. The comment in the file writes its rule the way a mathematician would: <code class="inl">substring(int start, int end)</code> takes <code class="inl">[start, end)</code> — the square bracket means <em>start is included</em>, the round one means <em>end is not</em>.</p>
+
+        <p>The easiest way to see this: stop numbering the letters and number the <strong>gaps between them</strong> instead. Gap 0 is before the <code class="inl">c</code>, gap 8 is after the <code class="inl">r</code>. <code class="inl">substring(start, end)</code> puts one knife at gap <em>start</em>, another at gap <em>end</em>, and gives you what is between the knives.</p>
+
+        <div class="strip-wrap" data-word="computer" data-edges data-from="2" data-to="5"><span class="strip-cap">word.substring(2, 5) → "mpu" · knives at gaps 2 and 5</span></div>
+
+        <p>Two things fall out of the drawing at once:</p>
+        <ul class="plain">
+          <li><strong>The piece has <code class="inl">end - start</code> letters.</strong> 5 − 2 = 3: <code class="inl">m</code>, <code class="inl">p</code>, <code class="inl">u</code>.</li>
+          <li><strong>A word of length 8 has gaps 0 to 8.</strong> So <code class="inl">8</code> is a fine <em>end</em> for a substring, even though there is no <em>letter</em> at index 8.</li>
+        </ul>
+
+        <h3 id="l22-six">Six cuts from the file</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>String word = "computer";</span></div>
+          <pre class="code"><code>System.out.println(word.substring(2,5));  // mpu
+System.out.println(word.substring(0,4));  // comp
+System.out.println(word.substring(3,7));  // pute
+System.out.println(word.substring(2,8));  // mputer
+System.out.println(word.substring(0,8));  // computer
+System.out.println(word.substring(4,5));  // u</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>mpu
+comp
+pute
+mputer
+computer
+u</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer" data-edges data-from="0" data-to="4"><span class="strip-cap">substring(0, 4) → "comp" · 4 letters</span></div>
+        <div class="strip-wrap" data-word="computer" data-edges data-from="3" data-to="7"><span class="strip-cap">substring(3, 7) → "pute" · 4 letters</span></div>
+        <div class="strip-wrap" data-word="computer" data-edges data-from="2" data-to="8"><span class="strip-cap">substring(2, 8) → "mputer" · the second knife at the very end</span></div>
+        <div class="strip-wrap" data-word="computer" data-edges data-from="4" data-to="5"><span class="strip-cap">substring(4, 5) → "u" · end = start + 1 gives exactly one letter</span></div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Call</th><th class="mono">start</th><th class="mono">end</th><th class="mono">end − start</th><th class="mono">Result</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">substring(2,5)</td><td class="mono">2</td><td class="mono">5</td><td class="mono">3</td><td class="mono">"mpu"</td></tr>
+              <tr><td class="mono">substring(0,4)</td><td class="mono">0</td><td class="mono">4</td><td class="mono">4</td><td class="mono">"comp"</td></tr>
+              <tr><td class="mono">substring(3,7)</td><td class="mono">3</td><td class="mono">7</td><td class="mono">4</td><td class="mono">"pute"</td></tr>
+              <tr><td class="mono">substring(2,8)</td><td class="mono">2</td><td class="mono">8</td><td class="mono">6</td><td class="mono">"mputer"</td></tr>
+              <tr><td class="mono">substring(0,8)</td><td class="mono">0</td><td class="mono">8</td><td class="mono">8</td><td class="mono">"computer"</td></tr>
+              <tr><td class="mono">substring(4,5)</td><td class="mono">4</td><td class="mono">5</td><td class="mono">1</td><td class="mono">"u"</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l22-ends">First and last letter</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two cuts you will write again and again</span></div>
+          <pre class="code"><code>System.out.println(word.substring(0,1)); // first character
+System.out.println(word.substring(word.length()-1,word.length())); // last character</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>c
+r</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer" data-edges data-from="0" data-to="1"><span class="strip-cap">substring(0, 1) → "c"</span></div>
+        <div class="strip-wrap" data-word="computer" data-edges data-from="7" data-to="8"><span class="strip-cap">substring(length() − 1, length()) = substring(7, 8) → "r"</span></div>
+
+        <p>The second line never mentions 7 or 8. Because it is written with <code class="inl">word.length()</code>, it gives the last letter of <em>any</em> word — change <code class="inl">word</code> to <code class="inl">"java"</code> and it becomes <code class="inl">substring(3, 4)</code> by itself.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>The letter at index <code class="inl">i</code> is <code class="inl">word.substring(i, i + 1)</code>. That one pattern is how you reach any single letter with the methods on the exam sheet.</p>
+        </div>
+
+        <h3 id="l22-loop">One letter at a time</h3>
+
+        <p>The file first writes the pattern out by hand — <code class="inl">substring(0,1)</code>, <code class="inl">substring(1,2)</code>, … <code class="inl">substring(7,8)</code> — then notices that only one number changes, and hands that number to a loop:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every letter, top to bottom</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; word.length(); i++) {
+    System.out.println(word.substring(i, i + 1));
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>c
+o
+m
+p
+u
+t
+e
+r</pre></div>
+        </div>
+
+        <div class="slides" data-word="computer" data-w="1"></div>
+
+        <p>The loop condition is <code class="inl">i &lt; word.length()</code>, so the last pass is <code class="inl">i = 7</code> and the last cut is <code class="inl">substring(7, 8)</code> — the second knife lands exactly on the last gap. This is the most important loop in the lesson; almost every String problem starts with it.</p>
+
+        <h3 id="l22-boom">When it breaks</h3>
+
+        <p>The file lists three ways to break <code class="inl">substring</code>. Each one crashes the program with a <code class="inl">StringIndexOutOfBoundsException</code>:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Rule broken</th><th class="mono">Example on "computer"</th><th>Why it is impossible</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>end &gt; length</td><td class="mono">substring(3, 9)</td><td>there is no gap 9</td></tr>
+              <tr><td>start &lt; 0</td><td class="mono">substring(-1, 7)</td><td>there is no gap −1</td></tr>
+              <tr><td>start &gt; end</td><td class="mono">substring(5, 2)</td><td>the knives are the wrong way round</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Uncomment the first one and run it</span></div>
+          <pre class="code"><code>System.out.println(word.substring(3, 9));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.StringIndexOutOfBoundsException: Range [3, 9) out of bounds for length 8</em>
+<em>	at java.base/java.lang.String.substring(String.java:2823)</em>
+<em>	at Grup1.Lesson22.main(Lesson22.java:45)</em></pre></div>
+        </div>
+
+        <p>Read the message: Java itself writes the range as <code class="inl">[3, 9)</code> — the same bracket notation as the comment in the file — and tells you the length it was checked against. The last line names the file and the line that caused it. (A few lines inside Java's own code are left out here; your console shows more. Older versions of Java word the message differently, as <em>begin 3, end 9, length 8</em>.)</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>This is not a compile error. The file compiles fine and crashes only when that line actually runs. Java cannot know in advance how long a String will be.</p>
+        </div>
+
+        <h3 id="l22-empty">The empty String</h3>
+
+        <p>What if both knives go in the same gap?</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>start equals end</span></div>
+          <pre class="code"><code>System.out.println(word.substring(0, 0)); // "" empty string
+System.out.println(word.substring(5, 5)); // ""
+System.out.println(word.substring(8, 8)); // ""</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>
+
+
+</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer" data-edges data-from="5" data-to="5"><span class="strip-cap">substring(5, 5) → "" · nothing between the knives</span></div>
+
+        <p>No crash — none of the three rules is broken — and nothing between the knives. The result is the <strong>empty String</strong> <code class="inl">""</code>, a String with length 0. <code class="inl">println</code> prints it as an empty line, which is why the console shows three blank lines. Even <code class="inl">substring(8, 8)</code> is fine: gap 8 exists.</p>
+
+        <h3 id="l22-back">Backwards</h3>
+
+        <p>Run the loop from the last index down to 0 and the letters come out in reverse. Only the loop header changes; the cut <code class="inl">substring(i, i + 1)</code> is the same.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>From the last letter to the first</span></div>
+          <pre class="code"><code>for (int i = word.length() - 1; i &gt;= 0; i--) {
+    System.out.println(word.substring(i, i + 1));
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>r
+e
+t
+u
+p
+m
+o
+c</pre></div>
+        </div>
+
+        <div class="slides" data-word="computer" data-w="1" data-back></div>
+
+        <p>Start at <code class="inl">word.length() - 1</code>, the last <em>index</em> — not at <code class="inl">word.length()</code>. And keep going while <code class="inl">i &gt;= 0</code>, so index 0 is included.</p>
+
+        <h3 id="l22-pairs">Pairs and triples</h3>
+
+        <p>Make the cut two letters wide — <code class="inl">substring(i, i + 2)</code> — and the window slides along the word two letters at a time. The loop has to stop one pass earlier:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every pair of neighbours</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; word.length() - 1; i++) {
+    System.out.println(word.substring(i, i + 2));
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>co
+om
+mp
+pu
+ut
+te
+er</pre></div>
+        </div>
+
+        <div class="slides" data-word="computer" data-w="2"></div>
+
+        <p>The last pair is <code class="inl">"er"</code>, at <code class="inl">i = 6</code>: <code class="inl">substring(6, 8)</code>. One more pass would be <code class="inl">substring(7, 9)</code> — gap 9 again. That is what the <code class="inl">- 1</code> in the condition prevents. Three letters wide needs <code class="inl">- 2</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Every three letters in a row</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; word.length() - 2; i++) {
+    System.out.println(word.substring(i, i + 3));
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>com
+omp
+mpu
+put
+ute
+ter</pre></div>
+        </div>
+
+        <div class="slides" data-word="computer" data-w="3"></div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A window <em>w</em> letters wide fits <code class="inl">length - w + 1</code> times. Width 1: 8 windows. Width 2: 7. Width 3: 6. Too many passes crashes; too few silently misses the last window.</p>
+        </div>
+
+        <p>Here is what happens if you forget the <code class="inl">- 1</code> for pairs. The first seven passes are fine; the eighth crashes:</p>
+
+        <div class="slides" data-word="computer" data-w="2" data-over></div>
+
+        <h3 id="l22-one">substring(start)</h3>
+
+        <p>Give <code class="inl">substring</code> only one number and the second knife goes at the very end by itself. The file's comment: <code class="inl">substring(start)</code> is the same as <code class="inl">substring(start, length)</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One argument: from here to the end</span></div>
+          <pre class="code"><code>System.out.println(word.substring(2));  // mputer
+System.out.println(word.substring(0));  // computer
+System.out.println(word.substring(3));  // puter
+System.out.println(word.substring(4));  // uter
+
+System.out.println(word.substring(word.length()-1)); // last character</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>mputer
+computer
+puter
+uter
+r</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer" data-edges data-from="3" data-to="8"><span class="strip-cap">substring(3) = substring(3, 8) → "puter"</span></div>
+
+        <p>The last line is a shorter way to get the last letter: <code class="inl">substring(word.length() - 1)</code> means “from the last index to the end”, which is one letter.</p>
+
+        <h3 id="l22-name">Splitting a full name</h3>
+
+        <p>The file ends by putting <code class="inl">indexOf</code> and <code class="inl">substring</code> together. Find the space; everything before it is the first name, everything after it is the last name.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>indexOf finds the knife, substring cuts</span></div>
+          <pre class="code"><code>String fullName = "Ada Lovelace";
+int index = fullName.indexOf(" ");
+if (index != -1) {
+    System.out.println(fullName.substring(0, index));
+    System.out.println(fullName.substring(index + 1));
+} else {
+    System.out.println(fullName);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ada
+Lovelace</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="Ada Lovelace" data-edges data-from="0" data-to="3"><span class="strip-cap">index = 3 · substring(0, index) → "Ada" · the space is left out because end is not included</span></div>
+        <div class="strip-wrap" data-word="Ada Lovelace" data-edges data-from="4" data-to="12"><span class="strip-cap">substring(index + 1) → "Lovelace" · + 1 steps over the space</span></div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">substring(0, index)</code></strong> stops just before the space, because <em>end</em> is not included.</li>
+          <li><strong><code class="inl">substring(index + 1)</code></strong> starts just after it. Without the <code class="inl">+ 1</code>, the last name would begin with a space: <code class="inl">" Lovelace"</code>.</li>
+          <li><strong>The <code class="inl">if</code></strong> handles a name with no space. For <code class="inl">"Cher"</code>, <code class="inl">index</code> is −1, and <code class="inl">substring(0, -1)</code> would crash. The file checks first and prints the whole name instead.</li>
+        </ul>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Whenever a program takes a piece out of a longer text, it is <code class="inl">substring</code>: the year out of a date, the last four digits of a card number on a receipt, the first letter of a name for an initial. The section <a href="#life">In real life</a> below writes these out.</p>
+        </div>
+
+        <div class="lab" data-mode="sub">
+          <div class="lab-head"><b>String lab · substring</b><span>Move the knives. Break the rules on purpose and read the exception.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab22-word">word<input id="lab22-word" data-f="word" value="computer" maxlength="24" autocomplete="off" spellcheck="false"></label>
+              <label for="lab22-from">start<input id="lab22-from" data-f="from" type="number" value="2"></label>
+              <label for="lab22-to">end<input id="lab22-to" data-f="to" type="number" value="5"></label>
+              <label class="chk" for="lab22-two"><input id="lab22-two" data-f="two" type="checkbox" checked> two arguments</label>
+            </div>
+            <div class="strip-wrap lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">(3, 9)</code>, <code class="inl">(5, 2)</code>, <code class="inl">(8, 8)</code>. Untick <em>two arguments</em> for <code class="inl">substring(start)</code>.</p>
+          </div>
+        </div>
+
+        <div class="practice" id="p22">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 22</h3>
+          <p class="practice-lede">In every question, <code class="inl">String word = "computer";</code> unless it says otherwise. Draw the gaps.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does each line print?</p>
+              <div class="ex"><pre class="code"><code>System.out.println(word.substring(1, 4));
+System.out.println(word.substring(5));
+System.out.println(word.substring(3, 3));
+System.out.println(word.substring(7));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="strip-wrap" data-word="computer" data-edges data-from="1" data-to="4"><span class="strip-cap">substring(1, 4) → "omp"</span></div>
+                  <p><span class="outline">omp · ter · (empty line) · r</span></p>
+                  <p><code class="inl">substring(5)</code> is <code class="inl">substring(5, 8)</code>. <code class="inl">(3, 3)</code> has nothing between the knives. <code class="inl">substring(7)</code> is the last letter.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Without counting letters: how long is <code class="inl">word.substring(2, 6)</code>? What is it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4 letters · "mput"</span></p>
+                  <p>Length is always <code class="inl">end - start</code> = 6 − 2 = 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these crash? For the ones that don't, what do they give?</p>
+              <div class="ex"><pre class="code"><code>word.substring(0, 8)
+word.substring(8)
+word.substring(2, 9)
+word.substring(4, 3)</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"computer" · "" · crash · crash</span></p>
+                  <p><code class="inl">8</code> is a real gap, so <code class="inl">(0, 8)</code> is the whole word and <code class="inl">substring(8)</code> is <code class="inl">(8, 8)</code>, the empty String. <code class="inl">(2, 9)</code> has end &gt; length. <code class="inl">(4, 3)</code> has start &gt; end.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed? (It uses <code class="inl">print</code>, not <code class="inl">println</code>.)</p>
+              <div class="ex"><pre class="code"><code>for (int i = 0; i &lt; word.length(); i += 2) {
+    System.out.print(word.substring(i, i + 1) + " ");
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>c m u e </pre></div></div>
+                  <p><code class="inl">i</code> is 0, 2, 4, 6 — the letters at the even indexes. At <code class="inl">i = 8</code> the loop stops.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String email = "ali@school.com";
+int at = email.indexOf("@");
+System.out.println(email.substring(0, at));
+System.out.println(email.substring(at + 1));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>ali
+school.com</pre></div></div>
+                  <p>The full-name split with <code class="inl">"@"</code> instead of <code class="inl">" "</code>. <code class="inl">at</code> is 3.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What happens when this runs?</p>
+              <div class="ex"><pre class="code"><code>for (int i = 0; i &lt; word.length(); i++) {
+    System.out.print(word.substring(i, i + 2) + " ");
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>co om mp pu ut te er <em>Exception in thread "main" java.lang.StringIndexOutOfBoundsException: Range [7, 9) out of bounds for length 8</em></pre></div></div>
+                  <p>Seven pairs print, then the eighth pass asks for <code class="inl">substring(7, 9)</code>. A two-letter window needs <code class="inl">i &lt; word.length() - 1</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 23 ============ -->
+      <section class="lesson" id="l23">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 23 · Lesson23.java</span>
+          <h2 class="lesson-title">equals &amp; Counting</h2>
+        </div>
+
+        <h3 id="l23-equals">equals</h3>
+
+        <p><code class="inl">equals</code> asks one question: do these two Strings have the same characters, in the same order? The answer is a <code class="inl">boolean</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>equals(another string) → true / false</span></div>
+          <pre class="code"><code>String x = "A";
+String y = "B";
+String z = "A";
+
+System.out.println(x.equals(y));
+System.out.println(x.equals(z));
+System.out.println(z.equals(y));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+true
+false</pre></div>
+        </div>
+
+        <p>“Same” means exactly the same: <code class="inl">"a"</code> does not equal <code class="inl">"A"</code>, and <code class="inl">"cat"</code> does not equal <code class="inl">"cat "</code> with a space on the end. Because it returns a <code class="inl">boolean</code>, <code class="inl">equals</code> goes straight into an <code class="inl">if</code> — and that is how the rest of the file uses it.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>To check whether two Strings are the same, use <code class="inl">equals</code>. Numbers are compared with <code class="inl">==</code>; Strings are compared with <code class="inl">.equals(...)</code>.</p>
+        </div>
+
+        <h3 id="l23-letter">Counting a letter</h3>
+
+        <p>Put three things together: the one-letter loop from Part 22, <code class="inl">equals</code>, and a counter from Lesson 3.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many e's?</span></div>
+          <pre class="code"><code>int count = 0;
+String word = "the professor drinks a cup of coffee in the office";
+for (int i = 0; i &lt; word.length(); i++) {
+    String c = word.substring(i, i + 1);
+    if (c.equals("e")) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="the professor drinks a cup of coffee in the office" data-marks="2,8,34,35,42,49" data-mlen="1"><span class="strip-cap">50 characters · the six e's are at 2, 8, 34, 35, 42 and 49</span></div>
+
+        <p>Each pass cuts out one letter, gives it the name <code class="inl">c</code>, and asks <code class="inl">c.equals("e")</code>. Here are the first few passes and the last one:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">i</th><th class="mono">c = substring(i, i + 1)</th><th class="mono">c.equals("e")</th><th class="mono">count after</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">0</td><td class="mono">"t"</td><td class="mono"><span class="fv">false</span></td><td class="mono">0</td></tr>
+              <tr><td class="mono">1</td><td class="mono">"h"</td><td class="mono"><span class="fv">false</span></td><td class="mono">0</td></tr>
+              <tr><td class="mono">2</td><td class="mono">"e"</td><td class="mono"><span class="tv">true</span></td><td class="mono">1</td></tr>
+              <tr><td class="mono">3</td><td class="mono">" "</td><td class="mono"><span class="fv">false</span></td><td class="mono">1</td></tr>
+              <tr><td class="mono">…</td><td class="mono">…</td><td class="mono">…</td><td class="mono">…</td></tr>
+              <tr><td class="mono">49</td><td class="mono">"e"</td><td class="mono"><span class="tv">true</span></td><td class="mono">6</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l23-word">Counting a word</h3>
+
+        <p>To count <code class="inl">"of"</code>, widen the window to two letters — the pairs loop from Part 22, with its <code class="inl">- 1</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many "of"s?</span></div>
+          <pre class="code"><code>count = 0;
+for (int i = 0; i &lt; word.length() - 1; i++) {
+    String c = word.substring(i, i + 2);
+    if (c.equals("of")) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="the professor drinks a cup of coffee in the office" data-marks="6,27,31,44" data-mlen="2"><span class="strip-cap">"of" at 6, 27, 31 and 44 · only one of them is the word "of"</span></div>
+
+        <p>Four, not one. The sentence has only one word <em>of</em> — but the loop does not know about words. It also finds the <code class="inl">of</code> hiding inside <code class="inl">professor</code>, <code class="inl">coffee</code> and <code class="inl">office</code>. A search that looks for letters side by side finds them wherever they are.</p>
+
+        <p>Here is the same loop on a short word, so every pass fits on screen:</p>
+
+        <div class="slides" data-word="proof" data-w="2" data-want="of"></div>
+
+        <p><code class="inl">"proof"</code> has length 5, so the loop runs while <code class="inl">i &lt; 4</code>: four windows, and the last one, <code class="inl">substring(3, 5)</code>, is the <code class="inl">"of"</code>. With <code class="inl">i &lt; word.length() - 2</code> the last window would be skipped and the count would be 0 — no crash, just a wrong answer.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Windows can overlap. <code class="inl">"banana"</code> contains <code class="inl">"ana"</code> at index 1 and at index 3 — they share the middle <code class="inl">a</code> — and this loop counts both.</p>
+        </div>
+
+        <h3 id="l23-end">Back to “ends with”</h3>
+
+        <p>Part 21 left a check commented out because <code class="inl">indexOf</code> only reports the first match. With <code class="inl">substring</code> and <code class="inl">equals</code> you do not need to search at all — cut off the last letter and compare it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Does "computere" end with "e"?</span></div>
+          <pre class="code"><code>String word = "computere";
+String letter = "e";
+System.out.println(word.indexOf(letter) == word.length() - 1);   // Part 21's idea
+System.out.println(word.substring(word.length() - 1).equals(letter));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+true</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computere" data-edges data-from="8" data-to="9"><span class="strip-cap">substring(length() − 1) → "e" · then .equals("e")</span></div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A login screen compares the password you typed with the saved one using an exact match — that is why <em>Ankara06</em> and <em>ankara06</em> are different passwords. Counting is everywhere too: how many times a hashtag appears in a post, how many times a word appears in an essay.</p>
+        </div>
+
+        <div class="practice" id="p23">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 23</h3>
+          <p class="practice-lede">Trace the loops on paper before opening the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String x = "cat";
+String y = "Cat";
+String z = "cat";
+System.out.println(x.equals(y));
+System.out.println(x.equals(z));
+System.out.println(y.equals("Cat"));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>false
+true
+true</pre></div></div>
+                  <p><code class="inl">"cat"</code> and <code class="inl">"Cat"</code> differ in the first letter's case.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Change the letter-counting loop so it counts <code class="inl">"a"</code> in <code class="inl">"banana"</code>. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="strip-wrap" data-word="banana" data-marks="1,3,5" data-mlen="1"></div>
+                  <p><span class="outline">3</span></p>
+                  <p>Change the word and the <code class="inl">equals("e")</code> to <code class="inl">equals("a")</code>; nothing else.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Using the two-letter loop, how many times does <code class="inl">"an"</code> appear in <code class="inl">"banana"</code>? Then write the loop that counts <code class="inl">"ana"</code>. How many?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"an" → 2 · "ana" → 2</span></p>
+                  <div class="slides" data-word="banana" data-w="3" data-want="ana"></div>
+                  <p>For three letters: <code class="inl">i &lt; word.length() - 2</code> and <code class="inl">substring(i, i + 3)</code>. The two <code class="inl">"ana"</code>s overlap, and both count.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>For <code class="inl">word = "proof"</code>, what does this print?</p>
+              <div class="ex"><pre class="code"><code>int count = 0;
+for (int i = 0; i &lt; word.length() - 2; i++) {
+    if (word.substring(i, i + 2).equals("of")) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0</span></p>
+                  <p>The loop stops at <code class="inl">i = 2</code> and never looks at <code class="inl">substring(3, 5)</code>, which is the only <code class="inl">"of"</code>. For a two-letter window the bound is <code class="inl">- 1</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>How many spaces are in <code class="inl">"the professor drinks a cup of coffee in the office"</code>? Which of the two loops from the file would you change, and how?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">9 · the one-letter loop, with c.equals(" ")</span></p>
+                  <p>A space is a one-character String, <code class="inl">" "</code>. Ten words, nine gaps between them.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write one expression that is <code class="inl">true</code> when the first letter of <code class="inl">word</code> is the same as its last letter. Test it on <code class="inl">"level"</code> and <code class="inl">"java"</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>word.substring(0, 1).equals(word.substring(word.length() - 1))</code></pre></div>
+                  <p><span class="outline">"level" → true · "java" → false</span></p>
+                  <p>First letter with <code class="inl">(0, 1)</code>, last letter with the one-argument form, compared with <code class="inl">equals</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 24 ============ -->
+      <section class="lesson" id="l24">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 24 · Lesson24.java</span>
+          <h2 class="lesson-title">compareTo</h2>
+        </div>
+
+        <h3 id="l24-sign">What the number means</h3>
+
+        <p><code class="inl">equals</code> only says <em>same</em> or <em>not the same</em>. <code class="inl">compareTo</code> says which one comes first, the way words are ordered in a dictionary. It answers with an <code class="inl">int</code>, and the sign is what matters:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">a.compareTo(b) is…</th><th>It means</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">negative</td><td><code class="inl">a</code> comes <strong>before</strong> <code class="inl">b</code></td></tr>
+              <tr><td class="mono">0</td><td>they are equal (same as <code class="inl">equals</code> being <code class="inl">true</code>)</td></tr>
+              <tr><td class="mono">positive</td><td><code class="inl">a</code> comes <strong>after</strong> <code class="inl">b</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>A way to remember it: read <code class="inl">a.compareTo(b)</code> as <code class="inl">a − b</code>. If <code class="inl">a</code> is “smaller” (earlier), the difference is negative.</p>
+
+        <h3 id="l24-codes">Letters are numbers</h3>
+
+        <p>In class we numbered the letters A = 1, B = 2, C = 3, … and subtracted. That gives the right answers, because only the <em>difference</em> is used. Java's real numbers are different — every character has a code, and <code class="inl">A</code> is 65 — but the gaps between letters are the same, so the differences come out the same.</p>
+
+        <div class="codes" data-on="ACE"><div><b>A</b><small>65</small></div><div><b>B</b><small>66</small></div><div><b>C</b><small>67</small></div><div><b>D</b><small>68</small></div><div><b>E</b><small>69</small></div><div><b>F</b><small>70</small></div><div><b>G</b><small>71</small></div><div><b>H</b><small>72</small></div><div><b>I</b><small>73</small></div><div><b>J</b><small>74</small></div><div><b>K</b><small>75</small></div><div><b>L</b><small>76</small></div><div><b>M</b><small>77</small></div><div><b>N</b><small>78</small></div><div><b>O</b><small>79</small></div><div><b>P</b><small>80</small></div><div><b>Q</b><small>81</small></div><div><b>R</b><small>82</small></div><div><b>S</b><small>83</small></div><div><b>T</b><small>84</small></div><div><b>U</b><small>85</small></div><div><b>V</b><small>86</small></div><div><b>W</b><small>87</small></div><div><b>X</b><small>88</small></div><div><b>Y</b><small>89</small></div><div><b>Z</b><small>90</small></div></div>
+
+        <div class="codes" data-on="ah"><div><b>a</b><small>97</small></div><div><b>b</b><small>98</small></div><div><b>c</b><small>99</small></div><div><b>d</b><small>100</small></div><div><b>e</b><small>101</small></div><div><b>f</b><small>102</small></div><div><b>g</b><small>103</small></div><div><b>h</b><small>104</small></div><div><b>i</b><small>105</small></div><div><b>j</b><small>106</small></div><div><b>k</b><small>107</small></div><div><b>l</b><small>108</small></div><div><b>m</b><small>109</small></div><div><b>n</b><small>110</small></div><div><b>o</b><small>111</small></div><div><b>p</b><small>112</small></div><div><b>q</b><small>113</small></div><div><b>r</b><small>114</small></div><div><b>s</b><small>115</small></div><div><b>t</b><small>116</small></div><div><b>u</b><small>117</small></div><div><b>v</b><small>118</small></div><div><b>w</b><small>119</small></div><div><b>x</b><small>120</small></div><div><b>y</b><small>121</small></div><div><b>z</b><small>122</small></div></div>
+
+        <p>The comment in the file draws the important part of this table: the capitals come first, then — after <code class="inl">Z</code> and a few other symbols — the small letters. <strong>Every capital letter comes before every small letter.</strong> You do not need to memorise the codes; you need to know that order.</p>
+
+        <h3 id="l24-file">The file, line by line</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>compareTo(other str) returns int</span></div>
+          <pre class="code"><code>String a = "A";
+String b = "C";
+String c = "E";
+String d = "a";
+String e = "C";
+
+System.out.println(a.compareTo(e)); // 1 - 3 ---> -2
+System.out.println(b.compareTo(e)); // 0
+System.out.println(a.compareTo(b)); // 1 - 3 --> -2
+System.out.println(b.compareTo(a)); // 3 - 1 ---> 2
+System.out.println(c.compareTo(a)); // 5 - 1 ---> 4
+System.out.println(a.compareTo(d));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-2
+0
+-2
+2
+4
+-32</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Call</th><th>Class numbers</th><th>Java codes</th><th class="mono">Result</th><th>Reads as</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">"A".compareTo("C")</td><td class="mono">1 − 3</td><td class="mono">65 − 67</td><td class="mono">-2</td><td>A before C</td></tr>
+              <tr><td class="mono">"C".compareTo("C")</td><td class="mono">3 − 3</td><td class="mono">67 − 67</td><td class="mono">0</td><td>equal</td></tr>
+              <tr><td class="mono">"C".compareTo("A")</td><td class="mono">3 − 1</td><td class="mono">67 − 65</td><td class="mono">2</td><td>C after A</td></tr>
+              <tr><td class="mono">"E".compareTo("A")</td><td class="mono">5 − 1</td><td class="mono">69 − 65</td><td class="mono">4</td><td>E after A</td></tr>
+              <tr><td class="mono">"A".compareTo("a")</td><td class="mono">—</td><td class="mono">65 − 97</td><td class="mono"><span class="fv">-32</span></td><td>capital A before small a</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The last line is the one the class numbering cannot answer. <code class="inl">"A"</code> and <code class="inl">"a"</code> are the same letter to us, but to Java they are 65 and 97 — 32 apart. Every small letter is exactly 32 after its capital.</p>
+
+        <h3 id="l24-long">Longer words</h3>
+
+        <p>For words of more than one letter, Java walks along both words together, index by index, and stops at the <strong>first position where they differ</strong>. Only those two letters are subtracted; everything after them is ignored.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two six-letter words, one short word</span></div>
+          <pre class="code"><code>String word1 = "abchab";
+String word2 = "abcayg";
+String word3 = "abc";
+System.out.println(word1.compareTo(word2));
+System.out.println(word3.compareTo(word1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>7
+-3</pre></div>
+        </div>
+
+        <div class="cmpfig" data-a="abchab" data-b="abcayg"></div>
+
+        <p>Indexes 0, 1, 2 match: <code class="inl">a b c</code>. At index 3 it is <code class="inl">h</code> against <code class="inl">a</code> — the comment in the file, <code class="inl">// h a</code>. 104 − 97 = 7. The <code class="inl">b</code> against <code class="inl">g</code> after it is never looked at.</p>
+
+        <div class="cmpfig" data-a="abc" data-b="abchab"></div>
+
+        <p>Here no letter differs — <code class="inl">"abc"</code> simply runs out. When one word is the beginning of the other, the shorter one comes first, and Java answers with the difference in length: 3 − 6 = −3. This is why <em>car</em> comes before <em>carpet</em> in a dictionary.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>On the exam, only the sign of <code class="inl">compareTo</code> matters: <em>negative, zero, positive</em>. Use it as <code class="inl">a.compareTo(b) &lt; 0</code> (“a comes first”), never as <code class="inl">a.compareTo(b) == -1</code> — the result is −2, −3, −32… as often as it is −1.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Any list sorted A to Z — a class list, contacts, files in a folder — needs a “which comes first?” test, and <code class="inl">compareTo</code> is Java's. Sorting with it directly has a surprise: <code class="inl">"Can".compareTo("Deniz")</code> is −1, but <code class="inl">"can".compareTo("Deniz")</code> is 31 — typed in small letters, <em>can</em> lands after <em>Deniz</em>.</p>
+        </div>
+
+        <div class="lab" data-mode="cmp">
+          <div class="lab-head"><b>String lab · equals &amp; compareTo</b><span>Two words. The first difference is marked in amber.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab24-a">a<input id="lab24-a" data-f="word" value="apple" maxlength="24" autocomplete="off" spellcheck="false"></label>
+              <label for="lab24-b">b<input id="lab24-b" data-f="other" value="apricot" maxlength="24" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">car</code> and <code class="inl">carpet</code>, then <code class="inl">Zebra</code> and <code class="inl">apple</code>, then the same word twice.</p>
+          </div>
+        </div>
+
+        <div class="practice" id="p24">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 24</h3>
+          <p class="practice-lede">Find the first difference first. The codes table above is there if you need it.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>System.out.println("B".compareTo("E"));
+System.out.println("E".compareTo("B"));
+System.out.println("D".compareTo("D"));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>-3
+3
+0</pre></div></div>
+                  <p>Swap the two sides and the sign flips; the size stays.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">"b".compareTo("B")</code> and <code class="inl">"Z".compareTo("a")</code> give?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">32 · -7</span></p>
+                  <p>98 − 66 = 32: small letters come after capitals. 90 − 97 = −7: even <code class="inl">Z</code>, the last capital, comes before <code class="inl">a</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">"apple".compareTo("apricot")</code> give?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="cmpfig" data-a="apple" data-b="apricot"></div>
+                  <p><span class="outline">-2</span></p>
+                  <p>The lengths do not matter here, because a letter differs before either word runs out.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">"car".compareTo("carpet")</code> and <code class="inl">"carpet".compareTo("car")</code> give?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="cmpfig" data-a="car" data-b="carpet"></div>
+                  <p><span class="outline">-3 · 3</span></p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>According to <code class="inl">compareTo</code>, which comes first: <code class="inl">"Zebra"</code> or <code class="inl">"apple"</code>? Is that what a dictionary says?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"Zebra" · no</span></p>
+                  <p><code class="inl">"Zebra".compareTo("apple")</code> is 90 − 97 = −7, negative, so <code class="inl">"Zebra"</code> comes first. A dictionary ignores capitals; <code class="inl">compareTo</code> does not.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String w1 = "cake";
+String w2 = "candy";
+if (w1.compareTo(w2) &lt; 0) {
+    System.out.println(w1);
+} else {
+    System.out.println(w2);
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="cmpfig" data-a="cake" data-b="candy"></div>
+                  <p><span class="outline">cake</span></p>
+                  <p>The <code class="inl">if</code> prints whichever word comes first.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life · the five methods at work</span>
+          <h2 class="lesson-title">Where Strings Show Up</h2>
+        </div>
+
+        <p>The programs you use every day are full of text: dates, file names, card numbers, passwords, e-mail addresses. Here are six small jobs they do, each written with only the five methods from this lesson.</p>
+
+        <h3 id="life-date">Turning a date around</h3>
+
+        <p>Computers store dates as <em>year-month-day</em>, because then they sort correctly. People in Turkey read <em>day.month.year</em>. Every position is fixed, so three cuts are enough:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>2026-09-28 → 28.09.2026</span></div>
+          <pre class="code"><code>String date = "2026-09-28";
+String year = date.substring(0, 4);
+String month = date.substring(5, 7);
+String day = date.substring(8);
+System.out.println(day + "." + month + "." + year);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>28.09.2026</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="2026-09-28" data-edges data-from="0" data-to="4"><span class="strip-cap">year = substring(0, 4)</span></div>
+        <div class="strip-wrap" data-word="2026-09-28" data-edges data-from="5" data-to="7"><span class="strip-cap">month = substring(5, 7) · the dash at 4 is skipped</span></div>
+        <div class="strip-wrap" data-word="2026-09-28" data-edges data-from="8" data-to="10"><span class="strip-cap">day = substring(8)</span></div>
+
+        <h3 id="life-file">A file's extension</h3>
+
+        <p>Your computer decides which program opens a file by the part after the dot. Find the dot, cut on both sides of it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Name and extension</span></div>
+          <pre class="code"><code>String file = "Lesson22.java";
+int dot = file.indexOf(".");
+System.out.println(file.substring(0, dot));
+System.out.println(file.substring(dot + 1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Lesson22
+java</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="Lesson22.java" data-edges data-from="9" data-to="13"><span class="strip-cap">dot = 8 · substring(dot + 1) → "java"</span></div>
+
+        <p>The same code on <code class="inl">"backup.tar.gz"</code> gives <code class="inl">"tar.gz"</code>, because <code class="inl">indexOf</code> finds the <em>first</em> dot. Whether that is right depends on what you want — Part 21's “the first match wins”, with real consequences.</p>
+
+        <h3 id="life-card">Hiding a card number</h3>
+
+        <p>A receipt never prints your whole card number, only the last four digits. The last four characters of any String are <code class="inl">substring(length() - 4)</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Show only the last four digits</span></div>
+          <pre class="code"><code>String card = "4556 7375 8689 9855";
+System.out.println("**** **** **** " + card.substring(card.length() - 4));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>**** **** **** 9855</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="4556 7375 8689 9855" data-edges data-from="15" data-to="19"><span class="strip-cap">length 19 · substring(15) → "9855"</span></div>
+
+        <h3 id="life-initials">Initials</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ada Lovelace → A.L.</span></div>
+          <pre class="code"><code>String name = "Ada Lovelace";
+int space = name.indexOf(" ");
+System.out.println(name.substring(0, 1) + "." + name.substring(space + 1, space + 2) + ".");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>A.L.</pre></div>
+        </div>
+
+        <p>The first initial is the first letter. The second is the one letter right after the space: <code class="inl">substring(space + 1, space + 2)</code> is Part 22's <code class="inl">substring(i, i + 1)</code> with <code class="inl">i = space + 1</code>.</p>
+
+        <h3 id="life-pass">A password rule</h3>
+
+        <p>A sign-up form: <em>at least 8 characters, no spaces</em>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two rules, two early returns</span></div>
+          <pre class="code"><code>public static boolean isGoodPassword(String password) {
+    if (password.length() &lt; 8) {
+        return false;
+    }
+    if (password.indexOf(" ") != -1) {
+        return false;
+    }
+    return true;
+}
+
+System.out.println(isGoodPassword("ankara06"));
+System.out.println(isGoodPassword("abc123"));
+System.out.println(isGoodPassword("my password"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false
+false</pre></div>
+        </div>
+
+        <p><code class="inl">"abc123"</code> is too short. <code class="inl">"my password"</code> is long enough but has a space at index 2.</p>
+
+        <h3 id="life-mail">Does it look like an e-mail?</h3>
+
+        <p>Before a website sends you a message it checks the address has a sensible shape: an <code class="inl">@</code> with something in front of it, and a dot somewhere after it.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A rough first check</span></div>
+          <pre class="code"><code>public static boolean looksLikeEmail(String email) {
+    int at = email.indexOf("@");
+    if (at &lt;= 0) {
+        return false;
+    }
+    String domain = email.substring(at + 1);
+    return domain.indexOf(".") &gt; 0;
+}
+
+System.out.println(looksLikeEmail("ali@school.com"));
+System.out.println(looksLikeEmail("@school.com"));
+System.out.println(looksLikeEmail("ali.school.com"));
+System.out.println(looksLikeEmail("ali@school"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false
+false
+false</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">at &lt;= 0</code></strong> catches both problems at once: −1 means no <code class="inl">@</code> at all, 0 means nothing before it.</li>
+          <li><strong><code class="inl">domain.indexOf(".") &gt; 0</code></strong> asks for a dot that is not the first character of the part after the <code class="inl">@</code>.</li>
+        </ul>
+
+        <div class="practice" id="plife">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Four questions on real life</h3>
+          <p class="practice-lede">Use the code above exactly as written.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">isGoodPassword("12345678")</code> return? Is it a good password?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">true · no</span></p>
+                  <p>It passes both rules: 8 characters, no space. The method only checks what it was told to check. Real sites add more rules — each one another <code class="inl">if</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>With the file-extension code, what is the “extension” of <code class="inl">"report.final.pdf"</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"final.pdf"</span></p>
+                  <p><code class="inl">indexOf</code> stops at the first dot, at index 6.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A phone number is stored as <code class="inl">"0532 123 45 67"</code>. Write one line that prints <code class="inl">*** *** ** 67</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>System.out.println("*** *** ** " + phone.substring(phone.length() - 2));</code></pre></div>
+                  <p>The card trick with 2 instead of 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>The saved password is <code class="inl">"Ankara06"</code>. What do <code class="inl">"ankara06".equals(saved)</code> and <code class="inl">"Ankara06".equals(saved)</code> give?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false · true</span></p>
+                  <p>That is why a login screen tells you to check Caps Lock.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the four files</span>
+          <h2 class="lesson-title">String Methods of Our Own</h2>
+        </div>
+
+        <p>Nothing in this section was in the class files. Every example uses only the five String methods above, plus loops, <code class="inl">if</code> and last week's methods. Each one is a small method you can reuse.</p>
+
+        <h3 id="x-rev">Reverse a String</h3>
+
+        <p>Part 22 printed a word backwards one letter per line. To get the reversed word as a <em>value</em>, collect the letters in a String instead of printing them — the <code class="inl">out = out + i</code> pattern from Lesson 3:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Build the reversed word, letter by letter</span></div>
+          <pre class="code"><code>public static String reverse(String word) {
+    String rev = "";
+    for (int i = word.length() - 1; i &gt;= 0; i--) {
+        rev = rev + word.substring(i, i + 1);
+    }
+    return rev;
+}
+
+System.out.println(reverse("computer"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>retupmoc</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">i</th><th class="mono">letter</th><th class="mono">rev after</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">7</td><td class="mono">"r"</td><td class="mono">"r"</td></tr>
+              <tr><td class="mono">6</td><td class="mono">"e"</td><td class="mono">"re"</td></tr>
+              <tr><td class="mono">5</td><td class="mono">"t"</td><td class="mono">"ret"</td></tr>
+              <tr><td class="mono">…</td><td class="mono">…</td><td class="mono">…</td></tr>
+              <tr><td class="mono">0</td><td class="mono">"c"</td><td class="mono">"retupmoc"</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="x-pal">Palindromes, again</h3>
+
+        <p>Lesson 4 checked whether a <em>number</em> reads the same backwards, with <code class="inl">% 10</code> and <code class="inl">/ 10</code>. For a word it is one line — reverse it and compare:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A word that equals its own reverse</span></div>
+          <pre class="code"><code>public static boolean isPalindrome(String word) {
+    return word.equals(reverse(word));
+}
+
+System.out.println(isPalindrome("level"));
+System.out.println(isPalindrome("computer"));
+System.out.println(isPalindrome("Level"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false
+false</pre></div>
+        </div>
+
+        <p><code class="inl">"Level"</code> reversed is <code class="inl">"leveL"</code>. Same letters to a person, different characters to <code class="inl">equals</code>.</p>
+
+        <h3 id="x-count">countOf, for any piece</h3>
+
+        <p>The file wrote one loop for <code class="inl">"e"</code> and a second loop for <code class="inl">"of"</code>. Only two things changed: the width of the window and the piece. Make both come from a parameter and one method covers every case:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The window is as wide as the piece</span></div>
+          <pre class="code"><code>public static int countOf(String word, String part) {
+    int count = 0;
+    for (int i = 0; i &lt;= word.length() - part.length(); i++) {
+        if (word.substring(i, i + part.length()).equals(part)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+System.out.println(countOf("banana", "an"));
+System.out.println(countOf("the professor drinks a cup of coffee in the office", "of"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2
+4</pre></div>
+        </div>
+
+        <p>The bound is Part 22's rule written in code: a window <code class="inl">part.length()</code> wide fits while <code class="inl">i &lt;= word.length() - part.length()</code>. For <code class="inl">"of"</code> that is <code class="inl">i &lt;= length - 2</code>, the same as the file's <code class="inl">i &lt; length - 1</code>.</p>
+
+        <h3 id="x-vowel">The vowel trick</h3>
+
+        <p><code class="inl">indexOf</code> can answer “is this letter one of these?” Turn the question around: instead of looking for the letter in the word, look for the letter in a String of all the vowels.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>"aeiou".indexOf(c) != -1 means c is a vowel</span></div>
+          <pre class="code"><code>public static int countVowels(String word) {
+    int count = 0;
+    for (int i = 0; i &lt; word.length(); i++) {
+        String c = word.substring(i, i + 1);
+        if ("aeiou".indexOf(c) != -1) {
+            count++;
+        }
+    }
+    return count;
+}
+
+System.out.println(countVowels("computer science"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer science" data-marks="1,4,6,11,12,15" data-mlen="1"><span class="strip-cap">o u e · i e e</span></div>
+
+        <p>One <code class="inl">if</code> replaces five <code class="inl">equals</code> joined with <code class="inl">||</code>. Yes, you can call a method on a String written directly in quotes: <code class="inl">"aeiou"</code> is a String like any other.</p>
+
+        <h3 id="x-space">Removing spaces</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Keep every letter that is not a space</span></div>
+          <pre class="code"><code>public static String removeSpaces(String text) {
+    String out = "";
+    for (int i = 0; i &lt; text.length(); i++) {
+        String c = text.substring(i, i + 1);
+        if (!c.equals(" ")) {
+            out = out + c;
+        }
+    }
+    return out;
+}
+
+System.out.println(removeSpaces("a cup of coffee"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>acupofcoffee</pre></div>
+        </div>
+
+        <p><code class="inl">!</code> from Lesson 1 flips the <code class="inl">boolean</code>: “if <code class="inl">c</code> is <em>not</em> a space”.</p>
+
+        <h3 id="x-first">First in the dictionary</h3>
+
+        <p>Last week's max-so-far pattern, with <code class="inl">compareTo</code> in place of <code class="inl">&lt;</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The earliest of three words</span></div>
+          <pre class="code"><code>public static String firstOf(String a, String b, String c) {
+    String first = a;
+    if (b.compareTo(first) &lt; 0) {
+        first = b;
+    }
+    if (c.compareTo(first) &lt; 0) {
+        first = c;
+    }
+    return first;
+}
+
+System.out.println(firstOf("pear", "plum", "apple"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>apple</pre></div>
+        </div>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Use the methods exactly as written above.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">reverse("stressed")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"desserts"</span></p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">isPalindrome("racecar")</code> and <code class="inl">isPalindrome("Racecar")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">true · false</span></p>
+                  <p>The capital R ends up at the other end, where it meets a small r.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">countOf("aaaa", "aa")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="slides" data-word="aaaa" data-w="2" data-want="aa"></div>
+                  <p><span class="outline">3</span></p>
+                  <p>Not 2. The windows overlap: 0–1, 1–2, 2–3 are all <code class="inl">"aa"</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">countVowels("AP")</code> return? Why?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0</span></p>
+                  <p><code class="inl">"aeiou".indexOf("A")</code> is −1: there is no capital A in <code class="inl">"aeiou"</code>. To count capitals too, search in <code class="inl">"aeiouAEIOU"</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">word.substring(word.length() / 2, word.length() / 2 + 1)</code> give for <code class="inl">"level"</code>? For <code class="inl">"java"</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"v" · "v"</span></p>
+                  <p>5 / 2 is 2, the exact middle of <code class="inl">"level"</code>. 4 / 2 is also 2 — integer division — and for an even-length word that is the second of the two middle letters.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">firstOf("pear", "Peach", "apple")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"Peach"</span></p>
+                  <p>Capital P (80) comes before every small letter, including the <code class="inl">a</code> (97) of <code class="inl">"apple"</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Fourteen traps to remember</h2>
+        <p>Three of these crash the program, one will not compile, and the other ten run quietly and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">word.length</td><td class="mono">8</td><td><span class="err">will not compile</span></td><td>length() is a method: it needs ()</td></tr>
+              <tr><td class="mono">"computer".substring(8, 9)</td><td>the last letter</td><td><span class="err">exception</span></td><td>the last index is length − 1</td></tr>
+              <tr><td class="mono">"computer".substring(2, 5)</td><td class="mono">"mput"</td><td class="mono"><span class="fv">"mpu"</span></td><td>end is not included</td></tr>
+              <tr><td class="mono">"computer".substring(8)</td><td>an exception</td><td class="mono"><span class="fv">""</span></td><td>gap 8 exists: the empty String</td></tr>
+              <tr><td class="mono">"computer".substring(5, 2)</td><td class="mono">"mpu"</td><td><span class="err">exception</span></td><td>start must not be greater than end</td></tr>
+              <tr><td class="mono">i &lt; length() with substring(i, i + 2)</td><td>every pair</td><td><span class="err">exception</span></td><td>a 2-wide window needs i &lt; length() − 1</td></tr>
+              <tr><td class="mono">i &lt; length() − 2 with substring(i, i + 2)</td><td>every pair</td><td class="mono"><span class="fv">last pair missed</span></td><td>one pass too few — no crash, wrong count</td></tr>
+              <tr><td class="mono">"computer".indexOf("C")</td><td class="mono">0</td><td class="mono"><span class="fv">-1</span></td><td>case-sensitive</td></tr>
+              <tr><td class="mono">"computere".indexOf("e")</td><td class="mono">8</td><td class="mono"><span class="fv">6</span></td><td>the first match wins</td></tr>
+              <tr><td class="mono">indexOf(x) == length() − 1</td><td>“ends with x”</td><td class="mono"><span class="fv">false for "computere"</span></td><td>use substring(length() − 1).equals(x)</td></tr>
+              <tr><td class="mono">fullName.substring(index)</td><td class="mono">"Lovelace"</td><td class="mono"><span class="fv">" Lovelace"</span></td><td>index + 1 steps over the space</td></tr>
+              <tr><td class="mono">"A".compareTo("a")</td><td class="mono">0</td><td class="mono"><span class="fv">-32</span></td><td>capitals and small letters are different codes</td></tr>
+              <tr><td class="mono">"abc".compareTo("abchab")</td><td>a letter difference</td><td class="mono"><span class="fv">-3</span></td><td>one word ran out: lengths are subtracted</td></tr>
+              <tr><td class="mono">a.compareTo(b) == -1</td><td>“a comes first”</td><td class="mono"><span class="fv">false for "A", "C"</span></td><td>only the sign is promised: write &lt; 0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 6, parts 21–24. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson5.html">← Lesson 5</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
