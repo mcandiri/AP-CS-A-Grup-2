@@ -59,6 +59,7 @@
         <li><a class="sub" href="#p22">Practice</a></li>
         <li><a href="#l23">23 · equals &amp; counting</a></li>
         <li><a class="sub" href="#l23-equals">equals</a></li>
+        <li><a class="sub" href="#l23-never">Never == for Strings</a></li>
         <li><a class="sub" href="#l23-letter">Counting a letter</a></li>
         <li><a class="sub" href="#l23-word">Counting a word</a></li>
         <li><a class="sub" href="#l23-end">Back to “ends with”</a></li>
@@ -784,6 +785,96 @@ false</pre></div>
         <div class="note note--rule">
           <span class="tag">Rule</span>
           <p>To check whether two Strings are the same, use <code class="inl">equals</code>. Numbers are compared with <code class="inl">==</code>; Strings are compared with <code class="inl">.equals(...)</code>.</p>
+        </div>
+
+        <h3 id="l23-never">Never == for Strings</h3>
+
+        <p>For <code class="inl">int</code>s, <code class="inl">==</code> asks “same number?”. For Strings it asks a different question: “is this the <em>same String in memory</em>?” Two Strings can hold exactly the same letters and still be two separate Strings — and then <code class="inl">==</code> says <code class="inl">false</code>. The worst part: sometimes it happens to say <code class="inl">true</code>, so the bug hides until it matters.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Sometimes == seems to work…</span></div>
+          <pre class="code"><code>String a = "java";
+String b = "java";
+System.out.println(a == b);
+System.out.println(a.equals(b));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+true</pre></div>
+        </div>
+
+        <p>Two Strings typed directly in quotes with the same letters are shared by Java, so here <code class="inl">a</code> and <code class="inl">b</code> really are the same String. This is the example that makes people think <code class="inl">==</code> is fine. Now make the String with a method instead:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>…until the String comes from substring</span></div>
+          <pre class="code"><code>String word = "computer";
+String part = word.substring(0, 4);
+System.out.println(part);
+System.out.println(part == "comp");
+System.out.println(part.equals("comp"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>comp
+<em>false</em>
+true</pre></div>
+        </div>
+
+        <p><code class="inl">part</code> prints as <code class="inl">comp</code>, and <code class="inl">==</code> still says <code class="inl">false</code>. <code class="inl">substring</code> built a <em>new</em> String; it has the right letters but it is not the <code class="inl">"comp"</code> in quotes.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>…or from +</span></div>
+          <pre class="code"><code>String first = "com";
+String full = first + "puter";
+System.out.println(full);
+System.out.println(full == "computer");
+System.out.println(full.equals("computer"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>computer
+<em>false</em>
+true</pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>The splitting code from Part 22, checked with ==</span></div>
+          <pre class="code"><code>String name = "Ada Lovelace";
+int space = name.indexOf(" ");
+System.out.println(name.substring(0, space) == "Ada");
+System.out.println(name.substring(0, space).equals("Ada"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>false</em>
+true</pre></div>
+        </div>
+
+        <p>And the most dangerous one — the counting loop below, with a single change. It compiles, it runs, there is no error message, and the answer is simply wrong:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counting e's with == instead of equals</span></div>
+          <pre class="code"><code>int count = 0;
+String word = "the professor drinks a cup of coffee in the office";
+for (int i = 0; i &lt; word.length(); i++) {
+    String c = word.substring(i, i + 1);
+    if (c == "e") {        // wrong: should be c.equals("e")
+        count++;
+    }
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>0</em></pre></div>
+        </div>
+
+        <p>There are six <code class="inl">e</code>s. Every <code class="inl">c</code> is a new String made by <code class="inl">substring</code>, so <code class="inl">c == "e"</code> is <code class="inl">false</code> on every pass — even the six where <code class="inl">c</code> <em>is</em> <code class="inl">"e"</code>.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Comparison</th><th class="mono">==</th><th class="mono">.equals</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">"java" and "java"</td><td class="mono"><span class="tv">true</span> (by luck)</td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">word.substring(0, 4) and "comp"</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">first + "puter" and "computer"</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">name.substring(0, space) and "Ada"</td><td class="mono"><span class="fv">false</span></td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">substring(i, i + 1) and "e", in a loop</td><td class="mono"><span class="fv">false every time</span></td><td class="mono"><span class="tv">true for each e</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Never use <code class="inl">==</code> to compare Strings — not even when it seems to work. <code class="inl">.equals(...)</code> for “same letters?”, <code class="inl">.compareTo(...)</code> for “which comes first?”. <code class="inl">==</code> stays with numbers.</p>
         </div>
 
         <h3 id="l23-letter">Counting a letter</h3>
@@ -1570,8 +1661,8 @@ System.out.println(firstOf("pear", "plum", "apple"));</code></pre>
 
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Fourteen traps to remember</h2>
-        <p>Three of these crash the program, one will not compile, and the other ten run quietly and give the wrong answer.</p>
+        <h2>Fifteen traps to remember</h2>
+        <p>Three of these crash the program, one will not compile, and the other eleven run quietly and give the wrong answer.</p>
 
         <div class="scroll">
           <table>
@@ -1590,6 +1681,7 @@ System.out.println(firstOf("pear", "plum", "apple"));</code></pre>
               <tr><td class="mono">"computere".indexOf("e")</td><td class="mono">8</td><td class="mono"><span class="fv">6</span></td><td>the first match wins</td></tr>
               <tr><td class="mono">indexOf(x) == length() − 1</td><td>“ends with x”</td><td class="mono"><span class="fv">false for "computere"</span></td><td>use substring(length() − 1).equals(x)</td></tr>
               <tr><td class="mono">fullName.substring(index)</td><td class="mono">"Lovelace"</td><td class="mono"><span class="fv">" Lovelace"</span></td><td>index + 1 steps over the space</td></tr>
+              <tr><td class="mono">if (c == "e")</td><td>it counts the e's</td><td class="mono"><span class="fv">0</span></td><td>== is not “same letters” for Strings — use equals</td></tr>
               <tr><td class="mono">"A".compareTo("a")</td><td class="mono">0</td><td class="mono"><span class="fv">-32</span></td><td>capitals and small letters are different codes</td></tr>
               <tr><td class="mono">"abc".compareTo("abchab")</td><td>a letter difference</td><td class="mono"><span class="fv">-3</span></td><td>one word ran out: lengths are subtracted</td></tr>
               <tr><td class="mono">a.compareTo(b) == -1</td><td>“a comes first”</td><td class="mono"><span class="fv">false for "A", "C"</span></td><td>only the sign is promised: write &lt; 0</td></tr>
