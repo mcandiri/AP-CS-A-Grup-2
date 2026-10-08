@@ -73,8 +73,8 @@
     var n = Math.max(word.length, o.ghost || 0);
     for (var i = 0; i < n; i++){
       var ch = i < word.length ? word.charAt(i) : '';
-      var c = el('div', 'cell', ch === ' ' ? '␣' : ch);
-      if (ch === ' ') c.classList.add('sp');
+      var c = el('div', 'cell', ch === ' ' ? '␣' : ch === '\n' ? '↵' : ch === '\t' ? '⇥' : ch);
+      if (ch === ' ' || ch === '\n' || ch === '\t') c.classList.add('sp');
       if (i >= word.length) c.classList.add('ghost');
       if (o.from !== undefined && i >= o.from && i < o.to) c.classList.add('in');
       if (o.marks){
@@ -83,6 +83,7 @@
         }
       }
       if (o.diff === i) c.classList.add('diff');
+      if (o.bad && o.bad.indexOf(i) !== -1) c.classList.add('diff');
       if (i < word.length){
         var ix = el('span', 'ix', String(i));
         if (o.edges && (i === o.from || i === o.to)) ix.classList.add('on');
@@ -130,7 +131,26 @@
     return { value: a.length - b.length, at: -1 };
   }
 
-  function q(s){ return '"' + s + '"'; }
+  function q(s){ return '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'; }
+
+  // what Java stores for the text typed between two quote marks
+  function unescape(lit){
+    var v = '';
+    for (var i = 0; i < lit.length; i++){
+      var ch = lit.charAt(i);
+      if (ch === '"') return { error: 'will not compile — the " at index ' + i + ' ends the String early. Write \\" instead.' };
+      if (ch !== '\\'){ v += ch; continue; }
+      if (i + 1 >= lit.length) return { error: 'will not compile — unclosed string literal: the last \\ turns the closing " into a character.' };
+      var nx = lit.charAt(++i);
+      if (nx === 'n') v += '\n';
+      else if (nx === 't') v += '\t';
+      else if (nx === '"') v += '"';
+      else if (nx === '\\') v += '\\';
+      else if ('rbfs\'01234567u'.indexOf(nx) !== -1) return { error: 'Java knows \\' + nx + ', but it is not one of our four escapes: \\n \\t \\" \\\\' };
+      else return { error: 'will not compile — illegal escape character: \\' + nx };
+    }
+    return { value: v };
+  }
   function show(ch){ return ch === ' ' ? 'space' : "'" + ch + "'"; }
 
   function explain(a, b, r){
@@ -199,6 +219,36 @@
         } else {
           out.appendChild(el('span', 'bad', 'Exception in thread "main" java.lang.StringIndexOutOfBoundsException: Range [' + b + ', ' + e + ') out of bounds for length ' + word.length));
         }
+      } else if (mode === 'esc'){
+        var r = unescape(word);
+        code.textContent = 'String s = "' + word + '";\nSystem.out.println(s);\nSystem.out.println(s.length());';
+        if (r.error){
+          out.appendChild(el('span', 'bad', r.error));
+        } else {
+          view.appendChild(strip(r.value));
+          out.textContent = r.value + '\n' + r.value.length;
+        }
+      } else if (mode === 'pass'){
+        var U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', L = 'abcdefghijklmnopqrstuvwxyz', S = '!@#$%^&*';
+        var cu = 0, cl = 0, cs = 0, ok = [], bad = [];
+        for (var p = 0; p < word.length; p++){
+          var ch = word.charAt(p);
+          if (U.indexOf(ch) !== -1) cu++;
+          if (L.indexOf(ch) !== -1) cl++;
+          if (S.indexOf(ch) !== -1) cs++;
+          if ((U + L + S).indexOf(ch) !== -1) ok.push(p); else bad.push(p);
+        }
+        var why = word.length < 6 ? 'too short (' + word.length + ' characters, need 6 to 12)'
+          : word.length > 12 ? 'too long (' + word.length + ' characters, need 6 to 12)'
+          : cu === 0 ? 'needs a capital letter'
+          : cl === 0 ? 'needs a small letter'
+          : cs === 0 ? 'needs a symbol from !@#$%^&*'
+          : cu + cl + cs !== word.length ? 'counts add up to ' + (cu + cl + cs) + ', length is ' + word.length + ': something is in no group'
+          : 'every rule holds';
+        view.appendChild(strip(word, { marks: ok, mlen: 1, bad: bad }));
+        view.appendChild(el('p', 'lab-why', 'countUpper = ' + cu + ' · countLower = ' + cl + ' · countSymbol = ' + cs + ' · length = ' + word.length + ' — ' + why));
+        code.textContent = 'System.out.println(isValid(' + q(word) + '));';
+        out.textContent = String(why === 'every rule holds');
       } else if (mode === 'cmp'){
         var other = val('other').value;
         var r = cmpFig(view, word, other);

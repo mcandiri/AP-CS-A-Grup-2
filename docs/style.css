@@ -651,3 +651,22 @@ figure.fig figcaption{
 
 .note--life{background:var(--accent-soft);border-color:var(--accent);}
 .note--life .tag{color:var(--accent);}
+
+/* ---------- Lesson 7: a variable and what it holds, password lab ---------- */
+.refs{display:grid;gap:12px;margin:20px 0 24px;}
+.refs .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.refs .var{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.84rem;
+  border:1px solid var(--line);background:var(--surface);
+  padding:7px 12px;border-radius:4px;min-width:11.5rem;
+}
+.refs .arrow{color:var(--ink-faint);font-family:"JetBrains Mono",ui-monospace,monospace;}
+.refs .strip-wrap{margin:0;padding:0;}
+.refs .empty-str,.refs .nothing{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.84rem;
+  padding:7px 14px;border-radius:4px;
+}
+.refs .empty-str{border:1px solid var(--line);background:var(--surface);color:var(--ink-faint);}
+.refs .nothing{border:1px dashed var(--crimson-line);color:var(--crimson);}
+.refs .say{color:var(--ink-soft);font-size:.95rem;}
+.lab-why{margin:10px 0 0;font-size:.92rem;color:var(--ink-soft);max-width:none;}

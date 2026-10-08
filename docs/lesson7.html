@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 7: escape sequences (\n, \t, \&quot;, \\), the empty String and null, then problem solving with Strings: random words, guessing a word, checking a password and generating one.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 7 · Escapes &amp; Problem Solving — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 7</p>
+    <h1>Escapes, null &amp; Problem Solving</h1>
+    <p class="deck">A short first part and a long second one. First, the characters you cannot simply type inside quotes — a new line, a tab, a quote mark, a backslash — and the difference between an <em>empty</em> String and <em>no</em> String at all. Then most of the lesson: solving real problems with nothing but last week's five String methods, a loop and <code class="inl">Math.random</code>. A random word, a computer guessing <code class="inl">"door"</code>, a password checker, and a password generator built on top of the checker.</p>
+    <ul class="facts">
+      <li>2 files</li>
+      <li>Java</li>
+      <li>18 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l25">25 · Escapes &amp; null</a></li>
+        <li><a class="sub" href="#l25-slash">The backslash</a></li>
+        <li><a class="sub" href="#l25-n">\n · new line</a></li>
+        <li><a class="sub" href="#l25-t">\t · tab</a></li>
+        <li><a class="sub" href="#l25-table">A table that lines up</a></li>
+        <li><a class="sub" href="#l25-q">\" and \\</a></li>
+        <li><a class="sub" href="#l25-one">One escape, one character</a></li>
+        <li><a class="sub" href="#l25-err">When it will not compile</a></li>
+        <li><a class="sub" href="#l25-empty">The empty String</a></li>
+        <li><a class="sub" href="#l25-null">null</a></li>
+        <li><a class="sub" href="#l25-check">Checking for null</a></li>
+        <li><a class="sub" href="#p25">Practice</a></li>
+        <li><a href="#l26">26 · Problem solving</a></li>
+        <li><a class="sub" href="#l26-how">How to attack a problem</a></li>
+        <li><a class="sub" href="#l26-rw">1 · A random word</a></li>
+        <li><a class="sub" href="#l26-door">2 · Guessing “door”</a></li>
+        <li><a class="sub" href="#l26-valid">3 · Is the password valid?</a></li>
+        <li><a class="sub" href="#l26-gen">4 · Make a valid password</a></li>
+        <li><a class="sub" href="#p26">Practice</a></li>
+        <li><a href="#extras">Extras · more problems</a></li>
+        <li><a class="sub" href="#x-pin">A PIN and a colour</a></li>
+        <li><a class="sub" href="#x-scr">Scramble a word</a></li>
+        <li><a class="sub" href="#x-hang">Hangman</a></li>
+        <li><a class="sub" href="#x-caesar">Caesar's secret code</a></li>
+        <li><a class="sub" href="#x-why">Why was it rejected?</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 25 ============ -->
+      <section class="lesson" id="l25">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 25 · Lesson25.java</span>
+          <h2 class="lesson-title">Escape Sequences &amp; null</h2>
+        </div>
+
+        <h3 id="l25-slash">The backslash</h3>
+
+        <p>A String starts at a <code class="inl">"</code> and ends at the next <code class="inl">"</code>. So how do you put a quote mark <em>inside</em> a String? Or a new line, which you cannot type between quotes at all? Java's answer is one character, drawn at the top of the file: the <strong>backslash</strong>, <code class="inl">\</code>.</p>
+
+        <p>Inside a String, a backslash means <em>“the next character is special”</em>. The two together are called an <strong>escape sequence</strong>. The file lists the four you need:</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">You type</th><th>Java stores</th><th>On the console</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">\n</td><td>a new line</td><td>the rest goes on the next line</td></tr>
+              <tr><td class="mono">\t</td><td>a tab</td><td>jumps to the next tab column</td></tr>
+              <tr><td class="mono">\"</td><td>a quote mark</td><td class="mono">"</td></tr>
+              <tr><td class="mono">\\</td><td>one backslash</td><td class="mono">\</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Notice the direction: <code class="inl">\</code> is a <strong>back</strong>slash, the one above Enter on most keyboards. <code class="inl">/</code> is a normal slash — the one in <code class="inl">//</code> comments — and it has no special meaning inside a String.</p>
+
+        <h3 id="l25-n">\n · new line</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four lines from one println</span></div>
+          <pre class="code"><code>System.out.println("W\nelcome\nto my\nworld!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>W
+elcome
+to my
+world!</pre></div>
+        </div>
+
+        <p>One <code class="inl">println</code>, four lines. Every <code class="inl">\n</code> breaks the line exactly where it stands — even in the middle of a word, which is why <code class="inl">W</code> sits alone on the first line. Here is what Java actually keeps in memory; a new line is drawn as <code class="inl">↵</code>:</p>
+
+        <div class="strip-wrap" data-word="W&#10;elcome&#10;to my&#10;world!"><span class="strip-cap">"W\nelcome\nto my\nworld!" · 21 characters — each \n is one ↵ box</span></div>
+
+        <h3 id="l25-t">\t · tab</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three tabs — but count them carefully</span></div>
+          <pre class="code"><code>System.out.println("Welc\tome \to my wo\trld!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Welc	ome 	o my wo	rld!</pre></div>
+        </div>
+
+        <p>A tab does not add a fixed number of spaces. It jumps forward to the next <strong>tab column</strong> — on the console, every 8 characters. <code class="inl">"Welc"</code> is 4 characters, so the tab fills 4 spaces; <code class="inl">"ome "</code> then starts at column 8.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Look at <code class="inl">\to</code> in the middle. It reads like the word <em>“to”</em>, but Java reads left to right: a backslash, then <code class="inl">t</code> — that is a tab. Only the <code class="inl">o</code> is left over. The console shows <code class="inl">ome</code>, a gap, then <code class="inl">o my</code>. The word <em>“to”</em> is gone.</p>
+        </div>
+
+        <h3 id="l25-table">A table that lines up</h3>
+
+        <p>This is what tabs are really for. In Lesson 4's extras, a multiplication table with a space between the numbers drifted out of line, and it took two <code class="inl">if</code>s to pad the small numbers with spaces. The file prints the table again with <code class="inl">"\t"</code> and no <code class="inl">if</code> at all:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The multiplication table, with tabs</span></div>
+          <pre class="code"><code>for (int i = 1; i &lt;= 10; i++) {
+    for (int j = 1; j &lt;= 10; j++) {
+        System.out.print(i * j + "\t");
+    }
+    System.out.println();
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1	2	3	4	5	6	7	8	9	10	
+2	4	6	8	10	12	14	16	18	20	
+3	6	9	12	15	18	21	24	27	30	
+4	8	12	16	20	24	28	32	36	40	
+5	10	15	20	25	30	35	40	45	50	
+6	12	18	24	30	36	42	48	54	60	
+7	14	21	28	35	42	49	56	63	70	
+8	16	24	32	40	48	56	64	72	80	
+9	18	27	36	45	54	63	72	81	90	
+10	20	30	40	50	60	70	80	90	100	</pre></div>
+        </div>
+
+        <p>Every number is shorter than 8 characters, so every tab lands on the same columns: 0, 8, 16, 24… The columns are straight no matter how many digits the numbers have.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Copy a table from a web page into Excel and it lands in separate columns. What travels on the clipboard is text with a <code class="inl">\t</code> between cells and a new line between rows — exactly what this loop prints.</p>
+        </div>
+
+        <h3 id="l25-q">\" and \\</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Quote marks inside a String</span></div>
+          <pre class="code"><code>System.out.println("Welcome \"to\" my wo\"rld");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Welcome "to" my wo"rld</pre></div>
+        </div>
+
+        <p><code class="inl">\"</code> is a quote mark that does <em>not</em> end the String. Without the backslash, the <code class="inl">"</code> before <code class="inl">to</code> would close the String and the rest of the line would be nonsense to Java.</p>
+
+        <p>And if a backslash means “something special follows”, how do you print a backslash itself? Escape it: <code class="inl">\\</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Backslashes</span></div>
+          <pre class="code"><code>System.out.println("Welco\\me \\to my wo\\\\\\rld!");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Welco\me \to my wo\\\rld!</pre></div>
+        </div>
+
+        <p>Take the pieces left to right, two characters at a time:</p>
+        <ul class="plain">
+          <li><strong><code class="inl">\\me</code></strong> → <code class="inl">\me</code>. Two backslashes in the code, one on the console.</li>
+          <li><strong><code class="inl">\\to</code></strong> → <code class="inl">\to</code>. Compare with the line above: there <code class="inl">\to</code> became a tab. Here the first backslash has already “used up” the second, so the <code class="inl">t</code> is just a <code class="inl">t</code>.</li>
+          <li><strong><code class="inl">\\\\\\rld</code></strong> — six backslashes → three on the console: <code class="inl">\\\rld</code>.</li>
+        </ul>
+
+        <p>The comment in the file shows where you meet this in practice — a Windows folder path:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A path with backslashes</span></div>
+          <pre class="code"><code>System.out.println("D:\\Program Files\\");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>D:\Program Files\</pre></div>
+        </div>
+
+        <h3 id="l25-one">One escape, one character</h3>
+
+        <p>The backslash is something you <em>type</em>; it is not something Java <em>stores</em>. Each escape sequence becomes a single character, so it counts as one in <code class="inl">length()</code> and takes one index:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Escapes and length()</span></div>
+          <pre class="code"><code>System.out.println("a\tb".length());
+System.out.println("say \"hi\"".length());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+8</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="a&#9;b"><span class="strip-cap">"a\tb" · 3 characters · a tab is drawn as ⇥</span></div>
+        <div class="strip-wrap" data-word='say "hi"'><span class="strip-cap">"say \"hi\"" · 8 characters · no backslashes stored</span></div>
+
+        <div class="lab" data-mode="esc">
+          <div class="lab-head"><b>String lab · escapes</b><span>Type what goes between the quotes, exactly as you would in Eclipse.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab25-lit" style="flex:1 1 16rem">between the quotes<input id="lab25-lit" data-f="word" value="say \&quot;hi\&quot;\tto\\me" maxlength="40" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="strip-wrap lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">C:\data</code>, then <code class="inl">C:\\data</code>. Try a <code class="inl">"</code> without a backslash. Try ending with a single <code class="inl">\</code>.</p>
+          </div>
+        </div>
+
+        <h3 id="l25-err">When it will not compile</h3>
+
+        <p>Only certain letters may follow a backslash. Anything else is a compile error — and so is a quote mark you forgot to escape:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>\d is not an escape</span></div>
+          <pre class="code"><code>System.out.println("C:\data");</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: illegal escape character</em></pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>A quote that ends the String too early</span></div>
+          <pre class="code"><code>System.out.println("say "hi"");</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: ')' or ',' expected</em>
+<em>error: ';' expected</em></pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>The path, written with single backslashes</span></div>
+          <pre class="code"><code>System.out.println("D:\Program Files\");</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: illegal escape character</em>
+<em>error: unclosed string literal</em></pre></div>
+        </div>
+
+        <p>The last one has two problems. <code class="inl">\P</code> is not an escape. And the final <code class="inl">\"</code> <em>is</em> one — an escaped quote mark — so the String never gets its closing quote.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A backslash in a String is always followed by one of <code class="inl">n</code>, <code class="inl">t</code>, <code class="inl">"</code> or <code class="inl">\</code>. If you want a backslash on the screen, type two.</p>
+        </div>
+
+        <h3 id="l25-empty">The empty String</h3>
+
+        <p>The second half of the file is about <em>nothing</em> — and there are two kinds of it. The first one we met in Lesson 6: two quote marks with nothing between them.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A String with zero letters</span></div>
+          <pre class="code"><code>String a = ""; // empty string length = 0
+
+System.out.println(a.length());
+System.out.println(a.indexOf("dsa"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0
+-1</pre></div>
+        </div>
+
+        <p><code class="inl">""</code> is a real String. It just has no characters. You can call every method on it: its length is 0, and searching it for anything finds nothing, so <code class="inl">indexOf</code> answers −1. No crash.</p>
+
+        <h3 id="l25-null">null</h3>
+
+        <p><code class="inl">null</code> is a Java keyword that means <strong>no String at all</strong>. The variable exists, but it is not holding anything.</p>
+
+        <div class="refs">
+          <div class="row"><span class="var">String w = "hi";</span><span class="arrow">→</span><div class="strip-wrap" data-word="hi"></div><span class="say">a String with 2 letters</span></div>
+          <div class="row"><span class="var">String a = "";</span><span class="arrow">→</span><span class="empty-str">""</span><span class="say">a String with 0 letters</span></div>
+          <div class="row"><span class="var">String b = null;</span><span class="arrow">→</span><span class="nothing">nothing</span><span class="say">no String to ask anything</span></div>
+        </div>
+
+        <p>An empty box is still a box: you can ask how many things are in it, and the answer is 0. With <code class="inl">null</code> there is no box to ask. Call a method on it and the program stops:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The last two lines of the file</span></div>
+          <pre class="code"><code>//  NullPointerException
+String b = null;
+System.out.println(b.length());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "b" is null</em>
+<em>	at Grup1.Lesson25.main(Lesson25.java:39)</em></pre></div>
+        </div>
+
+        <p>The message is unusually helpful: it names the method (<code class="inl">String.length()</code>) and the variable (<code class="inl">b</code>). Notice that the file <em>compiles</em> — Java only finds out at run time, when the line actually runs.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th class="mono">String a = "";</th><th class="mono">String b = null;</th></tr></thead>
+            <tbody>
+              <tr><td>is there a String?</td><td>yes, with no letters</td><td>no</td></tr>
+              <tr><td class="mono">.length()</td><td class="mono">0</td><td><span class="err">NullPointerException</span></td></tr>
+              <tr><td class="mono">.indexOf("dsa")</td><td class="mono">-1</td><td><span class="err">NullPointerException</span></td></tr>
+              <tr><td class="mono">System.out.println(…)</td><td>an empty line</td><td class="mono">null</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l25-check">Checking for null</h3>
+
+        <p>Before you call a method on a String that might be <code class="inl">null</code>, ask first. The question is asked with <code class="inl">==</code> and <code class="inl">!=</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Is there a String or not?</span></div>
+          <pre class="code"><code>String a = "";
+String b = null;
+
+if (b == null) {
+    System.out.println("b is null");
+}
+if (a != null) {
+    System.out.println("a is a String, length " + a.length());
+}
+System.out.println(a == null);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>b is null
+a is a String, length 0
+false</pre></div>
+        </div>
+
+        <p><code class="inl">a</code> is empty, but it is not <code class="inl">null</code> — there is a String there, so <code class="inl">a == null</code> is <code class="inl">false</code>.</p>
+
+        <p>Why not <code class="inl">equals</code>? Because <code class="inl">equals</code> is a method, and calling a method on <code class="inl">null</code> is exactly what crashes:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Asking null with equals</span></div>
+          <pre class="code"><code>String b = null;
+System.out.println(b.equals(null));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.equals(Object)" because "b" is null</em></pre></div>
+        </div>
+
+        <p>The program dies before <code class="inl">equals</code> can answer. <code class="inl">==</code> is not a method — it just looks at the variable — so it works even when there is no String.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Two different questions, two different tools. <em>Same letters?</em> → <code class="inl">equals</code>, never <code class="inl">==</code> (Lesson 6). <em>Is it null?</em> → <code class="inl">== null</code> or <code class="inl">!= null</code>, never <code class="inl">equals</code>. <code class="inl">null</code> is the only thing you compare a String to with <code class="inl">==</code>.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>When you build a String with <code class="inl">+=</code> in a loop, start from <code class="inl">""</code>, never from <code class="inl">null</code>. Every method in Part 26 starts with <code class="inl">String result = "";</code> for exactly this reason.</p>
+        </div>
+
+        <div class="practice" id="p25">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 25</h3>
+          <p class="practice-lede">Read the String left to right, two characters at a time whenever you meet a backslash.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>System.out.println("one\ntwo\\nthree");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>one
+two\nthree</pre></div></div>
+                  <p>The first <code class="inl">\n</code> is a new line. In <code class="inl">\\n</code> the first backslash escapes the second, so what is left is a backslash and a plain <code class="inl">n</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is <code class="inl">"a\tb\"c".length()</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">5</span></p>
+                  <div class="strip-wrap" data-word='a&#9;b"c'></div>
+                  <p><code class="inl">a</code>, a tab, <code class="inl">b</code>, a quote mark, <code class="inl">c</code>. Each escape is one character.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>One of these does not compile. Which one — and what does the other one print?</p>
+              <div class="ex"><pre class="code"><code>System.out.println("C:\new");
+System.out.println("C:\data");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">"C:\data"</code> does not compile: <em>illegal escape character</em>. <code class="inl">"C:\new"</code> compiles — <code class="inl">\n</code> is a real escape — but it is probably not what you wanted:</p>
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>C:
+ew</pre></div></div>
+                  <p>Both are fixed the same way: <code class="inl">"C:\\new"</code>, <code class="inl">"C:\\data"</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write one <code class="inl">println</code> that prints exactly this line:</p>
+              <div class="ex"><div class="out"><span class="out-label">Console</span><pre>She said "Hi" \o/</pre></div></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>System.out.println("She said \"Hi\" \\o/");</code></pre></div>
+                  <p>Two escaped quote marks and one escaped backslash. The <code class="inl">/</code> is an ordinary slash and needs nothing.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these lines stop the program with an exception?</p>
+              <div class="ex"><pre class="code"><code>String a = "";
+String b = null;
+System.out.println(a.length());      // line 1
+System.out.println(a.indexOf("x"));  // line 2
+System.out.println(a.equals(b));     // line 3
+System.out.println(b.equals(a));     // line 4
+System.out.println(b.indexOf("a"));  // line 5</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">lines 4 and 5</span></p>
+                  <p>Lines 1–3 call methods on <code class="inl">a</code>, which is a real String: they print <code class="inl">0</code>, <code class="inl">-1</code> and <code class="inl">false</code>. Lines 4 and 5 call a method on <code class="inl">b</code>, and <code class="inl">b</code> is <code class="inl">null</code> — whatever comes before the dot must be a real String. (In a real run the program stops at line 4 and never reaches line 5.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String s = "";
+System.out.println(s.length());
+s = s + "\"\"";
+System.out.println(s.length());
+System.out.println(s);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0
+2
+""</pre></div></div>
+                  <p>Now <code class="inl">s</code> holds two quote-mark characters. It looks like the empty String when printed, but it is not: its length is 2.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 26 ============ -->
+      <section class="lesson" id="l26">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 26 · Lesson26.java</span>
+          <h2 class="lesson-title">Problem Solving with Strings</h2>
+        </div>
+
+        <p>No new Java in this part. Everything below uses things you already know — <code class="inl">length</code>, <code class="inl">indexOf</code>, <code class="inl">substring</code>, <code class="inl">equals</code>, loops, <code class="inl">if</code>, <code class="inl">Math.random</code> and methods. What is new is putting them together to solve a problem nobody has solved for you.</p>
+
+        <h3 id="l26-how">How to attack a problem</h3>
+
+        <p>Every problem in the file was solved the same way in class. Use the same four steps on the homework and on the exam:</p>
+
+        <ol class="plain">
+          <li><strong>Say it in words.</strong> What goes in? What comes out? Write the method header first: name, parameters, return type.</li>
+          <li><strong>Do one example by hand.</strong> With paper and a small input. If you cannot do it by hand, you cannot tell the computer how.</li>
+          <li><strong>Find the small step that repeats.</strong> Almost always: <em>“look at one letter”</em> → <code class="inl">substring(i, i + 1)</code> inside a loop.</li>
+          <li><strong>Test with answers you already know.</strong> Before you trust a method, call it with inputs where you know the right answer — the file does this with four passwords.</li>
+        </ol>
+
+        <p>For each problem below: read the problem, close your eyes to the code, and try steps 1 and 2 yourself first.</p>
+
+        <!-- Problem 1 -->
+        <h3 id="l26-rw">Problem 1 · A random word</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Write a method that takes a String of letters and a length, and returns a random “word” of that length, built from those letters. <code class="inl">randomWord("abc", 4)</code> could give <code class="inl">"cabb"</code>, <code class="inl">"aaaa"</code>, <code class="inl">"bcab"</code>…</p>
+        </div>
+
+        <p><strong>Step 1 — the header.</strong> Two inputs, a String and an <code class="inl">int</code>. One output, a String:</p>
+        <div class="ex"><pre class="code"><code>public static String randomWord(String word, int length)</code></pre></div>
+
+        <p><strong>Step 2 — by hand.</strong> To pick one random letter of <code class="inl">"abcdefghijklmnopqrstuvwxyz"</code>, you would pick a random <em>index</em> from 0 to 25, then take the letter at that index:</p>
+
+        <div class="strip-wrap" data-word="abcdefghijklmnopqrstuvwxyz" data-marks="3" data-mlen="1"><span class="strip-cap">rnd = 3 → substring(3, 4) → "d"</span></div>
+
+        <p><strong>Step 3 — what repeats.</strong> “Pick a random letter and add it to the result”, <code class="inl">length</code> times. The random index is Lesson 5's formula for a whole number in a range — here the range is <code class="inl">[0, word.length())</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>randomWord</span></div>
+          <pre class="code"><code>public static String randomWord(String word, int length) {
+    String result = "";
+
+    for (int i = 0; i &lt; length; i++) {
+        int rnd = (int)(Math.random() * word.length());
+        result += word.substring(rnd, rnd + 1);
+    }
+    return result;
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">Math.random() * word.length()</code></strong> is a <code class="inl">double</code> from 0.0 up to, not including, 26.0. The cast cuts it down to a whole number <strong>0 to 25</strong> — exactly the valid indexes.</li>
+          <li><strong><code class="inl">substring(rnd, rnd + 1)</code></strong> is one letter. Even when <code class="inl">rnd</code> is 25, <code class="inl">rnd + 1</code> is 26 — the length — and an end of <code class="inl">length()</code> is allowed. It never crashes.</li>
+          <li><strong><code class="inl">result += …</code></strong> starts from <code class="inl">""</code>, the empty String of Part 25.</li>
+        </ul>
+
+        <p><strong>Step 4 — test it.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Six random words — one run; yours will differ</span></div>
+          <pre class="code"><code>String alphabet = "abcdefghijklmnopqrstuvwxyz";
+for (int i = 0; i &lt; 6; i++)
+    System.out.println(randomWord(alphabet, 5));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>rftjv
+cozca
+rirgf
+fawpc
+agdkx
+ygnyj</pre></div>
+        </div>
+
+        <p>Letters can repeat — <code class="inl">cozca</code> has two <code class="inl">c</code>s — because every pass picks from the whole alphabet again.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Every letter you want must be in the String you pass in. Count them: the alphabet has 26 letters. If one is missing — say <code class="inl">i</code> — then <code class="inl">randomWord</code> can never produce it, and nothing that needs an <code class="inl">i</code> will ever come out.</p>
+          <p>And do not write <code class="inl">word.length() - 1</code> in the formula “to be safe”. That gives 0 to 24: the last letter, <code class="inl">z</code>, is never picked. In a million tries we got index 25 zero times.</p>
+        </div>
+
+        <!-- Problem 2 -->
+        <h3 id="l26-door">Problem 2 · Guessing “door”</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Let the computer make random 4-letter words until it hits <code class="inl">"door"</code>. How many tries does it need?</p>
+        </div>
+
+        <p>We do not need a new method — Problem 1 already makes random words. That is the reward for writing methods: the next problem is three lines.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Keep guessing — five runs; yours will differ</span></div>
+          <pre class="code"><code>String word = "door";
+String result = randomWord(alphabet, 4);
+int count = 0;
+
+while (!word.equals(result)) {
+    result = randomWord(alphabet, 4);
+    count++;
+}
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>408080
+561562
+904507
+258983
+85509</pre></div>
+        </div>
+
+        <p>Read the loop condition aloud: <em>“while the word is <strong>not</strong> equal to the guess”</em>. The <code class="inl">!</code> from Lesson 1 turns <code class="inl">equals</code> around.</p>
+
+        <p>Why hundreds of thousands? Each letter has 26 choices, so there are 26 × 26 × 26 × 26 = <strong>456,976</strong> different 4-letter words, and only one of them is <code class="inl">"door"</code>. On average it takes about that many tries — just like Lesson 5's dice, the runs scatter around the average.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>In class the loop also printed every guess. That is fine for watching — but printing half a million lines is slow. When you only want the count, take the <code class="inl">println</code> out of the loop.</p>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>The condition is <code class="inl">!word.equals(result)</code>, not <code class="inl">word != result</code>. Lesson 6 said it: <code class="inl">==</code> and <code class="inl">!=</code> do not compare letters. With <code class="inl">!=</code> the loop never stops — we let it run 100,000 tries, it produced the right letters 151 times, and <code class="inl">!=</code> still said “different” every time.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>This is why short passwords are dangerous. A program that guesses millions of times a second gets through every 4-letter word in under a second. Each extra character multiplies the work — by 26 for small letters only, by 60 for the characters in Problem 4.</p>
+        </div>
+
+        <!-- Problem 3 -->
+        <h3 id="l26-valid">Problem 3 · Is the password valid?</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>A password is valid when <strong>all</strong> of these are true:</p>
+          <ul class="plain">
+            <li>it has 6 to 12 characters;</li>
+            <li>it has at least one capital letter, one small letter, and one symbol from <code class="inl">!@#$%^&amp;*</code>;</li>
+            <li>it has nothing else — no digits, no spaces, no other symbols.</li>
+          </ul>
+          <p>Write <code class="inl">isValid(String password)</code>.</p>
+        </div>
+
+        <p><strong>Step 1.</strong> In: a String. Out: yes or no — a <code class="inl">boolean</code>.</p>
+
+        <p><strong>Step 2 — the hard question.</strong> How does Java know whether a letter is a capital? We have no method for that. But we do have <code class="inl">indexOf</code>. Write all the capitals in one String and <em>ask whether the letter is in it</em>:</p>
+
+        <div class="strip-wrap" data-word="ABCDEFGHIJKLMNOPQRSTUVWXYZ" data-marks="1" data-mlen="1"><span class="strip-cap">upper.indexOf("B") → 1 · found, so "B" is a capital</span></div>
+        <div class="strip-wrap" data-word="!@#$%^&amp;*" data-marks="4" data-mlen="1"><span class="strip-cap">symbols.indexOf("%") → 4 · found, so "%" is a symbol</span></div>
+
+        <p><code class="inl">upper.indexOf("b")</code> is −1: a small <code class="inl">b</code> is not in the capitals. So <code class="inl">indexOf(ch) != -1</code> means <em>“ch belongs to this group”</em>. This is the trick of the whole problem.</p>
+
+        <p><strong>Step 3 — what repeats.</strong> Look at one character, decide its group, count it. Then, after the loop, check the counts.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>isValid</span></div>
+          <pre class="code"><code>public static boolean isValid(String password) {
+    String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String lower = "abcdefghijklmnopqrstuvwxyz";
+    String symbols = "!@#$%^&amp;*";
+    int minLength = 6;
+    int maxLength = 12;
+
+    if (password.length() &lt; minLength || password.length() &gt; maxLength) {
+        return false;
+    }
+
+    int countUpper = 0;
+    int countLower = 0;
+    int countSymbol = 0;
+    for (int i = 0; i &lt; password.length(); i++) {
+        String ch = password.substring(i, i + 1);
+        if (upper.indexOf(ch) != -1) {
+            countUpper++;
+        }
+        if (lower.indexOf(ch) != -1) {
+            countLower++;
+        }
+        if (symbols.indexOf(ch) != -1) {
+            countSymbol++;
+        }
+    }
+
+    if (countUpper &gt; 0 &amp;&amp; countLower &gt; 0 &amp;&amp; countSymbol &gt; 0
+            &amp;&amp; (countUpper + countLower + countSymbol) == password.length()) {
+        return true;
+    }
+    return false;
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong>The length check comes first</strong>, with an early <code class="inl">return false</code>. If it fails there is no point counting anything.</li>
+          <li><strong>Three separate <code class="inl">if</code>s</strong>, not <code class="inl">else if</code> — each character is tested against every group. (A character can only be in one of them, so <code class="inl">else if</code> would also work.)</li>
+          <li><strong>The last line of the condition is the clever part.</strong> Every character that is a capital, a small letter or a symbol was counted once. If the three counts add up to the whole length, nothing else is in the password. A digit, a space or a <code class="inl">?</code> is counted nowhere — and the sum comes up short.</li>
+        </ul>
+
+        <p>Here is the loop on <code class="inl">"aB%cdef"</code>, one row per pass:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">i</th><th class="mono">ch</th><th>group</th><th class="mono">countUpper</th><th class="mono">countLower</th><th class="mono">countSymbol</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">0</td><td class="mono">"a"</td><td>lower</td><td class="mono">0</td><td class="mono">1</td><td class="mono">0</td></tr>
+              <tr><td class="mono">1</td><td class="mono">"B"</td><td>upper</td><td class="mono">1</td><td class="mono">1</td><td class="mono">0</td></tr>
+              <tr><td class="mono">2</td><td class="mono">"%"</td><td>symbol</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td></tr>
+              <tr><td class="mono">3</td><td class="mono">"c"</td><td>lower</td><td class="mono">1</td><td class="mono">2</td><td class="mono">1</td></tr>
+              <tr><td class="mono">4–6</td><td class="mono">"d" "e" "f"</td><td>lower</td><td class="mono">1</td><td class="mono">5</td><td class="mono">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>All three counts are above 0, and 1 + 5 + 1 = 7 = the length. Valid. <strong>Step 4</strong> — the four tests from the file, each chosen to break a different rule:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four passwords with known answers</span></div>
+          <pre class="code"><code>System.out.println(isValid("abcdef"));
+System.out.println(isValid("aB%cdef"));
+System.out.println(isValid("aB%asSDASDDSADSADasdad"));
+System.out.println(isValid("aBB123?cdef"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+true
+false
+false</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">password</th><th>length</th><th>result</th><th>why</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">"abcdef"</td><td class="mono">6</td><td class="mono"><span class="fv">false</span></td><td>no capital, no symbol</td></tr>
+              <tr><td class="mono">"aB%cdef"</td><td class="mono">7</td><td class="mono"><span class="tv">true</span></td><td>every rule holds</td></tr>
+              <tr><td class="mono">"aB%asSDASDDSADSADasdad"</td><td class="mono">22</td><td class="mono"><span class="fv">false</span></td><td>too long — stopped by the first <code class="inl">if</code></td></tr>
+              <tr><td class="mono">"aBB123?cdef"</td><td class="mono">11</td><td class="mono"><span class="fv">false</span></td><td>no symbol from the list; <code class="inl">1 2 3 ?</code> are counted nowhere</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="lab" data-mode="pass">
+          <div class="lab-head"><b>Password lab · isValid</b><span>Characters counted in a group are blue. Characters in no group are amber.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab26-pw" style="flex:1 1 14rem">password<input id="lab26-pw" data-f="word" value="aB%cdef" maxlength="24" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="strip-wrap lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">aB%123</code>, then <code class="inl">aB% cdef</code> with a space, then <code class="inl">Ankara06!</code>.</p>
+          </div>
+        </div>
+
+        <!-- Problem 4 -->
+        <h3 id="l26-gen">Problem 4 · Make a valid password</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Write <code class="inl">generatePassword()</code>: it returns a random password that <code class="inl">isValid</code> accepts.</p>
+        </div>
+
+        <p>The tempting plan is to <em>build</em> a valid password carefully: one capital here, one symbol there… The file does something much simpler. We already have a method that makes random text and a method that checks a password. So: <strong>make one, check it, and if it is not valid, make another.</strong> This is called <em>generate and test</em>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>generatePassword</span></div>
+          <pre class="code"><code>public static String generatePassword() {
+    String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String lower = "abcdefghijklmnopqrstuvwxyz";
+    String symbols = "!@#$%^&amp;*";
+    int minLength = 6;
+    int maxLength = 12;
+    String all = upper + lower + symbols;
+    int length = (int)(Math.random() * (maxLength - minLength + 1) + minLength);
+    String password = "";
+
+    while (!isValid(password)) {
+        password = "";
+        for (int i = 0; i &lt; length; i++) {
+            int rnd = (int)(Math.random() * all.length());
+            password += all.substring(rnd, rnd + 1);
+        }
+    }
+    return password;
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">all</code></strong> glues the three groups into one String of 26 + 26 + 8 = 60 characters. Picking from <code class="inl">all</code> can give a character from any group.</li>
+          <li><strong>The length</strong> is Lesson 5's range formula: <code class="inl">(int)(Math.random() * (max - min + 1) + min)</code> gives a whole number from 6 to 12 — both ends included, because of the <code class="inl">+ 1</code>.</li>
+          <li><strong>The loop starts with <code class="inl">password = ""</code></strong>, and <code class="inl">isValid("")</code> is <code class="inl">false</code> — too short. So the loop always runs at least once. Using the empty String as a “not yet” value is a neat trick.</li>
+          <li><strong>The inner <code class="inl">for</code></strong> is Problem 1's <code class="inl">randomWord</code> again. (You could write <code class="inl">password = randomWord(all, length);</code> instead — try it.)</li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>Six passwords — one run; yours will differ</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; 6; i++)
+    System.out.println(generatePassword());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>^YnUjYHXqN
+$sdyyXB
+#xWOKIbZvpr
+GuWcVV%Wx
+R%djwQZ!^r
+F#Kfzn</pre></div>
+        </div>
+
+        <p>How often does a random try fail? We counted over 10,000 passwords: on average the loop ran <strong>1.47</strong> times. Most first tries are already valid; a short one with no symbol gets thrown away and made again.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Delete <code class="inl">password = "";</code> inside the loop and the program never ends. If the first try fails, the next 8 characters are added <em>on top of</em> the old ones:</p>
+          <div class="ex"><div class="out"><span class="out-label">Console</span><pre>pass 1: wSuadgLh (8)
+pass 2: wSuadgLhkMEbkcKB (16)
+pass 3: wSuadgLhkMEbkcKBLqVjeWvw (24)</pre></div></div>
+          <p>After pass 2 the password is longer than 12, so <code class="inl">isValid</code> can never say <code class="inl">true</code> again. When you repeat something in a loop, ask: <em>what must be reset at the start of every pass?</em></p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>The “suggest a strong password” button in Chrome or on your phone does this job. The rules are the same kind as ours — a length range, character groups that must appear — and checking a sign-up form is <code class="inl">isValid</code>, run on every key you press.</p>
+        </div>
+
+        <div class="practice" id="p26">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 26</h3>
+          <p class="practice-lede">Trace by hand first. For the random questions, think about what is <em>possible</em>, not about one run.</p>
+
+          <ol class="qs">
+            <li>
+              <p>In <code class="inl">randomWord</code>, <code class="inl">word</code> is <code class="inl">"abc"</code>. Which values can <code class="inl">rnd</code> have? Why does <code class="inl">substring(rnd, rnd + 1)</code> never crash?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0, 1 or 2</span></p>
+                  <p><code class="inl">Math.random() * 3</code> is from 0.0 up to, not including, 3.0; the cast gives 0, 1 or 2. The biggest call is <code class="inl">substring(2, 3)</code>, and an end equal to the length (3) is allowed.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">isValid</code> return for each of these?</p>
+              <div class="ex"><pre class="code"><code>isValid("Abc!def")
+isValid("Abc!")
+isValid("Abc!d ef")
+isValid("ABC!DEF")</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>true
+false
+false
+false</pre></div></div>
+                  <p><code class="inl">"Abc!"</code> has only 4 characters. <code class="inl">"Abc!d ef"</code> has a space: the counts add up to 7, the length is 8. <code class="inl">"ABC!DEF"</code> has no small letter.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Suppose we delete the last check, <code class="inl">(countUpper + countLower + countSymbol) == password.length()</code>. Give a password that is now wrongly accepted.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>For example <code class="inl">"aB%123"</code>. It has a capital, a small letter and a symbol, and length 6 — so without the sum check it returns <code class="inl">true</code>. With the check: 1 + 1 + 1 = 3, not 6, so <code class="inl">false</code>. Any password with a digit or a space works as an answer.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which lengths can <code class="inl">generatePassword</code> produce? And if the line were <code class="inl">(int)(Math.random() * (maxLength - minLength) + minLength)</code>, without the <code class="inl">+ 1</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6 to 12 · 6 to 11</span></p>
+                  <p><code class="inl">Math.random() * 7</code> is below 7.0, so the cast gives 0 to 6; plus 6 is 6 to 12. Without the <code class="inl">+ 1</code> it is <code class="inl">* 6</code>: 0 to 5, plus 6 is 6 to 11. A 12-character password could never be made. (We checked with 100,000 calls of each.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In the “door” program, why can't we write <code class="inl">while (word != result)</code>? What happens if we do?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>For Strings, <code class="inl">!=</code> does not compare the letters. Even when <code class="inl">result</code> is <code class="inl">"door"</code>, <code class="inl">word != result</code> is still <code class="inl">true</code>, so the loop never ends. Letters are compared with <code class="inl">equals</code>; “not equal” is <code class="inl">!word.equals(result)</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p><code class="inl">randomWord("ab", 3)</code> — how many different results are possible? List them.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">8</span></p>
+                  <p><code class="inl">aaa aab aba abb baa bab bba bbb</code>. Two choices for each of three places: 2 × 2 × 2 = 8 — the same counting that gave 26<sup>4</sup> for “door”.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the two files</span>
+          <h2 class="lesson-title">More Problems to Solve</h2>
+        </div>
+
+        <p>Nothing in this section was in the class files. Each problem uses only the five String methods, loops, <code class="inl">if</code>, <code class="inl">Math.random</code> and methods — and most of them reuse an idea from Part 26. Try each one yourself before you read the solution.</p>
+
+        <h3 id="x-pin">A PIN and a colour</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Make a random 4-digit PIN, and a random web colour code like <code class="inl">#3fa90c</code>.</p>
+        </div>
+
+        <p>No new method needed — <code class="inl">randomWord</code> does not care whether its “letters” are letters. Give it digits:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>randomWord with other letters — one run; yours will differ</span></div>
+          <pre class="code"><code>System.out.println(randomWord("0123456789", 4));
+System.out.println("#" + randomWord("0123456789abcdef", 6));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5471
+#101a57</pre></div>
+        </div>
+
+        <p>The PIN is a String, not an <code class="inl">int</code> — so a PIN like <code class="inl">"0427"</code> keeps its first zero. As a number it would just be 427.</p>
+
+        <h3 id="x-scr">Scramble a word</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Mix up the letters of a word, the way a word game does: <code class="inl">"computer"</code> → <code class="inl">"tpeocmur"</code>. Every letter must be used exactly once.</p>
+        </div>
+
+        <p><code class="inl">randomWord(word, word.length())</code> is not enough — it can pick the same letter twice and skip another. The fix: after picking a letter, <strong>cut it out</strong> of the letters that are left, with two <code class="inl">substring</code>s glued around it.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Pick a letter, remove it, repeat — one run</span></div>
+          <pre class="code"><code>public static String scramble(String word) {
+    String left = word;
+    String result = "";
+    while (left.length() &gt; 0) {
+        int rnd = (int)(Math.random() * left.length());
+        result += left.substring(rnd, rnd + 1);
+        left = left.substring(0, rnd) + left.substring(rnd + 1);
+    }
+    return result;
+}
+
+for (int i = 0; i &lt; 4; i++)
+    System.out.println(scramble("computer"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>toepcrmu
+tpeocmur
+eocrmupt
+omceputr</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="computer" data-marks="3" data-mlen="1"><span class="strip-cap">rnd = 3 · "com" + "uter" → left = "computer" without the p</span></div>
+
+        <p><code class="inl">left</code> gets one letter shorter every pass, so the <code class="inl">while</code> runs exactly <code class="inl">word.length()</code> times and stops when nothing is left.</p>
+
+        <h3 id="x-hang">Hangman</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>In Hangman the secret word is shown with blanks for the letters nobody has guessed yet. Write <code class="inl">mask(secret, guessed)</code>: <code class="inl">mask("door", "o")</code> is <code class="inl">"_oo_"</code>.</p>
+        </div>
+
+        <p>The same trick as <code class="inl">isValid</code>, turned around: there we asked whether a letter is in <code class="inl">upper</code>; here we ask whether it is in <code class="inl">guessed</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Show a letter only if it was guessed</span></div>
+          <pre class="code"><code>public static String mask(String secret, String guessed) {
+    String shown = "";
+    for (int i = 0; i &lt; secret.length(); i++) {
+        String ch = secret.substring(i, i + 1);
+        if (guessed.indexOf(ch) != -1) {
+            shown += ch;
+        } else {
+            shown += "_";
+        }
+    }
+    return shown;
+}
+
+System.out.println(mask("door", "o"));
+System.out.println(mask("door", "dr"));
+System.out.println(mask("door", "dorx"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>_oo_
+d__r
+door</pre></div>
+        </div>
+
+        <p>When the mask equals the secret — <code class="inl">mask(secret, guessed).equals(secret)</code> — the player has won.</p>
+
+        <h3 id="x-caesar">Caesar's secret code</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Julius Caesar hid his messages by moving every letter 3 places along the alphabet: <code class="inl">a</code> → <code class="inl">d</code>, <code class="inl">b</code> → <code class="inl">e</code>… and at the end it wraps around, <code class="inl">x</code> → <code class="inl">a</code>. Write <code class="inl">caesar(text, shift)</code>. Anything that is not a small letter stays as it is.</p>
+        </div>
+
+        <p>A letter's position in the alphabet is <code class="inl">alphabet.indexOf(ch)</code>. Add the shift, and use <code class="inl">% 26</code> — Lesson 1's remainder — to wrap around past <code class="inl">z</code>:</p>
+
+        <div class="strip-wrap" data-word="abcdefghijklmnopqrstuvwxyz" data-marks="23,0" data-mlen="1"><span class="strip-cap">"x" is at 23 · (23 + 3) % 26 = 0 → "a"</span></div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Shift every letter, wrap at z</span></div>
+          <pre class="code"><code>public static String caesar(String text, int shift) {
+    String alphabet = "abcdefghijklmnopqrstuvwxyz";
+    String result = "";
+    for (int i = 0; i &lt; text.length(); i++) {
+        String ch = text.substring(i, i + 1);
+        int at = alphabet.indexOf(ch);
+        if (at == -1) {
+            result += ch;                 // not a small letter: keep it
+        } else {
+            int moved = (at + shift) % 26;
+            result += alphabet.substring(moved, moved + 1);
+        }
+    }
+    return result;
+}
+
+System.out.println(caesar("hello world", 3));
+System.out.println(caesar("xyz", 3));
+System.out.println(caesar("khoor zruog", 23));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>khoor zruog
+abc
+hello world</pre></div>
+        </div>
+
+        <p>The last line decodes the message. Moving 23 more places is 3 + 23 = 26 — a full circle — so every letter is back where it started.</p>
+
+        <h3 id="x-why">Why was it rejected?</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p><code class="inl">isValid</code> only says <code class="inl">false</code>. A real sign-up form tells you <em>why</em>. Write <code class="inl">whyInvalid(password)</code> that returns the first broken rule as a message, or <code class="inl">"OK"</code>.</p>
+        </div>
+
+        <p>Same counting loop as <code class="inl">isValid</code>. Only the end changes: instead of one big condition, one <code class="inl">if</code> per rule, each with its own <code class="inl">return</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One rule, one message</span></div>
+          <pre class="code"><code>public static String whyInvalid(String password) {
+    String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String lower = "abcdefghijklmnopqrstuvwxyz";
+    String symbols = "!@#$%^&amp;*";
+
+    if (password.length() &lt; 6) {
+        return "too short";
+    }
+    if (password.length() &gt; 12) {
+        return "too long";
+    }
+
+    int countUpper = 0;
+    int countLower = 0;
+    int countSymbol = 0;
+    for (int i = 0; i &lt; password.length(); i++) {
+        String ch = password.substring(i, i + 1);
+        if (upper.indexOf(ch) != -1) {
+            countUpper++;
+        }
+        if (lower.indexOf(ch) != -1) {
+            countLower++;
+        }
+        if (symbols.indexOf(ch) != -1) {
+            countSymbol++;
+        }
+    }
+
+    if (countUpper == 0) {
+        return "needs a capital letter";
+    }
+    if (countLower == 0) {
+        return "needs a small letter";
+    }
+    if (countSymbol == 0) {
+        return "needs a symbol";
+    }
+    if (countUpper + countLower + countSymbol != password.length()) {
+        return "only letters and !@#$%^&amp;* are allowed";
+    }
+    return "OK";
+}
+
+System.out.println(whyInvalid("abcdef"));
+System.out.println(whyInvalid("aB%cdef"));
+System.out.println(whyInvalid("aB%asSDASDDSADSADasdad"));
+System.out.println(whyInvalid("aBB123?cdef"));
+System.out.println(whyInvalid("aB%123"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>needs a capital letter
+OK
+too long
+needs a symbol
+only letters and !@#$%^&amp;* are allowed</pre></div>
+        </div>
+
+        <p>The order of the <code class="inl">if</code>s decides which message you see. <code class="inl">"abcdef"</code> breaks two rules — no capital, no symbol — but only the first one is reported.</p>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Use the methods exactly as written above.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What do <code class="inl">caesar("abc", 1)</code> and <code class="inl">caesar("zoo", 1)</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"bcd" · "app"</span></p>
+                  <p><code class="inl">z</code> is at 25; (25 + 1) % 26 = 0, which is <code class="inl">a</code>. Both <code class="inl">o</code>s become <code class="inl">p</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">caesar("Hi!", 1)</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"Hj!"</span></p>
+                  <p><code class="inl">"H"</code> is a capital, so <code class="inl">alphabet.indexOf("H")</code> is −1 and it is kept as it is. So is <code class="inl">!</code>. Only the <code class="inl">i</code> moves.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">mask("banana", "an")</code> and <code class="inl">mask("banana", "")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"_anana" · "______"</span></p>
+                  <p>Searching the empty String always gives −1, so with no guesses every letter is a blank — six of them.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p><code class="inl">randomWord("computer", 8)</code> and <code class="inl">scramble("computer")</code> both return 8 letters. Which one can return <code class="inl">"tttttttt"</code>? Why can't the other?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">randomWord</code> can. It picks from all of <code class="inl">"computer"</code> every time, so it may pick <code class="inl">t</code> eight times. <code class="inl">scramble</code> removes each letter after picking it; once the one <code class="inl">t</code> is used, there is no <code class="inl">t</code> left.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">whyInvalid</code> return for <code class="inl">"abcdefgh!"</code>? And for <code class="inl">"Abc!d ef"</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"needs a capital letter" · "only letters and !@#$%^&amp;* are allowed"</span></p>
+                  <p>The second one has a capital, a small letter and a symbol — but also a space, so the counts add up to 7 while the length is 8.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write one line that prints a random 6-digit PIN.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>System.out.println(randomWord("0123456789", 6));</code></pre></div>
+                  <p>Change the letters you pass in, and the same method makes PINs, colour codes or passwords.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Thirteen traps to remember</h2>
+        <p>Three of these will not compile, two crash, three never finish, and the rest run quietly and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">"Welc\tome \to my"</td><td>the word “to”</td><td class="mono"><span class="fv">a tab, then o</span></td><td>\t is read first</td></tr>
+              <tr><td class="mono">"C:\data"</td><td class="mono">C:\data</td><td><span class="err">will not compile</span></td><td>\d is not an escape — write \\</td></tr>
+              <tr><td class="mono">"say "hi""</td><td class="mono">say "hi"</td><td><span class="err">will not compile</span></td><td>the second " ends the String — write \"</td></tr>
+              <tr><td class="mono">"D:\Program Files\"</td><td class="mono">D:\Program Files\</td><td><span class="err">will not compile</span></td><td>the last \" is an escaped quote: unclosed</td></tr>
+              <tr><td class="mono">"a\tb".length()</td><td class="mono">4</td><td class="mono"><span class="fv">3</span></td><td>an escape is one character</td></tr>
+              <tr><td class="mono">"\\\\"</td><td class="mono">\\\\</td><td class="mono"><span class="fv">\\</span></td><td>every \\ is one backslash</td></tr>
+              <tr><td class="mono">String b = null; b.length()</td><td class="mono">0</td><td><span class="err">NullPointerException</span></td><td>null is no String — "" is the empty one</td></tr>
+              <tr><td class="mono">if (b.equals(null))</td><td class="mono">true</td><td><span class="err">NullPointerException</span></td><td>check null with b == null, not equals</td></tr>
+              <tr><td class="mono">(int)(Math.random() * (word.length() - 1))</td><td>any letter</td><td class="mono"><span class="fv">never the last</span></td><td>gives 0 to length − 2</td></tr>
+              <tr><td class="mono">while (word != result)</td><td>stops at "door"</td><td><span class="err">never stops</span></td><td>!= does not compare letters — use !word.equals(result)</td></tr>
+              <tr><td class="mono">alphabet with a letter missing</td><td>every word possible</td><td><span class="err">never stops</span></td><td>a missing letter can never be picked</td></tr>
+              <tr><td class="mono">no password = ""; in the while</td><td>a new try each pass</td><td><span class="err">never stops</span></td><td>the password keeps growing past 12</td></tr>
+              <tr><td class="mono">isValid without the sum check</td><td class="mono">"aB%123" rejected</td><td class="mono"><span class="fv">true</span></td><td>digits are counted in no group</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 7, parts 25–26. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson6.html">← Lesson 6</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
