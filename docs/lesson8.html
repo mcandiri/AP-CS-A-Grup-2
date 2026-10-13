@@ -1,0 +1,2064 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 8: writing our own classes. Class and object, new, instance variables and their default values, private, encapsulation, getters and setters, this, private methods and objects as parameters.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 8 · Writing Classes — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 8</p>
+    <h1>Writing Classes</h1>
+    <p class="deck">Until now every program was one file and a pile of variables. This week we made our own types. A <code class="inl">Student</code> that knows its name, birth year, e-mail and average — and refuses a birth year of −1234. A <code class="inl">Height</code> that turns 15 inches into 1 foot 3 inches by itself. On the way: class and object, <code class="inl">new</code>, instance variables, <code class="inl">private</code>, encapsulation, getters and setters, and <code class="inl">this</code>.</p>
+    <ul class="facts">
+      <li>4 files</li>
+      <li>Java</li>
+      <li>30 questions</li>
+      <li>2 labs</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l27">27 · Classes &amp; objects</a></li>
+        <li><a class="sub" href="#l27-why">Too many variables</a></li>
+        <li><a class="sub" href="#l27-what">What is a class?</a></li>
+        <li><a class="sub" href="#l27-bp">A class is a blueprint</a></li>
+        <li><a class="sub" href="#l27-obj">What is an object?</a></li>
+        <li><a class="sub" href="#l27-for">What classes are for</a></li>
+        <li><a class="sub" href="#l27-think">Thinking in objects</a></li>
+        <li><a class="sub" href="#l27-files">Two files</a></li>
+        <li><a class="sub" href="#l27-new">new · making an object</a></li>
+        <li><a class="sub" href="#l27-def">Default values</a></li>
+        <li><a class="sub" href="#l27-many">Every object has its own</a></li>
+        <li><a class="sub" href="#p27a">Practice</a></li>
+        <li><a href="#l27b">27 · Encapsulation</a></li>
+        <li><a class="sub" href="#l27-pub">Open fields: anyone writes anything</a></li>
+        <li><a class="sub" href="#l27-priv">private</a></li>
+        <li><a class="sub" href="#l27-enc">Encapsulation</a></li>
+        <li><a class="sub" href="#l27-set">Setters</a></li>
+        <li><a class="sub" href="#l27-get">Getters</a></li>
+        <li><a class="sub" href="#l27-static">No static this time</a></li>
+        <li><a class="sub" href="#l27-methods">Methods that use the fields</a></li>
+        <li><a class="sub" href="#l27-trace">The file, line by line</a></li>
+        <li><a class="sub" href="#l27-lab">Student lab</a></li>
+        <li><a class="sub" href="#p27b">Practice</a></li>
+        <li><a href="#l28">28 · Height &amp; this</a></li>
+        <li><a class="sub" href="#l28-ft">Feet and inches</a></li>
+        <li><a class="sub" href="#l28-shadow">The same name twice</a></li>
+        <li><a class="sub" href="#l28-this">this</a></li>
+        <li><a class="sub" href="#l28-priv">A private method</a></li>
+        <li><a class="sub" href="#l28-simp">simplify with / and %</a></li>
+        <li><a class="sub" href="#l28-run">Running Lesson28</a></li>
+        <li><a class="sub" href="#l28-other">Another object as a parameter</a></li>
+        <li><a class="sub" href="#l28-lab">Height lab</a></li>
+        <li><a class="sub" href="#p28">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a class="sub" href="#life-table">Every app is full of setters</a></li>
+        <li><a class="sub" href="#life-car">The odometer</a></li>
+        <li><a class="sub" href="#pl">Practice</a></li>
+        <li><a href="#extras">Extras · more classes</a></li>
+        <li><a class="sub" href="#x-how">Designing a class</a></li>
+        <li><a class="sub" href="#x-bank">BankAccount</a></li>
+        <li><a class="sub" href="#x-user">User · a password</a></li>
+        <li><a class="sub" href="#x-thermo">Thermostat</a></li>
+        <li><a class="sub" href="#x-clock">Clock</a></li>
+        <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 27 · A ============ -->
+      <section class="lesson" id="l27">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 27 · Lesson27.java + Student.java</span>
+          <h2 class="lesson-title">Classes &amp; Objects</h2>
+        </div>
+
+        <h3 id="l27-why">Too many variables</h3>
+
+        <p>The file starts with something we already know how to do — one variable for every piece of information:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The first lines of Lesson27.java</span></div>
+          <pre class="code"><code>String name = "mehmet can";
+int age = 34;
+
+String name2 = "ali";
+int age2 = 17;</code></pre>
+        </div>
+
+        <p>Two people, four variables. Now imagine the whole class: 20 students, and for each one a name, a birth year, a school e-mail and an average. That is 80 variables — <code class="inl">name17</code>, <code class="inl">email17</code>, <code class="inl">average17</code>… Nothing in Java says that <code class="inl">name17</code> and <code class="inl">average17</code> belong to the same person. If you mix up one number, Selin gets Rüzgar's average.</p>
+
+        <p>What we want is one thing called a <em>student</em> that carries all four pieces with it. Java lets us invent that thing ourselves. It is called a <strong>class</strong>.</p>
+
+        <h3 id="l27-what">What is a class?</h3>
+
+        <p>Every value we have used so far had a type that Java gave us. <code class="inl">int</code> holds a whole number, <code class="inl">double</code> a decimal number, <code class="inl">boolean</code> true or false, <code class="inl">String</code> a piece of text. Each of these holds <em>one</em> kind of thing.</p>
+
+        <p>But the things our programs are about are bigger than one number or one word. A student is not a number. A student is a name <em>and</em> a birth year <em>and</em> an e-mail <em>and</em> an average, all at the same time. Java has no type for that — so we write one. <strong>A class is a new type that you describe yourself.</strong> You describe it once, and from then on Java knows a <code class="inl">Student</code> as well as it knows an <code class="inl">int</code>.</p>
+
+        <p>Describing a class means answering two questions about that kind of thing:</p>
+
+        <ul class="plain">
+          <li><strong>What does it have?</strong> Its data. A student has a name, a birth year, an e-mail and an average. In Java, these become the class's <strong>instance variables</strong>.</li>
+          <li><strong>What can it do?</strong> Its behaviour. A student can work out its age, print its information, and change its e-mail. In Java, these become the class's <strong>methods</strong>.</li>
+        </ul>
+
+        <p>“Has” and “can do” are the two halves of every class you will ever read or write. When you meet a new class, ask both questions first:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Class</th><th>Has (instance variables)</th><th>Can do (methods)</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">Student</td><td>name, birth year, e-mail, average</td><td>work out its age, print its information</td></tr>
+              <tr><td class="mono">Height</td><td>feet, inches</td><td>print itself, grow by some inches, add another height</td></tr>
+              <tr><td class="mono">Phone</td><td>volume, battery, owner</td><td>turn the volume up, charge, ring</td></tr>
+              <tr><td class="mono">BankAccount</td><td>owner, balance</td><td>take a deposit, pay out money</td></tr>
+              <tr><td class="mono">String</td><td>its letters</td><td><code class="inl">length()</code>, <code class="inl">indexOf</code>, <code class="inl">substring</code>, <code class="inl">equals</code>…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Look at the last row. <code class="inl">String</code> has been a class all along — the people who made Java wrote it, and since Lesson 6 we have been using its methods. This week we stop only <em>using</em> classes and start <em>writing</em> them.</p>
+
+        <h3 id="l27-bp">A class is a blueprint</h3>
+
+        <p>The comment in the file draws the idea as a table:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The comment in Lesson27.java</span></div>
+          <pre class="code"><code>// Students --> class
+
+// name    birthday  school email   (properties)
+// selin   2010      ...            (OBJECT)
+// ruzgar  ..        ..  ..</code></pre>
+        </div>
+
+        <p>The top row is the <strong>class</strong>: it says <em>what every student has</em> — but it is nobody in particular. Every row underneath is an <strong>object</strong>: one real student, with real values filled in.</p>
+
+        <div class="bp">
+          <div class="obj blue">
+            <div class="obj-h"><b>class Student</b><span>blueprint</span></div>
+            <div class="f"><span class="k">String</span><span class="v">name</span></div>
+            <div class="f"><span class="k">int</span><span class="v">birthYear</span></div>
+            <div class="f"><span class="k">String</span><span class="v">email</span></div>
+            <div class="f"><span class="k">double</span><span class="v">average</span></div>
+          </div>
+          <div class="to"><i>→</i>new Student()</div>
+          <div class="objs">
+            <div class="obj">
+              <div class="obj-h"><b>selin</b><span>Student</span></div>
+              <div class="f"><span class="k">name</span><span class="v">"Selin"</span></div>
+              <div class="f"><span class="k">birthYear</span><span class="v">2010</span></div>
+              <div class="f"><span class="k">email</span><span class="v">"selin@okul.k12"</span></div>
+              <div class="f"><span class="k">average</span><span class="v">91.5</span></div>
+            </div>
+            <div class="obj">
+              <div class="obj-h"><b>ruzgar</b><span>Student</span></div>
+              <div class="f"><span class="k">name</span><span class="v">"Rüzgar"</span></div>
+              <div class="f"><span class="k">birthYear</span><span class="v">2009</span></div>
+              <div class="f"><span class="k">email</span><span class="v">"ruzgar@okul.k12"</span></div>
+              <div class="f"><span class="k">average</span><span class="v">78.0</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">One class, as many objects as you like. The blueprint has names and types; only the objects have values.</p>
+
+        <p>An architect draws the plan of a flat once. Nobody can live in the plan — it is paper. But from that one plan, the builders can put up a hundred flats, and in each one a different family lives with different furniture. The class is the plan. The objects are the flats.</p>
+
+        <p>You have seen this a hundred times outside programming:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Class — the template</th><th>Objects — the real things</th></tr></thead>
+            <tbody>
+              <tr><td>The architect's plan of a flat</td><td>Flat 3, flat 7, flat 12 — built from the same plan, each with its own furniture</td></tr>
+              <tr><td>An empty school registration form</td><td>The forms that Selin and Rüzgar filled in</td></tr>
+              <tr><td>A cookie cutter</td><td>The cookies — same shape, one with chocolate, one with sesame</td></tr>
+              <tr><td>The ID-card design: <em>name, surname, birth date, photo</em></td><td>Your ID card and mine</td></tr>
+              <tr><td>“Phone model X”: <em>colour, storage, battery</em></td><td>The black 128 GB one in your pocket</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l27-obj">What is an object?</h3>
+
+        <p>An <strong>object</strong> is one real thing made from a class. If <code class="inl">Student</code> is the idea of a student, an object is <em>Selin</em>. Three things are true of every object:</p>
+
+        <ul class="plain">
+          <li><strong>It has its own values.</strong> Selin's average is 91.5 and Rüzgar's is 78.0. Both have an <code class="inl">average</code>, because the class says so — but each fills it in for itself. The values an object holds right now are called its <strong>state</strong>.</li>
+          <li><strong>It can do what its class says.</strong> If the class has a method that works out the age, every student object can work out <em>its own</em> age, from <em>its own</em> birth year.</li>
+          <li><strong>It is a separate thing.</strong> Two students who are both called Ali, born in the same year, with the same average, are still two students. Change one, and the other does not change.</li>
+        </ul>
+
+        <p>Notice what happens when. The <em>class</em> is written once, before the program runs — it is text in a file. The <em>objects</em> are made while the program runs, as many as it needs: one for a single student, thirty for a whole class, a thousand for a whole school, all from the same few lines of <code class="inl">Student.java</code>.</p>
+
+        <p>The four pieces every student has — <code class="inl">name</code>, <code class="inl">birthYear</code>, <code class="inl">email</code>, <code class="inl">average</code> — are called <strong>instance variables</strong>. The comment in <code class="inl">Student.java</code> gives the other names you will hear for exactly the same thing: <strong>fields</strong> and <strong>properties</strong>. An object is also called an <strong>instance</strong> of its class: <em>stu1 is an instance of Student</em>.</p>
+
+        <h3 id="l27-for">What classes are for</h3>
+
+        <p>We could keep writing programs with loose variables, as we have for seven lessons. So why do programmers bother? Four reasons, and you will see every one of them in this lesson.</p>
+
+        <h4>1 · What belongs together stays together</h4>
+        <p>With a class, Selin's name, birth year, e-mail and average travel as one thing. You cannot accidentally give her someone else's average, because her average is not a separate variable floating around — it is <em>inside</em> her object.</p>
+
+        <h4>2 · The code speaks the language of the problem</h4>
+        <p>A program for a school should be about students, teachers and lessons — not about <code class="inl">name17</code> and <code class="inl">average17</code>. With a class, the code is written in those words: a <code class="inl">Student</code>, its <code class="inl">name</code>, its <code class="inl">average</code>. Later in this lesson a student will even work out its own age, and the line that asks for it reads almost like English: <em>“student one, calculate your age.”</em></p>
+
+        <h4>3 · Write once, use many times</h4>
+        <p><code class="inl">Student.java</code> is written once. Then every program that needs students — a grade book, a library, a bus list — can use it, for as many students as it likes. You use <code class="inl">String</code> every day without ever having seen the code inside it; that is this reason at work.</p>
+
+        <h4>4 · The class can protect its own data</h4>
+        <p>A class can refuse bad values — no birth year of −1234, no average of 250. This is the second half of the lesson: <a href="#l27b">encapsulation</a>.</p>
+
+        <h3 id="l27-think">Thinking in objects</h3>
+
+        <p>Writing classes changes how you look at a problem. Before writing any code, you ask: <em>what are the things in this problem?</em> Take a school:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Class</th><th>Has</th><th>Can do</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">Student</td><td>name, number, birth year, average</td><td>work out its age, print a report card</td></tr>
+              <tr><td class="mono">Teacher</td><td>name, branch, e-mail</td><td>enter a grade</td></tr>
+              <tr><td class="mono">Classroom</td><td>name (“11-A”), floor, number of seats</td><td>tell if it is full</td></tr>
+              <tr><td class="mono">Lesson</td><td>subject, day, hour, teacher</td><td>print the timetable line</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>A handy trick: read the problem and underline the <strong>nouns</strong> — student, teacher, classroom, grade. The important nouns become classes, and smaller nouns that describe them (name, floor, grade) become their instance variables. Then underline the <strong>verbs</strong> — enter, print, calculate. They become methods. This way of building programs out of objects is called <strong>object-oriented programming</strong>, and Java is built for it from the ground up.</p>
+
+        <h3 id="l27-files">Two files</h3>
+
+        <p>This is the first lesson with two kinds of class in it, so the project has two files side by side in <code class="inl">src/Grup1</code>:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>File</th><th>What it is</th><th>Has main?</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">Student.java</td><td>the blueprint: what a student has and what a student can do</td><td>no — you cannot “run” a Student</td></tr>
+              <tr><td class="mono">Lesson27.java</td><td>the program: makes students and uses them</td><td>yes — this is the one you press Run on</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The first version of <code class="inl">Student</code> was only four lines inside the class — no methods at all, and nothing written in front of the fields:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java · the very first version</span></div>
+          <pre class="code"><code>package Grup1;
+
+public class Student {
+    String name;
+    int birthYear;
+    String email;
+    double average;
+}</code></pre>
+        </div>
+
+        <p>The instance variables are written <em>inside the class but outside every method</em>. That is what makes them belong to the object, and not to one method.</p>
+
+        <p>With nothing written in front of a field, any class in the same package — our <code class="inl">Grup1</code> folder — can use it. Lesson27 is in the same folder, so for us these fields behave <strong>just like <code class="inl">public</code></strong>: anyone can read them and anyone can change them. Keep that in mind; it is the problem the second half of the lesson solves.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The file name must be the class name, letter for letter, plus <code class="inl">.java</code>. Save <code class="inl">public class Student</code> in a file called <code class="inl">Students.java</code> and it does not compile:</p>
+          <div class="ex"><div class="out"><span class="out-label">Compiler</span><pre><em>Students.java:1: error: class Student is public, should be declared in a file named Student.java</em></pre></div></div>
+          <p>Class names start with a capital letter: <code class="inl">Student</code>, <code class="inl">Height</code>, <code class="inl">String</code>. Variable names start small: <code class="inl">stu1</code>, <code class="inl">name</code>.</p>
+        </div>
+
+        <h3 id="l27-new">new · making an object</h3>
+
+        <p>The blueprint alone does nothing. To get a real student, the program asks Java to build one with <code class="inl">new</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson27.java</span></div>
+          <pre class="code"><code>// stu1 -> instance , object
+Student stu1 = new Student();</code></pre>
+        </div>
+
+        <p>Read it right to left, the way Java runs it:</p>
+        <ul class="plain">
+          <li><strong><code class="inl">new Student()</code></strong> — build one new Student object in memory, with room for all four instance variables.</li>
+          <li><strong><code class="inl">Student stu1</code></strong> — a variable whose type is <code class="inl">Student</code>. Our own class is now a type, just like <code class="inl">int</code> or <code class="inl">String</code>.</li>
+          <li><strong><code class="inl">=</code></strong> — <code class="inl">stu1</code> now leads to that object.</li>
+        </ul>
+
+        <div class="refs">
+          <div class="row">
+            <span class="var">Student stu1</span><span class="arrow">→</span>
+            <div class="obj">
+              <div class="obj-h"><b>stu1</b><span>Student</span></div>
+              <div class="f"><span class="k">name</span><span class="v nul">null</span></div>
+              <div class="f"><span class="k">birthYear</span><span class="v">0</span></div>
+              <div class="f"><span class="k">email</span><span class="v nul">null</span></div>
+              <div class="f"><span class="k">average</span><span class="v">0.0</span></div>
+            </div>
+            <span class="say">a brand-new student — nothing filled in yet</span>
+          </div>
+        </div>
+
+        <p>For now, always write it exactly like this: <code class="inl">new</code>, the class name, and empty parentheses <code class="inl">()</code>. You have done this before without noticing — a String is an object too; <code class="inl">"door".length()</code> is a method called on a String object.</p>
+
+        <p>With this first version of the class, the program fills in the object with a dot: <em>object, dot, field</em>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Filling in stu1 — the first version, before private</span></div>
+          <pre class="code"><code>Student stu1 = new Student();
+stu1.name = "Mehmet can";
+stu1.birthYear = 1992;
+stu1.email = "mehmet@gmail.com";
+stu1.average = 34.67;
+
+System.out.println(stu1.name + " | " + stu1.birthYear + " | " + stu1.email + " | " + stu1.average);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Mehmet can | 1992 | mehmet@gmail.com | 34.67</pre></div>
+        </div>
+
+        <p>Say the dot as <em>“’s”</em>: <code class="inl">stu1.name</code> is <em>stu1’s name</em>, <code class="inl">stu1.average</code> is <em>stu1’s average</em>.</p>
+
+        <h3 id="l27-def">Default values</h3>
+
+        <p>What is inside a brand-new object before anyone sets anything? A local variable in <code class="inl">main</code> with no value will not even compile when you use it. Instance variables are different: Java fills them in with a <strong>default value</strong>. The comment at the top of <code class="inl">Student.java</code> lists them:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java</span></div>
+          <pre class="code"><code>// default values---- String null , int 0 , double 0.0 boolean false</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Type of the field</th><th>Default value</th><th>In Student</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">int</td><td class="mono">0</td><td class="mono">birthYear</td></tr>
+              <tr><td class="mono">double</td><td class="mono">0.0</td><td class="mono">average</td></tr>
+              <tr><td class="mono">boolean</td><td class="mono">false</td><td>— (no boolean field yet)</td></tr>
+              <tr><td class="mono">String</td><td class="mono">null</td><td class="mono">name, email</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Make a student, set nothing, and print every field:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Before anything is set</span></div>
+          <pre class="code"><code>Student stu1 = new Student();
+System.out.println("Student's name: " + stu1.name);
+System.out.println("Birth year: " + stu1.birthYear);
+System.out.println("Mail: " + stu1.email);
+System.out.println("Average: " + stu1.average);
+System.out.println("Age: " + (2026 - stu1.birthYear));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Student's name: null
+Birth year: 0
+Mail: null
+Average: 0.0
+Age: 2026</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Age 2026! <code class="inl">2026 - stu1.birthYear</code> uses a birth year that is still its default, 0. The program does not crash — it quietly gives a wrong answer. A default value is not a real value; it only means <em>“nobody set this yet”</em>.</p>
+          <p>And remember Lesson 7: a <code class="inl">String</code> field starts as <code class="inl">null</code>, not <code class="inl">""</code>. Printing it shows the word <code class="inl">null</code>; calling a method on it crashes.</p>
+        </div>
+
+        <h3 id="l27-many">Every object has its own</h3>
+
+        <p><code class="inl">new</code> builds a new object every time. Two students are two separate sets of four boxes:</p>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>stu1</b><span>Student</span></div>
+            <div class="f"><span class="k">name</span><span class="v">"Ahmet"</span></div>
+            <div class="f"><span class="k">birthYear</span><span class="v">2000</span></div>
+            <div class="f"><span class="k">email</span><span class="v">"asjkdsajk@sdfjds.com"</span></div>
+            <div class="f"><span class="k">average</span><span class="v">67.9</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>stu2</b><span>Student</span></div>
+            <div class="f"><span class="k">name</span><span class="v">"Mehmet"</span></div>
+            <div class="f"><span class="k">birthYear</span><span class="v">1992</span></div>
+            <div class="f"><span class="k">email</span><span class="v">"mehmet@gmail.com"</span></div>
+            <div class="f"><span class="k">average</span><span class="v">77.9</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">Two students, two separate objects. Changing stu1’s name never touches stu2’s name — they are different boxes that happen to have the same label.</p>
+
+        <p>That is why the field is called an <strong>instance</strong> variable: there is one copy <em>per instance</em>. Twenty students, twenty names — but you wrote <code class="inl">String name;</code> only once.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <strong>class</strong> is a type you write yourself: it says what every object of that kind <em>has</em> (instance variables) and what it <em>can do</em> (methods). An <strong>object</strong> is one real thing built from the class with <code class="inl">new</code>; it has its own values and lives separately from every other object. Fields that nobody has set hold their default: <code class="inl">null</code>, <code class="inl">0</code>, <code class="inl">0.0</code>, <code class="inl">false</code>.</p>
+        </div>
+
+        <div class="practice" id="p27a">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on classes &amp; objects</h3>
+          <p class="practice-lede">Use the first version of <code class="inl">Student</code> — four fields, nothing in front of them, no methods yet.</p>
+
+          <ol class="qs">
+            <li>
+              <p>In <code class="inl">Student stu2 = new Student();</code> — which word is the class, which is the variable that leads to the object, and which part actually builds the object?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">Student</code> (both times) is the class. <code class="inl">stu2</code> is the variable. <code class="inl">new Student()</code> builds the object.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Student s = new Student();
+System.out.println(s.average);
+System.out.println(s.birthYear);
+System.out.println(s.email);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0.0
+0
+null</pre></div></div>
+                  <p>Nothing was set, so each field still holds its default: <code class="inl">double</code> → 0.0, <code class="inl">int</code> → 0, <code class="inl">String</code> → null.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>We add one more field to the class: <code class="inl">boolean graduated;</code>. What value does it have in a new Student?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false</span></p>
+                  <p>The default for every <code class="inl">boolean</code> instance variable.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Student a = new Student();
+Student b = new Student();
+a.name = "Ali";
+b.name = "Veli";
+a.name = "Can";
+System.out.println(a.name + " " + b.name);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Can Veli</pre></div></div>
+                  <p><code class="inl">a</code> and <code class="inl">b</code> are two objects with two separate <code class="inl">name</code> boxes. The third line overwrites only <code class="inl">a</code>’s.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed? Is it true?</p>
+              <div class="ex"><pre class="code"><code>Student z = new Student();
+z.name = "Zeynep";
+System.out.println(z.name + " is " + (2026 - z.birthYear) + " years old");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Zeynep is 2026 years old</pre></div></div>
+                  <p>Not true. <code class="inl">birthYear</code> was never set, so it is still 0, and <code class="inl">2026 - 0</code> is 2026. A default looks like a real value, and Java will happily calculate with it.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Name three things from your own life that are a class, and one object of each.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Any three where the first is a <em>kind</em> of thing and the second is <em>one</em> of them. For example: <em>Book</em> → the copy of <em>Kürk Mantolu Madonna</em> on your desk; <em>Bus line</em> → the 500T; <em>Football club</em> → your team. Ask: “could there be many of these, each with its own values?” If yes, it is a class.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 27 · B ============ -->
+      <section class="lesson" id="l27b">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 27 · Lesson27.java + Student.java</span>
+          <h2 class="lesson-title">private, Encapsulation, Getters &amp; Setters</h2>
+        </div>
+
+        <p>In the first half we built objects. In this half we protect them. An object is only useful if its values make sense: a student with an empty name or a negative average is worse than no student, because the program will go on calculating with nonsense and print it as if it were true. The question of this part is: <em>who is allowed to change an object's data, and who checks that the new value makes sense?</em> Java's answer has three parts — <code class="inl">private</code>, setters and getters — and together they are called <strong>encapsulation</strong>.</p>
+
+        <h3 id="l27-pub">Open fields: anyone writes anything</h3>
+
+        <p>With the first version — nothing in front of the fields — look at what the second student got in class:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>stu2 — still the first version</span></div>
+          <pre class="code"><code>Student stu2 = new Student();
+stu2.name = "";
+stu2.birthYear = -1234;
+stu2.email = "ödmns";
+stu2.average = -34.56;
+
+System.out.println(stu2.name + " | " + stu2.birthYear + " | " + stu2.email + " | " + stu2.average);
+System.out.println("Age: " + (2026 - stu2.birthYear));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre> | -1234 | ödmns | -34.56
+Age: 3260</pre></div>
+        </div>
+
+        <p>An empty name, a student born 1234 years before year zero, an e-mail with no <code class="inl">@</code> and a negative average. Java accepted every line, and the student is 3260 years old. The <code class="inl">Student</code> class had no way to say <em>no</em>.</p>
+
+        <p>In class we first tried to fix it in <code class="inl">main</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Checking from outside</span></div>
+          <pre class="code"><code>stu2.birthYear = -1234;
+if (stu2.birthYear &lt; 0) {
+    System.out.println("Invalid birth year!");
+}</code></pre>
+        </div>
+
+        <p>Two problems. The check runs <em>after</em> the bad value is already inside the object. And the check is in <code class="inl">main</code>, not in <code class="inl">Student</code> — every program that ever uses Student has to remember to write it again, every time it sets a birth year. Forget once, and −1234 is in.</p>
+
+        <h3 id="l27-priv">private</h3>
+
+        <p>The fix is one word in front of each field. Until now we wrote nothing there; now we choose on purpose. The comment in the file names the two choices: <code class="inl">// public -- private</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java</span></div>
+          <pre class="code"><code>// encapsulation ---
+private String name;  // instance variables , fields , properties
+private int birthYear;
+private String email;
+private double average;</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th>nothing written</th><th class="mono">public</th><th class="mono">private</th></tr></thead>
+            <tbody>
+              <tr><td>Who can use it?</td><td>any class in the same package (folder)</td><td>any class</td><td>only code written inside <em>this</em> class</td></tr>
+              <tr><td class="mono">stu1.name</td><td>works from Lesson27</td><td>works from main</td><td><span class="err">will not compile</span> from main</td></tr>
+              <tr><td>Used in Student for</td><td>the first version's fields</td><td>the class and its methods</td><td>the instance variables</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Now the same lines in <code class="inl">main</code> stop the program before it ever runs. That is why they are commented out in the file:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson27.java, after private</span></div>
+          <pre class="code"><code>Student stu1 = new Student();
+stu1.name = "Mehmet can";</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: name has private access in Student</em></pre></div>
+        </div>
+
+        <p>Eclipse says the same thing in its own words: <em>The field Student.name is not visible.</em> Either way: from outside the class, nobody can read or write a private field directly. Not even to read it — <code class="inl">System.out.println(stu1.name);</code> gives the same error.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Instance variables are <code class="inl">private</code>. Always. On the AP exam, a class you write with public instance variables loses points — no matter how good the rest is.</p>
+        </div>
+
+        <h3 id="l27-enc">Encapsulation</h3>
+
+        <p>But now the fields are locked away completely. How does anybody set a name? Through the class's own <strong>methods</strong>, which are <code class="inl">public</code>. The data is hidden inside; the methods are the only doors; and every door can check what comes through it. That idea is called <strong>encapsulation</strong> — wrapping the data up like the medicine inside a capsule.</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 680 290" role="img" aria-label="main tries to write stu1.birthYear directly and is blocked by the wall of the object; the call stu1.setYear(-1234) goes through the setYear door, where the check rejects it">
+            <defs>
+              <marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+            </defs>
+            <rect class="fig-box" x="10" y="40" width="240" height="210" rx="6"/>
+            <text class="fig-lbl" x="24" y="62">Lesson27.java · main</text>
+            <text class="fig-m" x="24" y="111">stu1.birthYear = -1234;</text>
+            <text class="fig-m" x="24" y="203">stu1.setYear(-1234);</text>
+
+            <rect x="360" y="24" width="310" height="250" rx="60" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <text class="fig-t" x="520" y="52" text-anchor="middle">stu1 · a Student object</text>
+            <rect class="fig-box" x="440" y="66" width="200" height="26" rx="3"/>
+            <text class="fig-m" x="452" y="84">private name</text>
+            <rect class="fig-hit" x="440" y="98" width="200" height="26" rx="3"/>
+            <text class="fig-m" x="452" y="116">private birthYear</text>
+            <rect class="fig-box" x="440" y="130" width="200" height="26" rx="3"/>
+            <text class="fig-m" x="452" y="148">private email</text>
+            <rect class="fig-box" x="440" y="162" width="200" height="26" rx="3"/>
+            <text class="fig-m" x="452" y="180">private average</text>
+
+            <line x1="200" y1="107" x2="350" y2="107" stroke="currentColor" stroke-width="1.4"/>
+            <text x="340" y="114" text-anchor="middle" font-size="22" font-weight="700" fill="var(--crimson)">✕</text>
+            <text class="fig-lbl" x="275" y="97" text-anchor="middle">wall: will not compile</text>
+
+            <line x1="178" y1="199" x2="336" y2="203" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar8)"/>
+            <rect class="fig-cond" x="338" y="188" width="92" height="32" rx="4"/>
+            <text class="fig-m" x="384" y="209" text-anchor="middle">setYear</text>
+            <path class="fig-miss" d="M430 196 C 455 180, 430 140, 440 116" />
+            <text class="fig-lbl" x="520" y="236" text-anchor="middle">the door checks 1900 &lt; y ≤ 2026</text>
+            <text class="fig-lbl" x="520" y="252" text-anchor="middle">−1234 fails → "Invalid value!"</text>
+          </svg>
+          <figcaption>The wall is <code class="inl">private</code>. The doors are the <code class="inl">public</code> methods. A value only reaches <code class="inl">birthYear</code> through <code class="inl">setYear</code>, and only if it passes the check (dashed path).</figcaption>
+        </figure>
+
+        <p>Think about what changes. Before, the <em>user</em> of the class was responsible for every check: every program, every time. Now the <em>class</em> is responsible for its own data. The check is written once, in one place, and nobody can go around it. If the rule changes — say the school decides averages go up to 110 — you change one line in <code class="inl">Student.java</code>, and every program that uses it follows the new rule.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>An ATM. Your balance is inside the bank's computer, and nobody can walk in and change the number. The machine is the only door: it lets you <em>withdraw</em> — but first it checks your PIN, then checks you have enough money. The bank never trusts the customer to check by themselves; the check is built into the door. That is exactly what moving the <code class="inl">if</code> from <code class="inl">main</code> into <code class="inl">Student</code> does.</p>
+        </div>
+
+        <p>The comment in <code class="inl">Student.java</code> gives the two kinds of door their names — and more than one name each, because books use all of them:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Kind</th><th>Also called</th><th>Job</th><th>Looks like</th></tr></thead>
+            <tbody>
+              <tr><td><strong>setter</strong></td><td>mutator, modifier</td><td>changes a field — after checking the value</td><td class="mono">public void setName(String myName)</td></tr>
+              <tr><td><strong>getter</strong></td><td>accessor</td><td>gives back the value of a field</td><td class="mono">public String getName()</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l27-set">Setters</h3>
+
+        <p>Here are all four setters from the file. Each one has the same shape: <code class="inl">public void</code>, the name <code class="inl">set…</code>, one parameter of the field's type, and an <code class="inl">if</code> that guards the field.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java · setters</span></div>
+          <pre class="code"><code>// set methods -> mutator - modifier methods
+// stu1.setName("Mehmet Can");
+public void setName(String myName)
+{
+    if (myName.length() == 0) {
+        System.out.println("Invalid name!");
+    } else {
+        name = myName;
+    }
+}
+public void setMail(String mail)
+{
+    if (mail.length() == 0) {
+        System.out.println("Invalid mail!");
+    } else if (mail.indexOf("@") &lt;= 0) {
+        System.out.println("Invalid mail!");
+    }
+    else {
+        email = mail;
+    }
+}
+public void setYear(int y) {
+    if (y &gt; 1900 &amp;&amp; y &lt;= 2026) {
+        birthYear = y;
+    }
+    else {
+        System.out.println("Invalid value!");
+    }
+}
+public void setAvg(double avg) {
+    if (avg &lt; 0 || avg &gt; 100) {
+        System.out.println("Invalid value!");
+    } else {
+        average = avg;
+    }
+}</code></pre>
+        </div>
+
+        <p>Every setter is a little flowchart. Here is <code class="inl">setYear</code>:</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 680 200" role="img" aria-label="setYear: if 1900 is less than y and y is at most 2026, birthYear becomes y; otherwise it prints Invalid value and birthYear keeps its old value">
+            <defs>
+              <marker id="ar8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+            </defs>
+            <rect class="fig-box" x="10" y="40" width="150" height="44" rx="5"/>
+            <text class="fig-m" x="85" y="67" text-anchor="middle">setYear(y)</text>
+            <line x1="160" y1="62" x2="186" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar8b)"/>
+            <polygon class="fig-cond" points="190,62 300,18 410,62 300,106"/>
+            <text class="fig-m" x="300" y="67" text-anchor="middle">1900 &lt; y ≤ 2026 ?</text>
+            <line x1="410" y1="62" x2="476" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar8b)"/>
+            <text class="fig-run" x="443" y="54" text-anchor="middle">yes</text>
+            <rect class="fig-hit" x="480" y="40" width="190" height="44" rx="5"/>
+            <text class="fig-m" x="575" y="67" text-anchor="middle">birthYear = y;</text>
+            <line x1="300" y1="106" x2="300" y2="138" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar8b)"/>
+            <text class="fig-skip" x="312" y="127">no</text>
+            <rect class="fig-box" x="160" y="142" width="280" height="48" rx="5"/>
+            <text class="fig-m" x="300" y="162" text-anchor="middle">print "Invalid value!"</text>
+            <text class="fig-lbl" x="300" y="180" text-anchor="middle">birthYear keeps the value it had</text>
+          </svg>
+          <figcaption>A rejected value changes nothing. The object stays the way it was before the call.</figcaption>
+        </figure>
+
+        <p>Look at what each setter is guarding, and how:</p>
+        <ul class="plain">
+          <li><strong><code class="inl">setName</code></strong> — <code class="inl">length() == 0</code> catches the empty name <code class="inl">""</code>.</li>
+          <li><strong><code class="inl">setMail</code></strong> — <code class="inl">indexOf("@") &lt;= 0</code> catches two cases at once: no <code class="inl">@</code> at all (−1), and an <code class="inl">@</code> at the very front (0) with nothing before it.</li>
+          <li><strong><code class="inl">setYear</code></strong> — a range with <code class="inl">&amp;&amp;</code>: after 1900 <em>and</em> not in the future.</li>
+          <li><strong><code class="inl">setAvg</code></strong> — the same range turned inside out with <code class="inl">||</code>: <em>too small or too big</em> is wrong.</li>
+        </ul>
+
+        <p>The calls from <code class="inl">main</code> — and what each one does:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson27.java · trying setMail three times</span></div>
+          <pre class="code"><code>stu1.setName("Ahmet");
+stu1.setMail("@sdfjds.com");
+System.out.println("Student's name: " + stu1.getName());
+System.out.println("Student's mail: " + stu1.getMail());
+stu1.setMail("asjkdsajk.sdfjds.com");
+System.out.println("Student's mail: " + stu1.getMail());
+stu1.setMail("asjkdsajk@sdfjds.com");
+System.out.println("Student's mail: " + stu1.getMail());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Invalid mail!
+Student's name: Ahmet
+Student's mail: null
+Invalid mail!
+Student's mail: null
+Student's mail: asjkdsajk@sdfjds.com</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="@sdfjds.com" data-marks="0" data-mlen="1"><span class="strip-cap">"@sdfjds.com".indexOf("@") → 0 → nothing before the @ → rejected</span></div>
+        <div class="strip-wrap" data-word="asjkdsajk@sdfjds.com" data-marks="9" data-mlen="1"><span class="strip-cap">"asjkdsajk@sdfjds.com".indexOf("@") → 9 → accepted</span></div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The setter <em>does</em> check — but it only checks what you told it to check. <code class="inl">setMail("ali@")</code> and <code class="inl">setMail("a@b")</code> are both accepted: there is something before the <code class="inl">@</code>, and that is the only rule. A setter is exactly as smart as its <code class="inl">if</code>.</p>
+          <p>And it checks only things it can ask. <code class="inl">setName(null)</code> crashes inside the setter, because <code class="inl">myName.length()</code> is a method call on <code class="inl">null</code>:</p>
+          <div class="ex"><div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "myName" is null</em>
+<em>	at Grup1.Student.setName(Student.java:22)</em></pre></div></div>
+        </div>
+
+        <h3 id="l27-get">Getters</h3>
+
+        <p>The getters are the easy half. No parameter, no check — just hand back the value. The return type is the field's type:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java · getters</span></div>
+          <pre class="code"><code>// get methods -> accesor methods
+public String getName()
+{
+    return name;
+}
+public String getMail() {
+    return email;
+}
+public int getBirthYear() {
+    return birthYear;
+}
+public double getAverage() {
+    return average;
+}</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th>Setter</th><th>Getter</th></tr></thead>
+            <tbody>
+              <tr><td>Name</td><td class="mono">set + Field</td><td class="mono">get + Field</td></tr>
+              <tr><td>Return type</td><td class="mono">void</td><td>the field's type</td></tr>
+              <tr><td>Parameter</td><td>one — the new value</td><td>none</td></tr>
+              <tr><td>Body</td><td><code class="inl">if</code> check, then <code class="inl">field = parameter;</code></td><td class="mono">return field;</td></tr>
+              <tr><td>Call</td><td class="mono">stu1.setAvg(67.9);</td><td class="mono">double a = stu1.getAverage();</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>So why have a getter at all? Why not make the field public for reading? Because Java's <code class="inl">private</code> is all or nothing: a public field can be read <em>and written</em>. With <code class="inl">private</code> + a getter, the outside world can read but cannot write. And when a field should never change from outside, you simply do not write a setter — the field becomes <strong>read-only</strong>. You will see this with the bank account and the car below.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>A getter is a method — it needs its parentheses. <code class="inl">stu1.getName</code> without <code class="inl">()</code> does not compile, and <code class="inl">stu1.name</code> is the private field, which does not compile either. From <code class="inl">main</code> it is always <code class="inl">stu1.getName()</code>.</p>
+        </div>
+
+        <h3 id="l27-static">No static this time</h3>
+
+        <p>Put a Lesson 5 method next to a Student method and one word is missing:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th>Lesson 5</th><th>Lesson 8</th></tr></thead>
+            <tbody>
+              <tr><td>Header</td><td class="mono">public static boolean isPrime(int number)</td><td class="mono">public void setName(String myName)</td></tr>
+              <tr><td>Belongs to</td><td>nobody in particular</td><td>one object</td></tr>
+              <tr><td>Called as</td><td class="mono">isPrime(7)</td><td class="mono">stu1.setName("Ahmet")</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><code class="inl">isPrime(7)</code> only needs the number you give it. <code class="inl">setName</code> has to know <em>whose</em> name to change — stu1's or stu2's — so it is called on an object: <em>object, dot, method</em>. Without <code class="inl">static</code>, a method works on the fields of the object it was called on. Try to call it without an object, and:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Whose name?</span></div>
+          <pre class="code"><code>Student.setName("Ali");</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: non-static method setName(String) cannot be referenced from a static context</em></pre></div>
+        </div>
+
+        <h3 id="l27-methods">Methods that use the fields</h3>
+
+        <p>A class is not only getters and setters. Any method in the class can use the object's fields directly — no parameters needed, because the object already knows its own data:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Student.java</span></div>
+          <pre class="code"><code>public int calculateAge() {
+    return 2026 - birthYear;
+}
+
+public void printStudentInfos() {
+    System.out.println("*****STUDENT INFOS=====");
+    System.out.println("Student's name: " + name);
+    System.out.println("Student's age: " + calculateAge());
+    System.out.println("Student's mail: " + email);
+    System.out.println("Student's average: " + average);
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">calculateAge</code></strong> uses <code class="inl">birthYear</code> without a dot in front. Inside the class, <code class="inl">birthYear</code> means <em>this object’s</em> birth year: <code class="inl">stu1.calculateAge()</code> uses stu1’s, <code class="inl">stu2.calculateAge()</code> uses stu2’s.</li>
+          <li><strong>The age is not stored.</strong> There is no <code class="inl">age</code> field — the age is <em>worked out</em> from the birth year each time it is needed. Store the birth year, which never changes; calculate the age, which changes every year. Compare the first lines of the file: <code class="inl">int age = 34;</code> will be wrong next year.</li>
+          <li><strong><code class="inl">printStudentInfos</code></strong> calls another method of the same class, <code class="inl">calculateAge()</code>, also without a dot. Inside the class, it is understood: <em>on this same object</em>.</li>
+        </ul>
+
+        <h3 id="l27-trace">The file, line by line</h3>
+
+        <p>Here is all of <code class="inl">main</code> in Lesson27, without the commented-out lines, and what happens to stu1 at every step:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson27.java · main</span></div>
+          <pre class="code"><code>Student stu1 = new Student();
+System.out.println("Student's name: " + stu1.getName());
+stu1.setName("");
+System.out.println("Student's name: " + stu1.getName());
+
+stu1.setName("Ahmet");
+stu1.setMail("@sdfjds.com");
+System.out.println("Student's name: " + stu1.getName());
+System.out.println("Student's mail: " + stu1.getMail());
+stu1.setMail("asjkdsajk.sdfjds.com");
+System.out.println("Student's mail: " + stu1.getMail());
+stu1.setMail("asjkdsajk@sdfjds.com");
+System.out.println("Student's mail: " + stu1.getMail());
+stu1.setAvg(67.9);
+stu1.setYear(2000);
+Student stu2 = new Student();
+
+stu2.setName("Mehmet");
+stu2.setMail("mehmet@gmail.com");
+stu2.setAvg(77.9);
+stu2.setYear(1992);
+
+stu2.printStudentInfos();
+stu1.printStudentInfos();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Student's name: null
+Invalid name!
+Student's name: null
+Invalid mail!
+Student's name: Ahmet
+Student's mail: null
+Invalid mail!
+Student's mail: null
+Student's mail: asjkdsajk@sdfjds.com
+*****STUDENT INFOS=====
+Student's name: Mehmet
+Student's age: 34
+Student's mail: mehmet@gmail.com
+Student's average: 77.9
+*****STUDENT INFOS=====
+Student's name: Ahmet
+Student's age: 26
+Student's mail: asjkdsajk@sdfjds.com
+Student's average: 67.9</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">Call on stu1</th><th>Prints</th><th class="mono">name</th><th class="mono">email</th><th class="mono">birthYear</th><th class="mono">average</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">new Student()</td><td></td><td class="mono">null</td><td class="mono">null</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setName("")</td><td class="mono"><span class="fv">Invalid name!</span></td><td class="mono">null</td><td class="mono">null</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setName("Ahmet")</td><td></td><td class="mono"><span class="tv">"Ahmet"</span></td><td class="mono">null</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setMail("@sdfjds.com")</td><td class="mono"><span class="fv">Invalid mail!</span></td><td class="mono">"Ahmet"</td><td class="mono">null</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setMail("asjkdsajk.sdfjds.com")</td><td class="mono"><span class="fv">Invalid mail!</span></td><td class="mono">"Ahmet"</td><td class="mono">null</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setMail("asjkdsajk@sdfjds.com")</td><td></td><td class="mono">"Ahmet"</td><td class="mono"><span class="tv">"asjkdsajk@…"</span></td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">setAvg(67.9)</td><td></td><td class="mono">"Ahmet"</td><td class="mono">"asjkdsajk@…"</td><td class="mono">0</td><td class="mono"><span class="tv">67.9</span></td></tr>
+              <tr><td class="mono">setYear(2000)</td><td></td><td class="mono">"Ahmet"</td><td class="mono">"asjkdsajk@…"</td><td class="mono"><span class="tv">2000</span></td><td class="mono">67.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Three things to see in the output:</p>
+        <ul class="plain">
+          <li><strong>A rejected value leaves the old one.</strong> After <code class="inl">setName("")</code> the name is still <code class="inl">null</code> — the setter refused, so nothing was written.</li>
+          <li><strong>The order of output is the order of calls.</strong> “Invalid mail!” is printed <em>before</em> “Student's name: Ahmet”, because <code class="inl">setMail</code> runs before the two <code class="inl">println</code> lines.</li>
+          <li><strong>stu2 is printed first,</strong> because <code class="inl">stu2.printStudentInfos()</code> comes first in the file. The order in which the objects were created does not matter.</li>
+        </ul>
+
+        <h3 id="l27-lab">Student lab</h3>
+
+        <p>The lab below runs the real Student class from the file, one call at a time. Pick a method, type the argument, press <em>Run</em>. It starts with the first lines of Lesson27 already run.</p>
+
+        <div class="lab" data-mode="student" data-seed="setName|Ahmet|setMail|@sdfjds.com">
+          <div class="lab-head"><b>Student lab · stu1</b><span>Green: the setter accepted. Amber: it refused, and the old value stayed.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab27-m">method
+                <select id="lab27-m" data-f="method">
+                  <option value="setName">stu1.setName(…)</option>
+                  <option value="setMail" selected>stu1.setMail(…)</option>
+                  <option value="setYear">stu1.setYear(…)</option>
+                  <option value="setAvg">stu1.setAvg(…)</option>
+                  <option value="direct">stu1.birthYear = …</option>
+                </select>
+              </label>
+              <label for="lab27-a">argument<input id="lab27-a" data-f="arg" value="ahmet@okul.k12" maxlength="40" autocomplete="off" spellcheck="false"></label>
+              <button type="button" class="lab-btn" data-act="run">Run</button>
+              <button type="button" class="lab-btn ghost" data-act="call" data-m="print">printStudentInfos()</button>
+              <button type="button" class="lab-btn warn" data-act="reset">new Student()</button>
+            </div>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">For <code class="inl">setName</code> and <code class="inl">setMail</code>, type what goes between the quotes. Try a year of 1900, then 1901. Try an average of 100, then 100.5. Try <code class="inl">stu1.birthYear = …</code> — and press <em>printStudentInfos()</em> before setting a year.</p>
+          </div>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><strong>Encapsulation</strong> means the data of an object is <code class="inl">private</code>, and the only way in or out is through <code class="inl">public</code> methods. A <strong>setter</strong> (mutator) changes a field, but only after its <code class="inl">if</code> agrees the value makes sense; a rejected value changes nothing. A <strong>getter</strong> (accessor) hands back a field's value. A field with a getter and no setter is read-only. Methods without <code class="inl">static</code> belong to an object and are called on it: <code class="inl">stu1.setName("Ahmet")</code>.</p>
+        </div>
+
+        <div class="practice" id="p27b">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on getters &amp; setters</h3>
+          <p class="practice-lede">The code is in <code class="inl">main</code> of another class, like Lesson27.java. Student is the private version.</p>
+
+          <ol class="qs">
+            <li>
+              <p>Which of these lines compile?</p>
+              <div class="ex"><pre class="code"><code>Student s = new Student();
+s.name = "Ece";                      // line 1
+s.setName("Ece");                    // line 2
+System.out.println(s.average);       // line 3
+System.out.println(s.getAverage());  // line 4
+s.calculateAge();                    // line 5</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">lines 2, 4 and 5</span></p>
+                  <p>Lines 1 and 3 use a private field from outside the class — writing <em>and</em> reading are both blocked. Line 5 compiles; it calculates an age and then throws the answer away, which is allowed but useless.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Student s = new Student();
+s.setYear(1900);
+s.setYear(2026);
+s.setYear(2027);
+System.out.println(s.getBirthYear());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Invalid value!
+Invalid value!
+2026</pre></div></div>
+                  <p>1900 fails <code class="inl">y &gt; 1900</code>. 2026 passes <code class="inl">y &lt;= 2026</code>. 2027 fails — and the field keeps 2026.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these does <code class="inl">setMail</code> accept?</p>
+              <div class="ex"><pre class="code"><code>s.setMail("@gmail.com");
+s.setMail("ali.gmail.com");
+s.setMail("ali@");
+s.setMail("a@b");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"ali@" and "a@b"</span></p>
+                  <p><code class="inl">indexOf("@")</code> is 0 for the first (nothing before it) and −1 for the second. The last two have something before the <code class="inl">@</code>, which is the only rule — even though neither is a real address.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Student s = new Student();
+s.setAvg(100.5);
+s.setAvg(-0.1);
+s.setAvg(0);
+System.out.println(s.getAverage());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Invalid value!
+Invalid value!
+0.0</pre></div></div>
+                  <p>0 is allowed (<code class="inl">avg &lt; 0</code> is false), and the <code class="inl">int</code> 0 becomes the <code class="inl">double</code> 0.0. Careful: the answer is the same as if nothing had been set — you cannot tell the difference from the outside.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Add a new field <code class="inl">school</code> to Student, with a getter and a setter. The setter should reject the empty String.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>private String school;
+
+public void setSchool(String s) {
+    if (s.length() == 0) {
+        System.out.println("Invalid school!");
+    } else {
+        school = s;
+    }
+}
+public String getSchool() {
+    return school;
+}</code></pre></div>
+                  <p>Three pieces, always the same: a <code class="inl">private</code> field, a <code class="inl">void</code> setter with an <code class="inl">if</code>, a getter that returns the field's type.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What happens here — and which line in <code class="inl">Student.java</code> is to blame?</p>
+              <div class="ex"><pre class="code"><code>Student s = new Student();
+s.setName(null);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "myName" is null</em></pre></div></div>
+                  <p><code class="inl">if (myName.length() == 0)</code> — the very first line of the setter calls a method on <code class="inl">null</code>. To stop it, check <code class="inl">myName == null</code> first (Lesson 7): <code class="inl">if (myName == null || myName.length() == 0)</code>. With <code class="inl">||</code>, if the left side is already true, Java does not look at the right side, so <code class="inl">length()</code> is never called on <code class="inl">null</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 28 ============ -->
+      <section class="lesson" id="l28">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 28 · Lesson28.java + Height.java</span>
+          <h2 class="lesson-title">Height, this &amp; Private Methods</h2>
+        </div>
+
+        <p>Part 27 showed the main idea: private data, public methods that guard it. Height uses the same idea for something a little different. Student's setters only <em>refuse</em> bad values. Height's methods also <em>repair</em> values: give it too many inches, and it turns them into feet by itself, so the object is always in a sensible state. On the way we meet two new tools: the keyword <code class="inl">this</code>, and a method that is <code class="inl">private</code>.</p>
+
+        <h3 id="l28-ft">Feet and inches</h3>
+
+        <p>In America, a basketball player is not “2.06 m” tall but <strong>6 ft. 9 in.</strong>, six feet and nine inches. The rule is at the top of the file:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java</span></div>
+          <pre class="code"><code>// 1 feet = 12 inches
+public class Height {
+
+    private int feet;
+    private int inches;
+    ...
+}</code></pre>
+        </div>
+
+        <p>The tricky part: inches only go up to 11. Nobody says “6 feet 15 inches” — 12 inches make one more foot, so that is <strong>7 feet 3 inches</strong>. A <code class="inl">Height</code> object should always keep itself in that tidy form, whatever you give it. That is the job of this class.</p>
+
+        <div class="inchgrid-host" data-n="15"><span class="strip-cap">15 inches → one full row of 12 is 1 foot, 3 inches are left</span></div>
+
+        <h3 id="l28-shadow">The same name twice</h3>
+
+        <p>Here is a setter where the parameter has <em>the same name</em> as the field — both are called <code class="inl">inches</code>. The comment in the file keeps the first try:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · the first try</span></div>
+          <pre class="code"><code>public void setInches(int inches) {
+    if (inches &gt; 0) {
+        inches = inches; // The assignment to variable inches has no effect
+    }
+}</code></pre>
+        </div>
+
+        <p>Eclipse puts a yellow warning on that line, and it is right. Inside the method, the name <code class="inl">inches</code> means the <strong>closest</strong> one — the parameter. So <code class="inl">inches = inches;</code> copies the parameter onto itself. The field is never touched:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Running it</span></div>
+          <pre class="code"><code>Height h1 = new Height();
+h1.setFeet(6);
+h1.setInches(9);
+h1.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 ft. 0 inc.</pre></div>
+        </div>
+
+        <p>The 9 went into the parameter and disappeared when the method ended. The field still has its default, 0. No error, no crash — just the wrong height.</p>
+
+        <div class="refs">
+          <div class="row">
+            <span class="var">inches = inches;</span><span class="arrow">→</span>
+            <span class="param">parameter <b>inches = 9</b> ← itself</span>
+            <div class="obj">
+              <div class="obj-h"><b>h1</b><span>Height</span></div>
+              <div class="f"><span class="k">feet</span><span class="v">6</span></div>
+              <div class="f bad"><span class="k">inches</span><span class="v">0</span></div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="var">this.inches = inches;</span><span class="arrow">→</span>
+            <span class="param">parameter <b>inches = 9</b> → field</span>
+            <div class="obj is-this">
+              <div class="obj-h"><b>h1</b><span class="this-tag">this</span></div>
+              <div class="f"><span class="k">feet</span><span class="v">6</span></div>
+              <div class="f new"><span class="k">inches</span><span class="v">9</span></div>
+            </div>
+          </div>
+        </div>
+
+        <h3 id="l28-this">this</h3>
+
+        <p>The fix is a new keyword. <code class="inl">this</code> means <strong>the object the method was called on</strong>. <code class="inl">this.inches</code> is <em>that object’s field</em>, never the parameter:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · with this</span></div>
+          <pre class="code"><code>// this keyword
+
+public void setFeet(int feet) {
+    if (feet &gt; 0) {
+        this.feet = feet;
+    }
+}
+public void setInches(int inches) {
+    if (inches &gt; 0) {
+        this.inches = inches;
+    }
+    simplify();
+}</code></pre>
+        </div>
+
+        <p>Who is <code class="inl">this</code>? It depends on the call. The comments in <code class="inl">Lesson28.java</code> say it exactly:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson28.java</span></div>
+          <pre class="code"><code>Height h1 = new Height(); // h1 -> this
+h1.setFeet(6);
+
+Height h2 = new Height(); // h2 -> this
+h2.setFeet(6);</code></pre>
+        </div>
+
+        <div class="objs">
+          <div class="obj is-this">
+            <div class="obj-h"><b>h1</b><span class="this-tag">this</span></div>
+            <div class="f new"><span class="k">feet</span><span class="v">6</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">0</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>h2</b><span>Height</span></div>
+            <div class="f"><span class="k">feet</span><span class="v">0</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">0</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">During <code class="inl">h1.setFeet(6)</code>, <code class="inl">this</code> is h1. During <code class="inl">h2.setFeet(6)</code>, the same code runs again — and now <code class="inl">this</code> is h2. One method, written once, works on whichever object is in front of the dot.</p>
+
+        <p>When there is <em>no</em> parameter with the same name, <code class="inl">this.</code> is optional. That is why the file can mix both styles and still be right:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · both are the field</span></div>
+          <pre class="code"><code>public int getFeet() {
+    return feet;
+}
+public int getInches() {
+    return this.inches;
+}
+
+public void printHeight() {
+    System.out.println(this.feet + " ft. " + inches + " inc.");
+}</code></pre>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>If a parameter has the same name as a field, the plain name is the <strong>parameter</strong>. Write <code class="inl">this.field = parameter;</code>. The other way out is what Student does: give the parameter a different name — <code class="inl">myName</code>, <code class="inl">mail</code>, <code class="inl">y</code>, <code class="inl">avg</code> — and then <code class="inl">this</code> is not needed.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p><em>“Write your name at the top of the page.”</em> Every student in the room hears the same sentence, and each one writes a different name — their own. The sentence is the method; <em>your</em> is <code class="inl">this</code>.</p>
+        </div>
+
+        <h3 id="l28-priv">A private method</h3>
+
+        <p>Notice the last line of <code class="inl">setInches</code>: it calls <code class="inl">simplify()</code>, which turns too many inches into feet. But look at its header:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java</span></div>
+          <pre class="code"><code>private void simplify() {
+    ...
+}</code></pre>
+        </div>
+
+        <p><code class="inl">private</code> works on methods exactly as on fields: only code inside <code class="inl">Height</code> can call it. From <code class="inl">main</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson28.java · the commented-out line</span></div>
+          <pre class="code"><code>h2.simplify(); //The method simplify() from the type Height is not visible</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: simplify() has private access in Height</em></pre></div>
+        </div>
+
+        <p>Why hide it? Because nobody outside <em>needs</em> to call it. The class calls it itself, every time the inches change, so a Height is <em>always</em> tidy. A private method is a helper — part of how the class works inside, not part of what it offers outside.</p>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>Height</b><span>what main sees</span></div>
+            <div class="sec">public · the doors</div>
+            <div class="m">setFeet(int)</div>
+            <div class="m">setInches(int)</div>
+            <div class="m">getFeet() · getInches()</div>
+            <div class="m">printHeight()</div>
+            <div class="m">add(int)</div>
+            <div class="m">addHeight(Height)</div>
+            <div class="sec">private · inside only</div>
+            <div class="m priv">feet · inches</div>
+            <div class="m priv">simplify()</div>
+          </div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A restaurant. The menu is public: you can <em>order</em> and <em>pay</em>. The kitchen is private: chopping onions, checking the oven. You never order “chop an onion” — the kitchen does it by itself, because your soup needs it. <code class="inl">simplify()</code> is the kitchen.</p>
+        </div>
+
+        <h3 id="l28-simp">simplify with / and %</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java</span></div>
+          <pre class="code"><code>private void simplify() {
+    //feet +  inc / 12
+    // inc = inc % 12
+    feet += inches / 12;
+    inches = this.inches % 12;
+
+    //
+    while (inches &gt;= 12) {
+        feet++;
+        inches -= 12;
+    }
+}</code></pre>
+        </div>
+
+        <p>This is the digit trick from Lesson 3 (<code class="inl">% 10</code> and <code class="inl">/ 10</code>), with 12 instead of 10:</p>
+        <ul class="plain">
+          <li><strong><code class="inl">inches / 12</code></strong> — integer division: how many <em>full</em> feet fit in the inches. Add them to <code class="inl">feet</code>.</li>
+          <li><strong><code class="inl">inches % 12</code></strong> — the remainder: the inches left over after taking out every full foot.</li>
+        </ul>
+
+        <div class="inchgrid-host" data-n="38"><span class="strip-cap">38 inches → three full rows of 12 (3 feet) and 2 left over</span></div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">inches before</th><th class="mono">inches / 12</th><th class="mono">inches % 12</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">9</td><td class="mono">0</td><td class="mono">9</td><td>no change</td></tr>
+              <tr><td class="mono">15</td><td class="mono">1</td><td class="mono">3</td><td>+1 ft, 3 in.</td></tr>
+              <tr><td class="mono">38</td><td class="mono">3</td><td class="mono">2</td><td>+3 ft, 2 in.</td></tr>
+              <tr><td class="mono">123</td><td class="mono">10</td><td class="mono">3</td><td>+10 ft, 3 in.</td></tr>
+              <tr><td class="mono">12</td><td class="mono">1</td><td class="mono">0</td><td>+1 ft, 0 in.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>And the <code class="inl">while</code> loop under it? It does the same job the slow way — take away 12, add one foot, again and again — like counting out 38 coins in piles of 12. After the <code class="inl">%</code> line, <code class="inl">inches</code> is always below 12, so the loop never runs even once. Either half alone is enough; we wrote both in class to compare them. This version, with only the loop, gives the same answers:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>simplify with only the loop</span></div>
+          <pre class="code"><code>private void simplify() {
+    while (inches &gt;= 12) {
+        feet++;
+        inches -= 12;
+    }
+}</code></pre>
+        </div>
+
+        <h3 id="l28-run">Running Lesson28</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson28.java · main</span></div>
+          <pre class="code"><code>Height h1 = new Height(); // h1 -> this
+h1.setFeet(6);
+h1.setInches(9);
+h1.printHeight();
+
+Height h2 = new Height(); // h2 -> this
+h2.setFeet(6);
+h2.setInches(15);
+h2.printHeight();
+
+Height h3 = new Height();
+h3.setFeet(17);
+h3.setInches(123);
+h3.printHeight();
+
+h2.add(35);
+h2.printHeight();
+
+h1.printHeight();
+h2.printHeight();
+
+h1.addHeight(h2); // h1 -> 16ft 11inc
+
+h1.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 ft. 9 inc.
+7 ft. 3 inc.
+27 ft. 3 inc.
+10 ft. 2 inc.
+6 ft. 9 inc.
+10 ft. 2 inc.
+16 ft. 11 inc.</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><strong>h2:</strong> 6 ft, then 15 inches → simplify → 7 ft 3 in.</li>
+          <li><strong>h3:</strong> 17 ft, then 123 inches → 123 / 12 = 10 more feet, 123 % 12 = 3 → 27 ft 3 in.</li>
+          <li><strong><code class="inl">h2.add(35)</code>:</strong> 3 + 35 = 38 inches → 3 more feet, 2 inches → 10 ft 2 in.</li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · add</span></div>
+          <pre class="code"><code>public void add(int inc)
+{
+    inches += inc;
+    this.simplify();
+}</code></pre>
+        </div>
+
+        <p><code class="inl">this.simplify()</code> and <code class="inl">simplify()</code> are the same call: <em>simplify this same object</em>.</p>
+
+        <h3 id="l28-other">Another object as a parameter</h3>
+
+        <p>The last method adds one whole Height to another. Its parameter is not an <code class="inl">int</code> — it is a <code class="inl">Height</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · addHeight</span></div>
+          <pre class="code"><code>// h1.addHeight(h2);
+public void addHeight(Height other) {
+    this.feet += other.feet;
+    inches += other.inches;
+}</code></pre>
+        </div>
+
+        <p>In the call <code class="inl">h1.addHeight(h2)</code> there are two objects at once. <code class="inl">this</code> is h1, the one in front of the dot. <code class="inl">other</code> is h2, the one in the parentheses:</p>
+
+        <div class="objs">
+          <div class="obj is-this">
+            <div class="obj-h"><b>h1</b><span class="this-tag">this</span></div>
+            <div class="f new"><span class="k">feet</span><span class="v">6 + 10 = 16</span></div>
+            <div class="f new"><span class="k">inches</span><span class="v">9 + 2 = 11</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>h2</b><span>other</span></div>
+            <div class="f"><span class="k">feet</span><span class="v">10</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">2</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">Only h1 changes. h2 is read, never written: it is still 10 ft 2 in. after the call.</p>
+
+        <p>Wait — <code class="inl">other.feet</code> is a private field, and we are reading it with a dot. Why does that compile? Because the line is written <em>inside the Height class</em>. <code class="inl">private</code> means <em>“only code in this class”</em>, not <em>“only this object”</em>. Code inside Height may look at the private fields of any Height. In <code class="inl">main</code>, <code class="inl">h2.feet</code> is still an error — that is what the two comments under the call are reminding us.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">addHeight</code> does not call <code class="inl">simplify()</code>. In the file it works out because 9 + 2 is only 11. Add two heights whose inches go past 11, and the object is no longer tidy:</p>
+          <div class="ex">
+            <pre class="code"><code>Height a = new Height();
+a.setFeet(6);
+a.setInches(9);
+Height b = new Height();
+b.setFeet(5);
+b.setInches(5);
+a.addHeight(b);
+a.printHeight();</code></pre>
+            <div class="out"><span class="out-label">Console</span><pre>11 ft. 14 inc.</pre></div>
+          </div>
+          <p>One line fixes it: <code class="inl">simplify();</code> at the end of <code class="inl">addHeight</code>, as <code class="inl">add</code> does. Then the answer is <code class="inl">12 ft. 2 inc.</code> The lesson: <em>every</em> method that changes the inches must call <code class="inl">simplify()</code> — that is the promise the class makes.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">this</code> is the object the method was called on; <code class="inl">this.inches</code> is always the field, even when a parameter has the same name. A <code class="inl">private</code> method is a helper only the class itself can call. Code inside a class can use the private fields of <em>any</em> object of that class — <code class="inl">other.feet</code> — because <code class="inl">private</code> is about where the code is written. A class keeps its promise only if <em>every</em> method that changes the data keeps it.</p>
+        </div>
+
+        <h3 id="l28-lab">Height lab</h3>
+
+        <div class="lab" data-mode="height" data-seed="setFeet|6|setInches|15">
+          <div class="lab-head"><b>Height lab · h</b><span>Every time the inches change, watch what simplify() does with them.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab28-m">method
+                <select id="lab28-m" data-f="method">
+                  <option value="setFeet">h.setFeet(…)</option>
+                  <option value="setInches">h.setInches(…)</option>
+                  <option value="add" selected>h.add(…)</option>
+                </select>
+              </label>
+              <label for="lab28-a">int<input id="lab28-a" data-f="arg" type="number" value="35" autocomplete="off"></label>
+              <button type="button" class="lab-btn" data-act="run">Run</button>
+              <button type="button" class="lab-btn ghost" data-act="call" data-m="printHeight">printHeight()</button>
+              <button type="button" class="lab-btn warn" data-act="reset">new Height()</button>
+            </div>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try <code class="inl">setInches(123)</code>. Try <code class="inl">setInches(0)</code> — it is refused, the old inches stay. Then try <code class="inl">add(-20)</code>: <code class="inl">add</code> has no check at all.</p>
+          </div>
+        </div>
+
+        <div class="practice" id="p28">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 28</h3>
+          <p class="practice-lede">Use Height.java exactly as it is in the file.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height();
+h.setFeet(5);
+h.setInches(30);
+h.printHeight();
+h.setInches(12);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>7 ft. 6 inc.
+8 ft. 0 inc.</pre></div></div>
+                  <p>30 / 12 = 2, 30 % 12 = 6. Then <code class="inl">setInches(12)</code> <em>replaces</em> the 6 with 12 — it does not add — and simplify turns 12 into one more foot.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height();
+h.setFeet(5);
+h.setInches(10);
+h.setInches(0);
+h.setFeet(-3);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 10 inc.</pre></div></div>
+                  <p>Both setters only write when the value is <code class="inl">&gt; 0</code>, so 0 and −3 are ignored. Unlike Student, they ignore it silently — no message.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Someone deletes <code class="inl">this.</code> from <code class="inl">setFeet</code>, so the line reads <code class="inl">feet = feet;</code>. What does this print?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height();
+h.setFeet(6);
+h.setInches(9);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0 ft. 9 inc.</pre></div></div>
+                  <p><code class="inl">feet = feet;</code> copies the parameter onto itself. The field keeps its default 0. It still compiles — that is what makes it dangerous.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed? Is this a correct height?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height();
+h.setFeet(6);
+h.setInches(9);
+h.add(-20);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6 ft. -11 inc.</pre></div></div>
+                  <p>9 − 20 = −11. −11 / 12 = 0 and −11 % 12 = −11, so simplify changes nothing. Not a real height: <code class="inl">add</code> has no check, so the object can be broken through it. Encapsulation only protects as well as <em>every</em> door checks.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed — with the file's <code class="inl">addHeight</code>, which does not simplify?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height();
+a.setFeet(4);
+a.setInches(8);
+Height b = new Height();
+b.setFeet(3);
+b.setInches(7);
+a.addHeight(b);
+a.printHeight();
+b.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>7 ft. 15 inc.
+3 ft. 7 inc.</pre></div></div>
+                  <p>8 + 7 = 15 inches, and nothing simplifies them. With <code class="inl">simplify();</code> added at the end of <code class="inl">addHeight</code> it would be <code class="inl">8 ft. 3 inc.</code> <code class="inl">b</code> is unchanged either way.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Inside <code class="inl">addHeight</code>, <code class="inl">other.feet</code> compiles. In <code class="inl">main</code>, <code class="inl">h2.feet</code> does not. Explain the difference in one sentence.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">private</code> is checked by <em>where the code is written</em>: <code class="inl">addHeight</code> is written inside the Height class, so it may use the private fields of any Height; <code class="inl">main</code> is in Lesson28, outside, so it may not.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">Where Encapsulation Lives</h2>
+        </div>
+
+        <h3 id="life-table">Every app is full of setters</h3>
+
+        <p>Every app on your phone is built out of classes like Student. Each screen is objects; every box you can type into ends in a setter; and every rule that ever rejected what you typed is an <code class="inl">if</code> inside one.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Object</th><th>Fields</th><th>A setter that says no</th><th>A field with no setter</th></tr></thead>
+            <tbody>
+              <tr><td>e-Okul grade</td><td>student, lesson, score</td><td>score must be 0–100</td><td>student — a grade never moves to someone else</td></tr>
+              <tr><td>Instagram account</td><td>username, bio, followers</td><td>username: no spaces, not taken</td><td>followers — only <em>follow</em> / <em>unfollow</em> change it</td></tr>
+              <tr><td>Cart item</td><td>product, quantity, price</td><td>quantity at least 1, at most the stock</td><td>price — the shop sets it, not you</td></tr>
+              <tr><td>Phone</td><td>volume, brightness, battery</td><td>volume 0–15</td><td>battery — only charging or using it changes it</td></tr>
+              <tr><td>Bank account</td><td>owner, balance</td><td>withdraw no more than the balance</td><td>balance — only deposit and withdraw</td></tr>
+              <tr><td>Car</td><td>plate, km</td><td>plate not empty</td><td>km — only driving adds to it</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>When a website shows <em>“Please enter a valid e-mail address”</em>, you have just watched <code class="inl">setMail</code> refuse your value. The red text is the <code class="inl">System.out.println("Invalid mail!")</code>.</p>
+
+        <h3 id="life-car">The odometer</h3>
+
+        <p>The odometer is the number on a car's dashboard that counts every kilometre the car has driven. A used car with fewer kilometres sells for more — so some sellers illegally wind it back. A well-encapsulated <code class="inl">Car</code> class makes that impossible: <code class="inl">km</code> is private, there is a getter, there is <em>no setter</em>, and the only way to change it is to drive.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Car.java</span></div>
+          <pre class="code"><code>public class Car {
+    private String plate;
+    private double km;
+
+    public void setPlate(String plate) {
+        if (plate.length() == 0) {
+            System.out.println("Invalid plate!");
+        } else {
+            this.plate = plate;
+        }
+    }
+    public String getPlate() {
+        return plate;
+    }
+    public double getKm() {
+        return km;
+    }
+
+    public void drive(double distance) {
+        if (distance &gt; 0) {
+            km += distance;
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Using it</span></div>
+          <pre class="code"><code>Car car = new Car();
+car.setPlate("34 ABC 123");
+car.drive(120.5);
+car.drive(-80);
+car.drive(30);
+System.out.println(car.getPlate() + ": " + car.getKm() + " km");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>34 ABC 123: 150.5 km</pre></div>
+        </div>
+
+        <p>Driving −80 km is ignored: the number can only go up. And winding it back from <code class="inl">main</code>?</p>
+
+        <div class="ex">
+          <pre class="code"><code>car.km = 0;</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: km has private access in Car</em></pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Not every field needs a setter. For every field, ask two questions. <em>Should the outside world be able to read it?</em> → write a getter. <em>Should the outside world be able to change it — and with what rule?</em> → write a setter with that rule in its <code class="inl">if</code>, or write no setter at all.</p>
+        </div>
+
+        <div class="practice" id="pl">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six design questions</h3>
+          <p class="practice-lede">No output here — these are the questions you ask yourself before writing a class.</p>
+
+          <ol class="qs">
+            <li>
+              <p>A <code class="inl">Phone</code> class has <code class="inl">private int volume;</code>. Write <code class="inl">setVolume</code> so that only 0 to 15 is allowed.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public void setVolume(int v) {
+    if (v &gt;= 0 &amp;&amp; v &lt;= 15) {
+        volume = v;
+    } else {
+        System.out.println("Invalid volume!");
+    }
+}</code></pre></div>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A cart item has <code class="inl">private int quantity;</code>. Write <code class="inl">removeOne()</code>: it takes one away, but the quantity may never go below 1.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public void removeOne() {
+    if (quantity &gt; 1) {
+        quantity--;
+    }
+}</code></pre></div>
+                  <p>No parameter: the method knows which quantity to change — <em>this</em> item's.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A <code class="inl">Product</code> has <code class="inl">name</code>, <code class="inl">price</code> and <code class="inl">stock</code>. Give each one a setter rule.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>One good set: <code class="inl">name</code> not empty; <code class="inl">price</code> greater than 0; <code class="inl">stock</code> 0 or more (0 means sold out, which is allowed). Other sensible rules are fine — what matters is that every setter has one.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>An <code class="inl">ExamResult</code> class has <code class="inl">score</code>. The teacher enters it once. Should students' code have <code class="inl">getScore</code>? <code class="inl">setScore</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">getScore</code> yes — a student may see their score. <code class="inl">setScore</code> is the dangerous one: if it exists and is public, anyone holding the object can change their grade. Leave it out, like the car's <code class="inl">km</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why does Student store <code class="inl">birthYear</code> and calculate the age, instead of storing <code class="inl">age</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The birth year never changes; the age changes every year. A stored age is right today and wrong next year. A calculated age is always worked out fresh from a value that stays true.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A <code class="inl">Temperature</code> class stores Celsius. Someone also wants Fahrenheit. Add a second field <code class="inl">fahrenheit</code>, or a method <code class="inl">getFahrenheit()</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The method — the same reason as the age. Two fields can disagree (someone changes one and forgets the other). One field plus a method can never disagree. See the Thermostat in the extras.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ EXTRAS ============ -->
+      <section class="lesson" id="extras">
+        <div class="lesson-head">
+          <span class="lesson-no">Extras · beyond the four files</span>
+          <h2 class="lesson-title">More Classes to Read and Write</h2>
+        </div>
+
+        <p>Nothing new below: <code class="inl">private</code> fields, getters, setters with an <code class="inl">if</code>, <code class="inl">this</code>, a private helper. Each class is a new real-world thing built with exactly the tools of this lesson. Every one is in its own file, used from a <code class="inl">main</code> in another file.</p>
+
+        <h3 id="x-how">Designing a class in four steps</h3>
+
+        <ol class="plain">
+          <li><strong>What does it have?</strong> Those are the fields. Pick a type for each. Make them all <code class="inl">private</code>.</li>
+          <li><strong>What may never be true?</strong> A negative balance, an empty name, minute 75. Those become the <code class="inl">if</code>s in the setters.</li>
+          <li><strong>What can the outside read, and what can it change?</strong> Getters for the first; setters — or no setter — for the second.</li>
+          <li><strong>What can it do?</strong> Deposit, drive, add minutes. Those are the other methods. Things that can be worked out (an age, a Fahrenheit value) are methods, not fields.</li>
+        </ol>
+
+        <h3 id="x-bank">BankAccount · a read-only balance</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java</span></div>
+          <pre class="code"><code>public class BankAccount {
+    private String owner;
+    private double balance;
+
+    public void setOwner(String name) {
+        if (name.length() == 0) {
+            System.out.println("Invalid name!");
+        } else {
+            owner = name;
+        }
+    }
+    public String getOwner() {
+        return owner;
+    }
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount &lt;= 0) {
+            System.out.println("Invalid amount!");
+        } else {
+            balance += amount;
+        }
+    }
+    public void withdraw(double amount) {
+        if (amount &lt;= 0) {
+            System.out.println("Invalid amount!");
+        } else if (amount &gt; balance) {
+            System.out.println("Not enough money!");
+        } else {
+            balance -= amount;
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Using it</span></div>
+          <pre class="code"><code>BankAccount acc = new BankAccount();
+acc.setOwner("Selin");
+acc.deposit(500);
+acc.withdraw(120);
+acc.withdraw(1000);
+acc.deposit(-50);
+System.out.println(acc.getOwner() + ": " + acc.getBalance());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Not enough money!
+Invalid amount!
+Selin: 380.0</pre></div>
+        </div>
+
+        <p>There is no <code class="inl">setBalance</code>. The balance can only change by <code class="inl">deposit</code> and <code class="inl">withdraw</code>, and both check. A setter does not have to be called <code class="inl">set…</code> — any method that changes a field is a mutator.</p>
+
+        <h3 id="x-user">User · a password with no getter</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>User.java</span></div>
+          <pre class="code"><code>public class User {
+    private String username;
+    private String password;
+
+    public void setUsername(String u) {
+        if (u.length() == 0 || u.indexOf(" ") != -1) {
+            System.out.println("Invalid username!");
+        } else {
+            username = u;
+        }
+    }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setPassword(String p) {
+        if (p.length() &lt; 6) {
+            System.out.println("Too short!");
+        } else {
+            password = p;
+        }
+    }
+    // no getPassword() on purpose
+
+    public boolean checkPassword(String attempt) {
+        return attempt.equals(password);
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Logging in</span></div>
+          <pre class="code"><code>User u = new User();
+u.setUsername("ruzgar 07");
+u.setUsername("ruzgar07");
+u.setPassword("1234");
+u.setPassword("Kedi!2026");
+System.out.println(u.getUsername());
+System.out.println(u.checkPassword("kedi!2026"));
+System.out.println(u.checkPassword("Kedi!2026"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Invalid username!
+Too short!
+ruzgar07
+false
+true</pre></div>
+        </div>
+
+        <p>The password can be <em>set</em> and <em>checked</em>, but never <em>read</em>. That is how every real login works: the site can tell you “wrong password”, but no button shows you the right one. <code class="inl">equals</code> also cares about capitals, so <code class="inl">"kedi!2026"</code> is wrong.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Before <code class="inl">setPassword</code> is called, <code class="inl">password</code> is <code class="inl">null</code>. <code class="inl">attempt.equals(password)</code> is safe: asking a real String whether it equals <code class="inl">null</code> just answers <code class="inl">false</code>. Written the other way round, <code class="inl">password.equals(attempt)</code> calls a method on <code class="inl">null</code> — a NullPointerException.</p>
+        </div>
+
+        <h3 id="x-thermo">Thermostat · a value worked out, not stored</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Thermostat.java</span></div>
+          <pre class="code"><code>public class Thermostat {
+    private double celsius;
+
+    public void setCelsius(double c) {
+        if (c &lt; 5 || c &gt; 30) {
+            System.out.println("Choose 5 to 30!");
+        } else {
+            celsius = c;
+        }
+    }
+    public double getCelsius() {
+        return celsius;
+    }
+    public double getFahrenheit() {
+        return celsius * 9 / 5 + 32;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Using it</span></div>
+          <pre class="code"><code>Thermostat t = new Thermostat();
+t.setCelsius(22);
+System.out.println(t.getCelsius() + " C = " + t.getFahrenheit() + " F");
+t.setCelsius(45);
+t.setCelsius(21.5);
+System.out.println(t.getCelsius() + " C = " + t.getFahrenheit() + " F");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>22.0 C = 71.6 F
+Choose 5 to 30!
+21.5 C = 70.7 F</pre></div>
+        </div>
+
+        <p><code class="inl">getFahrenheit</code> looks like a getter, but there is no <code class="inl">fahrenheit</code> field. Like <code class="inl">calculateAge</code>, it is worked out from the one field that is stored. The outside world cannot tell the difference — that is encapsulation too: <em>how</em> the class keeps its data is its own business.</p>
+
+        <h3 id="x-clock">Clock · Height with 60 instead of 12</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Clock.java</span></div>
+          <pre class="code"><code>public class Clock {
+    private int hours;
+    private int minutes;
+
+    public void setHours(int hours) {
+        if (hours &gt;= 0 &amp;&amp; hours &lt; 24) {
+            this.hours = hours;
+        }
+    }
+    public void setMinutes(int minutes) {
+        if (minutes &gt;= 0 &amp;&amp; minutes &lt; 60) {
+            this.minutes = minutes;
+        }
+    }
+
+    public void addMinutes(int m) {
+        if (m &gt; 0) {
+            minutes += m;
+            simplify();
+        }
+    }
+    private void simplify() {
+        hours += minutes / 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+    }
+
+    public void printTime() {
+        if (minutes &lt; 10) {
+            System.out.println(hours + ":0" + minutes);
+        } else {
+            System.out.println(hours + ":" + minutes);
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>The school day</span></div>
+          <pre class="code"><code>Clock c = new Clock();
+c.setHours(8);
+c.setMinutes(50);
+c.printTime();
+c.addMinutes(15);
+c.printTime();
+c.addMinutes(45);
+c.printTime();
+c.addMinutes(900);
+c.printTime();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>8:50
+9:05
+9:50
+0:50</pre></div>
+        </div>
+
+        <p>Same shape as Height: two <code class="inl">int</code> fields, setters with <code class="inl">this</code>, and a private <code class="inl">simplify</code> with <code class="inl">/</code> and <code class="inl">%</code>. One extra step — <code class="inl">hours % 24</code> — makes the clock go round past midnight: 9:50 plus 900 minutes (15 hours) is 24:50, which is 0:50. And unlike Height's <code class="inl">add</code>, <code class="inl">addMinutes</code> checks its argument, so no negative minutes get in.</p>
+
+        <div class="practice" id="px">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the extras</h3>
+          <p class="practice-lede">Use the classes exactly as written above.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>BankAccount acc = new BankAccount();
+acc.deposit(100);
+acc.withdraw(30);
+acc.withdraw(80);
+System.out.println(acc.getBalance());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Not enough money!
+70.0</pre></div></div>
+                  <p>After 100 − 30 there are 70, so 80 is refused and the balance stays 70.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A classmate adds <code class="inl">public void setBalance(double b) { balance = b; }</code> to BankAccount. What goes wrong?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Every check in <code class="inl">deposit</code> and <code class="inl">withdraw</code> becomes pointless: <code class="inl">acc.setBalance(1000000)</code> or <code class="inl">acc.setBalance(-500)</code> goes straight in. One unchecked door is enough to break encapsulation.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does this print — and why doesn't it crash?</p>
+              <div class="ex"><pre class="code"><code>User v = new User();
+System.out.println(v.checkPassword("anything"));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false</span></p>
+                  <p><code class="inl">password</code> is still <code class="inl">null</code>. The method is called on <code class="inl">"anything"</code>, a real String, and a real String is never equal to <code class="inl">null</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Thermostat t = new Thermostat();
+t.setCelsius(25);
+System.out.println(t.getFahrenheit());
+t.setCelsius(4);
+System.out.println(t.getCelsius());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>77.0
+Choose 5 to 30!
+25.0</pre></div></div>
+                  <p>25 × 9 / 5 + 32 = 77. Then 4 is refused, so Celsius stays 25.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Clock c = new Clock();
+c.setHours(23);
+c.setMinutes(45);
+c.addMinutes(30);
+c.printTime();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0:15</pre></div></div>
+                  <p>75 minutes → 1 more hour, 15 minutes. 24 hours → 24 % 24 = 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What would <code class="inl">printTime</code> print for 7:05 if it were only <code class="inl">System.out.println(hours + ":" + minutes);</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">7:5</span></p>
+                  <p><code class="inl">minutes</code> is the <code class="inl">int</code> 5, and an <code class="inl">int</code> has no leading zero. The <code class="inl">if</code> adds the <code class="inl">"0"</code> by hand whenever minutes is below 10.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>Many of these have two or three names. You will meet all of them — in class, in the book and on the exam.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>class</strong></td><td>blueprint, type</td><td>the template: what every object has and can do</td><td class="mono">Student, Height</td></tr>
+              <tr><td><strong>object</strong></td><td>instance</td><td>one real thing built from the class with <code class="inl">new</code></td><td class="mono">stu1, stu2, h1, h2, h3</td></tr>
+              <tr><td><strong>instance variable</strong></td><td>field, property, attribute</td><td>a variable that every object has its own copy of</td><td class="mono">name, birthYear, feet, inches</td></tr>
+              <tr><td><strong>default value</strong></td><td></td><td>what a field holds before anyone sets it</td><td class="mono">null, 0, 0.0, false</td></tr>
+              <tr><td><strong>private</strong></td><td></td><td>usable only by code inside this class</td><td>every field, <code class="inl">simplify()</code></td></tr>
+              <tr><td><strong>public</strong></td><td></td><td>usable from any class</td><td>the class, the getters and setters</td></tr>
+              <tr><td><strong>encapsulation</strong></td><td>data hiding</td><td>private data, reached only through methods that check</td><td>the whole Student class</td></tr>
+              <tr><td><strong>setter</strong></td><td>mutator, modifier</td><td>a method that changes a field, after a check</td><td class="mono">setName, setYear, setFeet</td></tr>
+              <tr><td><strong>getter</strong></td><td>accessor</td><td>a method that returns a field's value</td><td class="mono">getName, getInches</td></tr>
+              <tr><td><strong>this</strong></td><td></td><td>the object the method was called on</td><td class="mono">this.inches = inches;</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Fourteen traps to remember</h2>
+        <p>Five of these will not compile, one crashes, and the rest run quietly and give the wrong answer — the hardest kind to find.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">stu1.name = "Ali";</td><td>the name is set</td><td><span class="err">will not compile</span></td><td>name is private — use stu1.setName("Ali")</td></tr>
+              <tr><td class="mono">System.out.println(stu1.name);</td><td>the name</td><td><span class="err">will not compile</span></td><td>reading is blocked too — use getName()</td></tr>
+              <tr><td class="mono">h2.simplify();</td><td>h2 is tidied</td><td><span class="err">will not compile</span></td><td>simplify() is a private method</td></tr>
+              <tr><td class="mono">Student.setName("Ali");</td><td>a name is set</td><td><span class="err">will not compile</span></td><td>whose name? Call it on an object: stu1.</td></tr>
+              <tr><td class="mono">public class Student in Students.java</td><td>it runs</td><td><span class="err">will not compile</span></td><td>the file name must be the class name</td></tr>
+              <tr><td class="mono">stu1.setName(null)</td><td>"Invalid name!"</td><td><span class="err">NullPointerException</span></td><td>myName.length() on null — check == null first</td></tr>
+              <tr><td class="mono">new Student().getName()</td><td class="mono">""</td><td class="mono"><span class="fv">null</span></td><td>a String field starts as null</td></tr>
+              <tr><td class="mono">calculateAge() with no year set</td><td>an error</td><td class="mono"><span class="fv">2026</span></td><td>birthYear is still its default, 0</td></tr>
+              <tr><td class="mono">stu1.setName("") after "Ahmet"</td><td class="mono">""</td><td class="mono"><span class="fv">"Ahmet"</span></td><td>a rejected value changes nothing</td></tr>
+              <tr><td class="mono">setMail("a@b")</td><td>rejected</td><td><span class="fv">accepted</span></td><td>the only rule is “something before @”</td></tr>
+              <tr><td class="mono">inches = inches;</td><td>the field is set</td><td class="mono"><span class="fv">0 inc.</span></td><td>both names mean the parameter — write this.inches</td></tr>
+              <tr><td class="mono">h.setInches(12) after 6 in.</td><td>18 inches</td><td class="mono"><span class="fv">+1 ft, 0 in.</span></td><td>a setter replaces, it does not add</td></tr>
+              <tr><td class="mono">h.add(-20) on 6 ft 9</td><td>5 ft 1</td><td class="mono"><span class="fv">6 ft. -11 inc.</span></td><td>add has no check</td></tr>
+              <tr><td class="mono">a.addHeight(b): 9 in. + 5 in.</td><td class="mono">12 ft. 2 inc.</td><td class="mono"><span class="fv">11 ft. 14 inc.</span></td><td>addHeight does not call simplify()</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 8, parts 27–28. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson7.html">← Lesson 7</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

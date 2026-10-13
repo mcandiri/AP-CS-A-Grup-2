@@ -1,5 +1,5 @@
 (function(){
-  var KW = /^(public|class|static|void|package|new|final|return|true|false|this|null)$/;
+  var KW = /^(public|private|class|static|void|package|new|final|return|true|false|this|null)$/;
   var TY = /^(int|double|boolean|String|char|long|float)$/;
 
   function esc(s){
@@ -312,4 +312,189 @@
       hosts[h].appendChild(row);
     });
   }
+})();
+
+// ---------- Lesson 8: the inch grid, a Student object lab, a Height object lab ----------
+(function(){
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  // Java's int division and % (both round toward zero, like JS trunc and %)
+  function idiv(a, b){ return Math.trunc(a / b); }
+  function jd(x){ return Number.isInteger(x) ? x.toFixed(1) : String(x); }
+  function q(s){ return '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'; }
+
+  // n inches drawn in rows of 12 — every full row is one foot
+  function inchGrid(n){
+    var g = el('div', 'inchgrid');
+    if (n < 0 || n > 240){
+      g.appendChild(el('div', 'sum', n + ' inches → ' + n + ' / 12 = ' + idiv(n, 12) + ' ft, ' + n + ' % 12 = ' + (n % 12) + ' inc.'));
+      return g;
+    }
+    for (var r = 0; r * 12 < n; r++){
+      var left = Math.min(12, n - r * 12);
+      var row = el('div', 'ir' + (left === 12 ? ' full' : ''));
+      var cells = el('div', 'cells');
+      for (var k = 0; k < left; k++) cells.appendChild(el('span', 'i'));
+      row.appendChild(cells);
+      row.appendChild(el('span', 'lbl', left === 12 ? '12 inc. = 1 ft' : left + ' inc. left over'));
+      g.appendChild(row);
+    }
+    g.appendChild(el('div', 'sum', n + ' inches → ' + n + ' / 12 = ' + idiv(n, 12) + ' ft, ' + n + ' % 12 = ' + (n % 12) + ' inc.'));
+    return g;
+  }
+  var grids = document.querySelectorAll('.inchgrid-host[data-n]');
+  for (var i = 0; i < grids.length; i++){
+    var cap = grids[i].querySelector('.strip-cap');
+    grids[i].insertBefore(inchGrid(parseInt(grids[i].dataset.n, 10)), grids[i].firstChild);
+  }
+
+  // one object card: rows = [[field, value, state]]
+  function card(name, type, rows){
+    var c = el('div', 'obj');
+    var h = el('div', 'obj-h'); h.appendChild(el('b', null, name)); h.appendChild(el('span', null, type));
+    c.appendChild(h);
+    rows.forEach(function(r){
+      var f = el('div', 'f' + (r[2] ? ' ' + r[2] : ''));
+      f.appendChild(el('span', 'k', r[0]));
+      f.appendChild(el('span', 'v' + (r[1] === 'null' ? ' nul' : ''), r[1]));
+      c.appendChild(f);
+    });
+    return c;
+  }
+
+  var labs = document.querySelectorAll('.lab[data-mode="student"], .lab[data-mode="height"]');
+  for (var l = 0; l < labs.length; l++) (function(lab){
+    var mode = lab.dataset.mode;
+    var view = lab.querySelector('.lab-view');
+    var code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out');
+    var pick = lab.querySelector('[data-f="method"]');
+    var arg = lab.querySelector('[data-f="arg"]');
+    var s, lines, outs, mark, extra;
+
+    function reset(){
+      s = mode === 'student' ? { name: null, birthYear: 0, email: null, average: 0 } : { feet: 0, inches: 0 };
+      lines = [mode === 'student' ? 'Student stu1 = new Student();' : 'Height h = new Height();'];
+      outs = []; mark = {}; extra = null;
+    }
+    function say(t, bad){ outs.push({ t: t, bad: bad }); }
+
+    function student(m, raw){
+      var v = raw.trim();
+      if (m === 'direct'){
+        lines.push('stu1.birthYear = ' + v + ';');
+        say('error: birthYear has private access in Student — nothing runs until this line is removed', true);
+        mark = { birthYear: 'bad' };
+        return;
+      }
+      if (m === 'print'){
+        lines.push('stu1.printStudentInfos();');
+        say('*****STUDENT INFOS=====');
+        say("Student's name: " + s.name);
+        say("Student's age: " + (2026 - s.birthYear));
+        say("Student's mail: " + s.email);
+        say("Student's average: " + jd(s.average));
+        return;
+      }
+      if (m === 'setName' || m === 'setMail'){
+        lines.push('stu1.' + m + '(' + q(raw) + ');');
+        if (m === 'setName'){
+          if (raw.length === 0){ say('Invalid name!'); mark = { name: 'bad' }; }
+          else { s.name = raw; mark = { name: 'new' }; }
+        } else {
+          if (raw.length === 0 || raw.indexOf('@') <= 0){ say('Invalid mail!'); mark = { email: 'bad' }; }
+          else { s.email = raw; mark = { email: 'new' }; }
+        }
+        return;
+      }
+      lines.push('stu1.' + m + '(' + v + ');');
+      if (m === 'setYear'){
+        if (!/^-?\d{1,9}$/.test(v)){ say('will not compile — setYear needs an int, like 2009', true); return; }
+        var y = parseInt(v, 10);
+        if (y > 1900 && y <= 2026){ s.birthYear = y; mark = { birthYear: 'new' }; }
+        else { say('Invalid value!'); mark = { birthYear: 'bad' }; }
+      } else {
+        if (!/^-?\d{1,6}(\.\d{1,6})?$/.test(v)){ say('will not compile — setAvg needs a number, like 88.5', true); return; }
+        var a = parseFloat(v);
+        if (a < 0 || a > 100){ say('Invalid value!'); mark = { average: 'bad' }; }
+        else { s.average = a; mark = { average: 'new' }; }
+      }
+    }
+
+    function height(m, raw){
+      var v = raw.trim();
+      if (m === 'printHeight'){ lines.push('h.printHeight();'); say(s.feet + ' ft. ' + s.inches + ' inc.'); return; }
+      lines.push('h.' + m + '(' + v + ');');
+      if (!/^-?\d{1,4}$/.test(v)){ say('will not compile — ' + m + ' needs an int', true); return; }
+      var n = parseInt(v, 10);
+      if (m === 'setFeet'){
+        if (n > 0){ s.feet = n; mark = { feet: 'new' }; } else mark = { feet: 'bad' };
+        return;
+      }
+      var before = s.inches;
+      if (m === 'setInches'){ if (n > 0) s.inches = n; else mark = { inches: 'bad' }; }
+      else s.inches += n;
+      // simplify()
+      extra = s.inches;
+      s.feet += idiv(s.inches, 12);
+      s.inches = s.inches % 12;
+      if (!(m === 'setInches' && n <= 0)) mark = { feet: 'new', inches: 'new' };
+    }
+
+    function render(){
+      view.textContent = '';
+      var row = el('div', 'objs');
+      if (mode === 'student'){
+        row.appendChild(card('stu1', 'Student', [
+          ['name', s.name === null ? 'null' : q(s.name), mark.name],
+          ['birthYear', String(s.birthYear), mark.birthYear],
+          ['email', s.email === null ? 'null' : q(s.email), mark.email],
+          ['average', jd(s.average), mark.average]
+        ]));
+      } else {
+        row.appendChild(card('h', 'Height', [
+          ['feet', String(s.feet), mark.feet],
+          ['inches', String(s.inches), mark.inches]
+        ]));
+      }
+      view.appendChild(row);
+      if (mode === 'height' && extra !== null){
+        view.appendChild(el('p', 'lab-why', 'simplify() saw inches = ' + extra + ':'));
+        view.appendChild(inchGrid(extra));
+      }
+      code.textContent = lines.join('\n');
+      out.textContent = '';
+      outs.forEach(function(o){
+        out.appendChild(o.bad ? el('span', 'bad', o.t) : document.createTextNode(o.t));
+        out.appendChild(document.createTextNode('\n'));
+      });
+    }
+
+    function run(m){
+      mark = {}; extra = null;
+      if (mode === 'student') student(m, arg.value); else height(m, arg.value);
+      render();
+    }
+
+    lab.querySelector('[data-act="run"]').addEventListener('click', function(){ run(pick.value); });
+    arg.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); run(pick.value); } });
+    var more = lab.querySelectorAll('[data-act="call"]');
+    for (var b = 0; b < more.length; b++) (function(btn){
+      btn.addEventListener('click', function(){ run(btn.dataset.m); });
+    })(more[b]);
+    lab.querySelector('[data-act="reset"]').addEventListener('click', function(){ reset(); render(); });
+
+    // open in a working state: the first lines of the class file
+    reset();
+    var seed = (lab.dataset.seed || '').split('|');
+    for (var z = 0; z + 1 < seed.length; z += 2){
+      mark = {}; extra = null;
+      if (mode === 'student') student(seed[z], seed[z + 1]); else height(seed[z], seed[z + 1]);
+    }
+    render();
+  })(labs[l]);
 })();
