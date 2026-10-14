@@ -26,7 +26,7 @@
     <ul class="facts">
       <li>4 files</li>
       <li>Java</li>
-      <li>34 questions</li>
+      <li>40 questions</li>
       <li>Every output verified</li>
     </ul>
   </header>
@@ -81,6 +81,20 @@
         <li><a class="sub" href="#life-pass">A password rule</a></li>
         <li><a class="sub" href="#life-mail">Does it look like an e-mail?</a></li>
         <li><a class="sub" href="#plife">Practice</a></li>
+        <li><a href="#shop">Workshop · more String jobs</a></li>
+        <li><a class="sub" href="#shop-acr">Initials</a></li>
+        <li><a class="sub" href="#shop-phone">Phone numbers</a></li>
+        <li><a class="sub" href="#shop-replace">Find and replace</a></li>
+        <li><a class="sub" href="#shop-censor">A word filter</a></li>
+        <li><a class="sub" href="#shop-words">Counting words</a></li>
+        <li><a class="sub" href="#shop-longest">The longest word</a></li>
+        <li><a class="sub" href="#shop-mask">Hiding an e-mail</a></li>
+        <li><a class="sub" href="#shop-pad">Leading zeros</a></li>
+        <li><a class="sub" href="#shop-unique">Every letter once</a></li>
+        <li><a class="sub" href="#shop-order">Who comes first</a></li>
+        <li><a class="sub" href="#shop-wordle">Wordle hints</a></li>
+        <li><a class="sub" href="#shop-user">A username</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
         <li><a href="#extras">Extras · beyond the files</a></li>
         <li><a class="sub" href="#x-rev">Reverse a String</a></li>
         <li><a class="sub" href="#x-pal">Palindromes, again</a></li>
@@ -1540,6 +1554,422 @@ false</pre></div>
                 <div class="ans-body">
                   <p><span class="outline">false · true</span></p>
                   <p>That is why a login screen tells you to check Caps Lock.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · more jobs for the five methods</span>
+          <h2 class="lesson-title">A String Workshop</h2>
+        </div>
+
+        <p>Knowing five methods is one thing; seeing what they can build is another. Every example below is a real job that apps do with text, written as a small method. None of them needs anything beyond this lesson and the ones before it: <code class="inl">length</code>, <code class="inl">indexOf</code>, <code class="inl">substring</code>, <code class="inl">equals</code>, <code class="inl">compareTo</code>, loops, <code class="inl">if</code> and our own methods. Before you read each solution, cover it and ask yourself the Lesson 3 question: <em>what is the small step that repeats?</em></p>
+
+        <h3 id="shop-acr">Initials of a long name</h3>
+
+        <p>TBMM, PNG, NASA — an acronym takes the first letter of every word. A letter is the start of a word when the character just before it is a space. So walk through the name and look one step back:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>acronym</span></div>
+          <pre class="code"><code>public static String acronym(String name) {
+    String result = name.substring(0, 1);        // the first word has no space before it
+    for (int i = 1; i &lt; name.length(); i++) {
+        if (name.substring(i - 1, i).equals(" ")) {
+            result = result + name.substring(i, i + 1);
+        }
+    }
+    return result;
+}
+
+System.out.println(acronym("Türkiye Büyük Millet Meclisi"));
+System.out.println(acronym("Portable Network Graphics"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>TBMM
+PNG</pre></div>
+        </div>
+
+        <p>Two details. The loop starts at 1, not 0, because <code class="inl">substring(i - 1, i)</code> at <code class="inl">i = 0</code> would be <code class="inl">substring(-1, 0)</code> — a crash. And the first word is handled before the loop, because nothing comes before it to be a space.</p>
+
+        <h3 id="shop-phone">A phone number people can read</h3>
+
+        <p>Lesson 1 decided that a phone number is a String. Here is the reward: a form saves <code class="inl">05321234567</code>, and the screen shows <code class="inl">0532 123 45 67</code>. Every position is fixed, so it is four cuts and three spaces:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>formatPhone</span></div>
+          <pre class="code"><code>public static String formatPhone(String phone) {
+    return phone.substring(0, 4) + " " + phone.substring(4, 7) + " "
+         + phone.substring(7, 9) + " " + phone.substring(9);
+}
+
+System.out.println(formatPhone("05321234567"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0532 123 45 67</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="05321234567" data-edges data-from="0" data-to="4"><span class="strip-cap">substring(0, 4) → "0532"</span></div>
+        <div class="strip-wrap" data-word="05321234567" data-edges data-from="4" data-to="7"><span class="strip-cap">substring(4, 7) → "123" · each cut starts where the last one ended</span></div>
+        <div class="strip-wrap" data-word="05321234567" data-edges data-from="7" data-to="9"><span class="strip-cap">substring(7, 9) → "45"</span></div>
+        <div class="strip-wrap" data-word="05321234567" data-edges data-from="9" data-to="11"><span class="strip-cap">substring(9) → "67"</span></div>
+
+        <p>Look at the numbers: 0–4, 4–7, 7–9, 9–end. Each cut's end is the next cut's start. That is the half-open range from Part 22 doing its job — no letter lost, no letter twice.</p>
+
+        <h3 id="shop-replace">Find and replace</h3>
+
+        <p>Every editor has <em>Find and Replace</em>. With <code class="inl">indexOf</code> to find and <code class="inl">substring</code> to cut, it is three pieces glued together: everything before the match, the new text, everything after the match.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>replaceFirst</span></div>
+          <pre class="code"><code>public static String replaceFirst(String text, String oldPart, String newPart) {
+    int index = text.indexOf(oldPart);
+    if (index == -1) {
+        return text;                     // nothing to replace
+    }
+    return text.substring(0, index) + newPart + text.substring(index + oldPart.length());
+}
+
+System.out.println(replaceFirst("I like cats", "cats", "dogs"));
+System.out.println(replaceFirst("I like cats", "birds", "dogs"));
+System.out.println(replaceFirst("2026-10-14", "-", "/"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>I like dogs
+I like cats
+2026/10-14</pre></div>
+        </div>
+
+        <div class="strip-wrap" data-word="I like cats" data-edges data-from="7" data-to="11"><span class="strip-cap">index = 7 · the part after the match starts at index + oldPart.length() = 11</span></div>
+
+        <p>The <code class="inl">+ oldPart.length()</code> is the key: it jumps over the whole old word, however long it is. The <code class="inl">if</code> protects against −1 — without it, <code class="inl">substring(0, -1)</code> would crash. And the last line shows the method's limit: only the <em>first</em> dash is replaced. For all of them, we need a loop.</p>
+
+        <h3 id="shop-censor">Replace all: a word filter</h3>
+
+        <p>Chat apps and games hide bad words with stars. Keep replacing while <code class="inl">indexOf</code> still finds the word. A small helper makes the right number of stars:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>stars and censor</span></div>
+          <pre class="code"><code>public static String stars(int n) {
+    String s = "";
+    for (int i = 1; i &lt;= n; i++) {
+        s = s + "*";
+    }
+    return s;
+}
+
+public static String censor(String text, String bad) {
+    int index = text.indexOf(bad);
+    while (index != -1) {
+        text = text.substring(0, index) + stars(bad.length()) + text.substring(index + bad.length());
+        index = text.indexOf(bad);       // search again in the new text
+    }
+    return text;
+}
+
+System.out.println(censor("you are bad, very bad", "bad"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>you are ***, very ***</pre></div>
+        </div>
+
+        <p>The loop ends because every pass removes one copy of the word, and stars are never the word. Strings never change, so <code class="inl">text = …</code> puts the new String back in the variable — the parameter is a copy, so the caller's String is safe.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>If the replacement contains the word you are searching for, this loop never ends. Replacing <code class="inl">"a"</code> with <code class="inl">"aa"</code> leaves an <code class="inl">"a"</code> behind every time, so <code class="inl">indexOf</code> always finds one. A <code class="inl">while</code> loop must make progress towards its stop — the Lesson 3 rule again.</p>
+        </div>
+
+        <h3 id="shop-words">Counting words</h3>
+
+        <p>Word counters in Word and Google Docs start from a simple idea: between every two words there is one space. So the number of words is the number of spaces plus one.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>countWords</span></div>
+          <pre class="code"><code>public static int countWords(String sentence) {
+    if (sentence.length() == 0) {
+        return 0;
+    }
+    int count = 1;
+    for (int i = 0; i &lt; sentence.length(); i++) {
+        if (sentence.substring(i, i + 1).equals(" ")) {
+            count++;
+        }
+    }
+    return count;
+}
+
+System.out.println(countWords("Java is fun to learn"));
+System.out.println(countWords(""));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+0</pre></div>
+        </div>
+
+        <p>The empty String is a special case and is checked first: it has no spaces, so the formula would say 1 word. Real word counters also deal with double spaces and spaces at the ends — question 2 below shows why they have to.</p>
+
+        <h3 id="shop-longest">The longest word</h3>
+
+        <p>Now the words themselves. Cut off one word at a time: find the first space, the word is everything before it, and the <em>rest</em> is everything after it. Then do the same to the rest, until nothing is left. Keep the longest one seen so far — the max pattern from Lesson 3.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>longestWord</span></div>
+          <pre class="code"><code>public static String longestWord(String sentence) {
+    String longest = "";
+    String rest = sentence;
+    while (rest.length() &gt; 0) {
+        int space = rest.indexOf(" ");
+        String word;
+        if (space == -1) {               // the last word
+            word = rest;
+            rest = "";
+        }
+        else {
+            word = rest.substring(0, space);
+            rest = rest.substring(space + 1);
+        }
+        if (word.length() &gt; longest.length()) {
+            longest = word;
+        }
+    }
+    return longest;
+}
+
+System.out.println(longestWord("the quick brown fox jumps"));
+System.out.println(longestWord("programming is fun"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>quick
+programming</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">rest at the top</th><th class="mono">word</th><th class="mono">longest after</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">"the quick brown fox jumps"</td><td class="mono">"the"</td><td class="mono">"the"</td></tr>
+              <tr><td class="mono">"quick brown fox jumps"</td><td class="mono">"quick"</td><td class="mono">"quick"</td></tr>
+              <tr><td class="mono">"brown fox jumps"</td><td class="mono">"brown"</td><td class="mono">"quick"</td></tr>
+              <tr><td class="mono">"fox jumps"</td><td class="mono">"fox"</td><td class="mono">"quick"</td></tr>
+              <tr><td class="mono">"jumps"</td><td class="mono">"jumps"</td><td class="mono">"quick"</td></tr>
+              <tr><td class="mono">""</td><td colspan="2">loop ends</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>quick, brown and jumps all have five letters, and the answer is quick — the first one. The test is <code class="inl">&gt;</code>, so a tie never replaces the word already kept. With <code class="inl">&gt;=</code> the answer would be jumps, the last one. One character decides which of the equals wins.</p>
+
+        <h3 id="shop-mask">Hiding an e-mail address</h3>
+
+        <p>When an app sends you a code, it often shows where it went without showing the whole address: <code class="inl">m*****@gmail.com</code>. Keep the first letter, star the rest of the name, keep everything from the <code class="inl">@</code> on:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>maskEmail — uses stars from above</span></div>
+          <pre class="code"><code>public static String maskEmail(String email) {
+    int at = email.indexOf("@");
+    return email.substring(0, 1) + stars(at - 1) + email.substring(at);
+}
+
+System.out.println(maskEmail("mehmet@gmail.com"));
+System.out.println(maskEmail("ali@okul.k12.tr"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>m*****@gmail.com
+a**@okul.k12.tr</pre></div>
+        </div>
+
+        <p>The <code class="inl">@</code> is at index 6 in the first address, so the name has 6 letters: one is shown, <code class="inl">at - 1</code> = 5 are starred. <code class="inl">stars</code>, written for the word filter, is reused here without a change — that is what methods are for.</p>
+
+        <h3 id="shop-pad">Leading zeros</h3>
+
+        <p>Order numbers, ticket numbers and student numbers often have a fixed width: 7 is printed as 007. Lesson 1 said an <code class="inl">int</code> cannot keep leading zeros; a String can. Add <code class="inl">"0"</code> in front until the String is wide enough:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>pad</span></div>
+          <pre class="code"><code>public static String pad(String number, int width) {
+    while (number.length() &lt; width) {
+        number = "0" + number;           // in FRONT
+    }
+    return number;
+}
+
+System.out.println(pad("7", 3));
+System.out.println(pad("42", 5));
+System.out.println(pad("1234", 3));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>007
+00042
+1234</pre></div>
+        </div>
+
+        <p>The last call shows the loop's good manners: <code class="inl">"1234"</code> is already wider than 3, the condition is false at the first check, and the String comes back untouched. A <code class="inl">while</code> loop can run zero times, and here that is exactly right.</p>
+
+        <h3 id="shop-unique">Every letter once</h3>
+
+        <p>Which letters does a word use? Build a result, and add each letter only if the result does not have it yet. <code class="inl">indexOf</code> on the result answers “have I seen this one?”:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>uniqueLetters</span></div>
+          <pre class="code"><code>public static String uniqueLetters(String word) {
+    String result = "";
+    for (int i = 0; i &lt; word.length(); i++) {
+        String c = word.substring(i, i + 1);
+        if (result.indexOf(c) == -1) {   // not seen yet
+            result = result + c;
+        }
+    }
+    return result;
+}
+
+System.out.println(uniqueLetters("banana"));
+System.out.println(uniqueLetters("mississippi"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>ban
+misp</pre></div>
+        </div>
+
+        <p>This is a new use of <code class="inl">indexOf</code>: not to find where something is in the input, but to remember what we have already collected. The result String works as a small memory.</p>
+
+        <h3 id="shop-order">Who comes first?</h3>
+
+        <p>A teacher's list, a contacts app, a leaderboard of names — all sorted. Finding the first of three names is the max pattern again, with <code class="inl">compareTo</code> doing the comparing:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>firstOfThree</span></div>
+          <pre class="code"><code>public static String firstOfThree(String a, String b, String c) {
+    String first = a;
+    if (b.compareTo(first) &lt; 0) {
+        first = b;
+    }
+    if (c.compareTo(first) &lt; 0) {
+        first = c;
+    }
+    return first;
+}
+
+System.out.println(firstOfThree("Selin", "Ali", "Mert"));
+System.out.println(firstOfThree("ali", "Mert", "Selin"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ali
+Mert</pre></div>
+        </div>
+
+        <p>The two <code class="inl">if</code>s are separate on purpose — each new name is compared with the best so far, not with the one before it. The second line is the capital-letter trap from Part 24: <code class="inl">"ali"</code> starts with a small letter, and every capital comes before every small letter, so Mert wins.</p>
+
+        <h3 id="shop-wordle">A word game: hints like Wordle</h3>
+
+        <p>In the game Wordle you guess a five-letter word, and each letter gets a hint: right letter in the right place, right letter in the wrong place, or not in the word. Here the hint is the letter itself, <code class="inl">+</code>, or <code class="inl">-</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>wordleHint</span></div>
+          <pre class="code"><code>public static String wordleHint(String answer, String guess) {
+    String hint = "";
+    for (int i = 0; i &lt; guess.length(); i++) {
+        String g = guess.substring(i, i + 1);
+        if (g.equals(answer.substring(i, i + 1))) {
+            hint = hint + g;             // right place
+        }
+        else if (answer.indexOf(g) != -1) {
+            hint = hint + "+";           // in the word, wrong place
+        }
+        else {
+            hint = hint + "-";           // not in the word
+        }
+    }
+    return hint;
+}
+
+System.out.println(wordleHint("table", "cable"));
+System.out.println(wordleHint("table", "bleat"));
+System.out.println(wordleHint("table", "ghost"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-able
++++++
+----+</pre></div>
+        </div>
+
+        <p>The order of the chain matters: “right place” is checked first, because a letter in the right place is also somewhere in the word, and it deserves the better hint. <code class="inl">bleat</code> uses exactly the letters of <code class="inl">table</code>, none of them in place — five pluses. The real game has one more rule for repeated letters, which this short version ignores; question 6 shows where it goes wrong.</p>
+
+        <h3 id="shop-user">A username — and how it breaks</h3>
+
+        <p>Some schools make usernames from the first three letters of each name:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>username</span></div>
+          <pre class="code"><code>public static String username(String fullName) {
+    int space = fullName.indexOf(" ");
+    return fullName.substring(0, 3) + fullName.substring(space + 1, space + 4);
+}
+
+System.out.println(username("Ada Lovelace"));
+System.out.println(username("Alan Turing"));
+System.out.println(username("Ece Su"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>AdaLov
+AlaTur
+<em>Exception in thread "main" java.lang.StringIndexOutOfBoundsException: Range [4, 7) out of bounds for length 6</em></pre></div>
+        </div>
+
+        <p>Two names work, the third crashes. “Su” has only two letters, so <code class="inl">substring(4, 7)</code> asks for a gap that does not exist. The method is not wrong for the names its author tried — it is wrong for a name nobody tried. Writing down a precondition (Lesson 5) or checking the length with an <code class="inl">if</code> are the two honest fixes.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule of thumb</span>
+          <p>Every String method you write, test with at least these: a normal input, the empty String <code class="inl">""</code>, a one-letter String, an input where the thing you search for is missing, and one where it appears twice. Most crashes on this page were found by exactly those five.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Most text jobs are combinations of a few moves: walk through the letters with <code class="inl">substring(i, i + 1)</code>; find a position with <code class="inl">indexOf</code> and cut around it; glue pieces with <code class="inl">+</code>; check a match with <code class="inl">equals</code> and an order with <code class="inl">compareTo</code>; keep a result String that grows. Watch the edges: index −1, the first and last letter, the empty String.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">acronym("Hyper Text Markup Language")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"HTML"</span></p>
+                  <p>H comes from the line before the loop; T, M and L each follow a space.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">countWords("Java  is fun")</code> return — with <strong>two</strong> spaces after Java? Is that right?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">4 · wrong, there are 3 words</span></p>
+                  <p>The method counts spaces, and there are three of them. Counting spaces works only when there is exactly one space between words.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">replaceFirst("banana", "an", "AN")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"bANana"</span></p>
+                  <p><code class="inl">indexOf("an")</code> is 1. Before it: <code class="inl">"b"</code>; then <code class="inl">"AN"</code>; then everything from 1 + 2 = 3: <code class="inl">"ana"</code>. Only the first match is replaced.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">pad("2026", 3)</code> and <code class="inl">pad("", 3)</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"2026" and "000"</span></p>
+                  <p>The first is already wide enough, so the loop runs zero times. The empty String has length 0, so three zeros are added.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">uniqueLetters("Anna")</code> return, and why are there two a's in it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"Ana"</span></p>
+                  <p><code class="inl">"A"</code> and <code class="inl">"a"</code> are different characters. When the last letter comes, <code class="inl">"An".indexOf("a")</code> is −1, so it is added. The second n is skipped.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">wordleHint("table", "eerie")</code> return? Is every hint fair?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"++--e"</span></p>
+                  <p>The last e is in the right place. The first two e's get <code class="inl">+</code>, because <code class="inl">"table".indexOf("e")</code> finds the e — the same e that the last letter already matched. <em>table</em> has only one e, so the real game would mark those two as not in the word. To do that, the method would have to remember which letters of the answer are already used up.</p>
                 </div>
               </details>
             </li>
