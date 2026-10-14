@@ -26,7 +26,7 @@
     <ul class="facts">
       <li>4 files</li>
       <li>Java</li>
-      <li>30 questions</li>
+      <li>36 questions</li>
       <li>2 labs</li>
       <li>Every output verified</li>
     </ul>
@@ -81,6 +81,16 @@
         <li><a class="sub" href="#x-thermo">Thermostat</a></li>
         <li><a class="sub" href="#x-clock">Clock</a></li>
         <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#shop">Workshop · more classes</a></li>
+        <li><a class="sub" href="#shop-uml">Class diagrams</a></li>
+        <li><a class="sub" href="#shop-noobj">No object at all</a></li>
+        <li><a class="sub" href="#shop-counter">Counter</a></li>
+        <li><a class="sub" href="#shop-battery">Battery</a></li>
+        <li><a class="sub" href="#shop-rect">Rectangle</a></li>
+        <li><a class="sub" href="#shop-product">Product</a></li>
+        <li><a class="sub" href="#shop-dice">Dice</a></li>
+        <li><a class="sub" href="#shop-exam">ExamScores</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
         <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
@@ -2005,6 +2015,497 @@ c.printTime();</code></pre></div>
                 <div class="ans-body">
                   <p><span class="outline">7:5</span></p>
                   <p><code class="inl">minutes</code> is the <code class="inl">int</code> 5, and an <code class="inl">int</code> has no leading zero. The <code class="inl">if</code> adds the <code class="inl">"0"</code> by hand whenever minutes is below 10.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · more classes, same tools</span>
+          <h2 class="lesson-title">A Class Workshop</h2>
+        </div>
+
+        <p>This section adds two ideas every object-oriented programmer uses daily — drawing a class, and a variable with no object behind it — and then six more small classes from everyday life. The tools are exactly this lesson's: <code class="inl">private</code> fields, getters and setters that check, <code class="inl">this</code>, private helpers, and objects made with <code class="inl">new X()</code>. Every object still starts with its default values; the setters are what give it real ones.</p>
+
+        <h3 id="shop-uml">Drawing a class</h3>
+
+        <p>Before writing a class, programmers often sketch it as a box with three parts: the name, the fields, and the methods. A <strong>−</strong> means private, a <strong>+</strong> means public, and the type is written after a colon. This drawing is called a <strong>class diagram</strong>, and AP exam questions sometimes describe a class this way instead of with code.</p>
+
+        <div class="objs">
+          <div class="obj blue"><div class="obj-h"><b>Student</b><span>class diagram</span></div>
+            <div class="sec">fields</div>
+            <div class="f"><span class="k">− name</span><span class="v">String</span></div>
+            <div class="f"><span class="k">− birthYear</span><span class="v">int</span></div>
+            <div class="f"><span class="k">− email</span><span class="v">String</span></div>
+            <div class="f"><span class="k">− average</span><span class="v">double</span></div>
+            <div class="sec">methods</div>
+            <div class="m">+ setName(String myName) : void</div>
+            <div class="m">+ getName() : String</div>
+            <div class="m">+ setYear(int y) : void</div>
+            <div class="m">+ calculateAge() : int</div>
+            <div class="m">+ printStudentInfos() : void</div>
+          </div>
+        </div>
+        <p class="fig-cap">The Student class from Lesson27, as a diagram (some methods left out). Everything private is hidden from main; everything public is how main talks to it. The diagram shows <em>what</em> the class has and does — not how the methods work.</p>
+
+        <p>Read a diagram from top to bottom and you know how to <em>use</em> a class without opening its file — exactly like the headers of <code class="inl">Math.sqrt</code> in Lesson 5. That is abstraction again: the box is the promise, the code is the business of whoever writes it.</p>
+
+        <h3 id="shop-noobj">A variable with no object</h3>
+
+        <p>A variable of a class type can exist without any object made for it. Declare it and forget <code class="inl">new</code>, and Java refuses to compile:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Declared, never made</span></div>
+          <pre class="code"><code>Student s;
+s.setName("Ali");</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: variable s might not have been initialized</em></pre></div>
+        </div>
+
+        <p>Give it <code class="inl">null</code> on purpose and it compiles — then crashes the moment a method is called, with the same exception as Lesson 7:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A variable that holds null</span></div>
+          <pre class="code"><code>Student s = null;
+System.out.println(s.getName());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "Grup1.Student.getName()" because "s" is null</em></pre></div>
+        </div>
+
+        <p>Remember the default values: a String field starts as <code class="inl">null</code>. Any field whose type is a class does the same. That is why every object in this lesson is made with <code class="inl">new</code> before anything is asked of it.</p>
+
+        <h3 id="shop-counter">Counter · the smallest useful class</h3>
+
+        <p>A tally counter at a museum door, the like button under a post, the number of visits to a page: one number that only goes up, and can be reset.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counter.java</span></div>
+          <pre class="code"><code>public class Counter {
+    private int count;
+
+    public void click() {
+        count++;
+    }
+    public void reset() {
+        count = 0;
+    }
+    public int getCount() {
+        return count;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Using it</span></div>
+          <pre class="code"><code>Counter likes = new Counter();
+likes.click();
+likes.click();
+likes.click();
+System.out.println(likes.getCount());
+likes.reset();
+likes.click();
+System.out.println(likes.getCount());
+
+Counter a = new Counter();
+Counter b = new Counter();
+a.click();
+a.click();
+b.click();
+System.out.println(a.getCount() + " " + b.getCount());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3
+1
+2 1</pre></div>
+        </div>
+
+        <p>There is no <code class="inl">setCount</code>, and that is the design. Nobody outside can set the count to 1,000,000; the only ways to change it are one click at a time, or back to zero. The default value 0 is exactly the right start, so this class needs nothing before its first use. And each counter keeps its own count — <code class="inl">a</code> and <code class="inl">b</code> are separate objects.</p>
+
+        <h3 id="shop-battery">Battery · a value that must stay in range</h3>
+
+        <p>A phone battery is never below 0% or above 100%, whatever happens. The class keeps that promise itself — charging past full stops at 100, using more than is left stops at 0:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Battery.java</span></div>
+          <pre class="code"><code>public class Battery {
+    private int level;      // 0 to 100
+
+    public void charge(int amount) {
+        if (amount &lt; 0) {
+            System.out.println("Invalid amount!");
+        } else {
+            level += amount;
+            if (level &gt; 100) {
+                level = 100;
+            }
+        }
+    }
+    public void use(int amount) {
+        if (amount &lt; 0) {
+            System.out.println("Invalid amount!");
+        } else {
+            level -= amount;
+            if (level &lt; 0) {
+                level = 0;
+            }
+        }
+    }
+    public int getLevel() {
+        return level;
+    }
+    public boolean isLow() {
+        return level &lt; 20;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>A day with the phone</span></div>
+          <pre class="code"><code>Battery phone = new Battery();
+System.out.println(phone.getLevel() + " " + phone.isLow());
+phone.charge(70);
+phone.charge(50);           // 120 would be too much
+System.out.println(phone.getLevel());
+phone.use(85);
+System.out.println(phone.getLevel() + " " + phone.isLow());
+phone.use(40);              // more than is left
+System.out.println(phone.getLevel());
+phone.charge(-5);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0 true
+100
+15 true
+0
+Invalid amount!</pre></div>
+        </div>
+
+        <p>Compare this with the setters so far: they <em>reject</em> a bad value. <code class="inl">charge</code> and <code class="inl">use</code> do something different — they accept the request and <em>clamp</em> the result into the allowed range, because that is what a real battery does. Both are encapsulation; the class decides which rule fits. <code class="inl">isLow</code> is a value worked out, not stored, like the Thermostat's Fahrenheit.</p>
+
+        <div class="objs">
+          <div class="obj blue"><div class="obj-h"><b>Battery</b><span>class diagram</span></div>
+            <div class="sec">fields</div>
+            <div class="f"><span class="k">− level</span><span class="v">int</span></div>
+            <div class="sec">methods</div>
+            <div class="m">+ charge(int amount) : void</div>
+            <div class="m">+ use(int amount) : void</div>
+            <div class="m">+ getLevel() : int</div>
+            <div class="m">+ isLow() : boolean</div>
+          </div>
+        </div>
+        <p class="fig-cap">No setLevel: the level only changes by charging and using.</p>
+
+        <h3 id="shop-rect">Rectangle · comparing two objects</h3>
+
+        <p>Height's <code class="inl">addHeight</code> took another Height as a parameter. Rectangle does the same to answer a question about two rectangles:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Rectangle.java</span></div>
+          <pre class="code"><code>public class Rectangle {
+    private int width;
+    private int height;
+
+    public void setWidth(int width) {
+        if (width &gt; 0) {
+            this.width = width;
+        }
+    }
+    public void setHeight(int height) {
+        if (height &gt; 0) {
+            this.height = height;
+        }
+    }
+    public int getArea() {
+        return width * height;
+    }
+    public int getPerimeter() {
+        return 2 * (width + height);
+    }
+    public boolean isSquare() {
+        return width == height;
+    }
+    public boolean isBiggerThan(Rectangle other) {
+        return getArea() &gt; other.getArea();
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two rectangles</span></div>
+          <pre class="code"><code>Rectangle r1 = new Rectangle();
+r1.setWidth(4);
+r1.setHeight(6);
+
+Rectangle r2 = new Rectangle();
+r2.setWidth(5);
+r2.setHeight(5);
+
+System.out.println(r1.getArea() + " " + r1.getPerimeter() + " " + r1.isSquare());
+System.out.println(r2.getArea() + " " + r2.getPerimeter() + " " + r2.isSquare());
+System.out.println(r1.isBiggerThan(r2));
+System.out.println(r2.isBiggerThan(r1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>24 20 false
+25 20 true
+false
+true</pre></div>
+        </div>
+
+        <p>Read <code class="inl">r1.isBiggerThan(r2)</code> as a sentence: <em>r1, are you bigger than r2?</em> Inside the method, <code class="inl">getArea()</code> with nothing in front means <em>my</em> area — r1's — and <code class="inl">other.getArea()</code> means r2's. Same perimeter, different areas: the 4 × 6 and the 5 × 5 both have a perimeter of 20, and the square holds more.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>A rectangle whose setters were never called — or got only bad values — is 0 × 0. Its area is 0, and <code class="inl">isSquare()</code> says <code class="inl">true</code>, because 0 == 0. Default values are real values, and every method happily works with them. Until something sets the fields, an object is not “empty”; it is a 0 × 0 rectangle, a 0% battery, a student born in year 0.</p>
+        </div>
+
+        <h3 id="shop-product">Product · prices in kuruş</h3>
+
+        <p>Shop prices have two decimal places. A 15% discount on 1299.99 TL is 1104.9915 TL — and nobody can pay that. A private helper rounds every price to the nearest kuruş with the add-a-half trick from Lesson 1:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Product.java</span></div>
+          <pre class="code"><code>public class Product {
+    private String name;
+    private double price;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setPrice(double price) {
+        if (price &lt; 0) {
+            System.out.println("Invalid price!");
+        } else {
+            this.price = roundToKurus(price);
+        }
+    }
+    public String getName() {
+        return name;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public void applyDiscount(int percent) {
+        if (percent &lt; 0 || percent &gt; 100) {
+            System.out.println("Invalid discount!");
+        } else {
+            price = roundToKurus(price * (100 - percent) / 100);
+        }
+    }
+    private double roundToKurus(double amount) {
+        return (int) (amount * 100 + 0.5) / 100.0;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>A discount, a bad discount, a bad price</span></div>
+          <pre class="code"><code>Product p = new Product();
+p.setName("Headphones");
+p.setPrice(1299.99);
+p.applyDiscount(15);
+System.out.println(p.getName() + ": " + p.getPrice());
+
+p.applyDiscount(150);
+p.setPrice(-10);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Headphones: 1104.99
+Invalid discount!
+Invalid price!</pre></div>
+        </div>
+
+        <p>Follow <code class="inl">roundToKurus(1104.9915)</code>: times 100 is 110499.15; plus 0.5 is 110499.65; <code class="inl">(int)</code> cuts it to 110499; divided by <code class="inl">100.0</code> — a double, so no integer division — it is 1104.99. The helper is <code class="inl">private</code> because nobody outside needs it; it is a tool the class uses to keep its own promise that every price is in whole kuruş. Both <code class="inl">setPrice</code> and <code class="inl">applyDiscount</code> call it, so the promise holds however the price changes.</p>
+
+        <div class="objs">
+          <div class="obj blue"><div class="obj-h"><b>Product</b><span>class diagram</span></div>
+            <div class="sec">fields</div>
+            <div class="f"><span class="k">− name</span><span class="v">String</span></div>
+            <div class="f"><span class="k">− price</span><span class="v">double</span></div>
+            <div class="sec">methods</div>
+            <div class="m">+ setName(String name) : void</div>
+            <div class="m">+ setPrice(double price) : void</div>
+            <div class="m">+ getName() : String</div>
+            <div class="m">+ getPrice() : double</div>
+            <div class="m">+ applyDiscount(int percent) : void</div>
+            <div class="m priv">− roundToKurus(double amount) : double</div>
+          </div>
+        </div>
+        <p class="fig-cap">The private helper gets a − like the fields: it is part of how the class works, not part of what it offers.</p>
+
+        <h3 id="shop-dice">Dice · an object with a random side</h3>
+
+        <p>Lesson 5 rolled dice with a formula. Put the formula inside a class, and each die becomes an object that remembers what it last showed:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Dice.java</span></div>
+          <pre class="code"><code>public class Dice {
+    private int value;
+
+    public void roll() {
+        value = (int) (Math.random() * 6) + 1;
+    }
+    public int getValue() {
+        return value;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Roll two dice until they match — one run; yours will differ</span></div>
+          <pre class="code"><code>Dice d1 = new Dice();
+Dice d2 = new Dice();
+
+d1.roll();
+d2.roll();
+int tries = 1;
+System.out.println(d1.getValue() + " " + d2.getValue());
+
+while (d1.getValue() != d2.getValue()) {
+    d1.roll();
+    d2.roll();
+    tries++;
+    System.out.println(d1.getValue() + " " + d2.getValue());
+}
+System.out.println("doubles after " + tries + " tries");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 1
+2 5
+3 3
+doubles after 3 tries</pre></div>
+        </div>
+
+        <p>The first roll happens before the loop, because the condition needs two values to compare — a fresh Dice shows 0, and two zeros would “match” before anything was rolled. There is no <code class="inl">setValue</code>: a die cannot be told what to show, only rolled. Board games, card games and every game with chance in it are built from objects like this one.</p>
+
+        <h3 id="shop-exam">ExamScores · putting the lessons together</h3>
+
+        <p>Three exam scores, an average and a letter grade. This one class uses something from almost every lesson so far: a boolean helper, <code class="inl">&amp;&amp;</code>, division by <code class="inl">3.0</code>, and an <code class="inl">else if</code> chain.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>ExamScores.java</span></div>
+          <pre class="code"><code>public class ExamScores {
+    private int exam1;
+    private int exam2;
+    private int exam3;
+
+    public void setScores(int a, int b, int c) {
+        if (isValid(a) &amp;&amp; isValid(b) &amp;&amp; isValid(c)) {
+            exam1 = a;
+            exam2 = b;
+            exam3 = c;
+        } else {
+            System.out.println("Invalid score!");
+        }
+    }
+    public double getAverage() {
+        return (exam1 + exam2 + exam3) / 3.0;
+    }
+    public String getLetter() {
+        double avg = getAverage();
+        if (avg &gt;= 85) {
+            return "AA";
+        } else if (avg &gt;= 70) {
+            return "BB";
+        } else if (avg &gt;= 50) {
+            return "CC";
+        } else {
+            return "FF";
+        }
+    }
+    private boolean isValid(int score) {
+        return score &gt;= 0 &amp;&amp; score &lt;= 100;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Using it</span></div>
+          <pre class="code"><code>ExamScores e = new ExamScores();
+e.setScores(80, 95, 72);
+System.out.println(e.getAverage() + " " + e.getLetter());
+
+e.setScores(60, 101, 70);      // 101 is not a score
+System.out.println(e.getAverage() + " " + e.getLetter());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>82.33333333333333 BB
+Invalid score!
+82.33333333333333 BB</pre></div>
+        </div>
+
+        <p>One setter for three fields, and it is all or nothing: if any score is invalid, <em>none</em> of them change, so the object never holds a half-updated mix of old and new scores. The average divides by <code class="inl">3.0</code>, not <code class="inl">3</code> — with three ints, 247 / 3 would be 82 (Lesson 1). And <code class="inl">getLetter</code> calls <code class="inl">getAverage</code> instead of repeating the formula: one place to fix if the formula ever changes.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule of thumb</span>
+          <p>When you design a class, ask what must <em>always</em> be true about its objects — the battery is 0 to 100, a price is in whole kuruş, the scores are a valid set. Then make every field private and make every method that changes a field keep that promise. If no method can break it, no code anywhere in the program can.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A class diagram shows a class's name, fields and methods, with − for private and + for public. A variable with no object made by <code class="inl">new</code> is a compile error, or <code class="inl">null</code> and a crash at the first method call. Every object starts at its default values, and its methods work on those too. Setters can reject bad values or clamp them; private helpers keep the class's promises in one place.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex">
+                <pre class="code"><code>Counter c = new Counter();
+c.click();
+c.reset();
+c.click();
+c.click();
+System.out.println(c.getCount());</code></pre>
+              </div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">2</span></p>
+                  <p>The first click is wiped out by <code class="inl">reset</code>; two clicks follow.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A new Battery gets <code class="inl">charge(30)</code> and then <code class="inl">use(50)</code>. What do <code class="inl">getLevel()</code> and <code class="inl">isLow()</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0 · true</span></p>
+                  <p>30 − 50 would be −20, and <code class="inl">use</code> clamps it to 0. Zero is below 20, so the battery is low.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A new Rectangle gets <code class="inl">setWidth(3)</code> and <code class="inl">setHeight(0)</code>. What do <code class="inl">getArea()</code> and <code class="inl">isSquare()</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0 · false</span></p>
+                  <p>0 is not greater than 0, so the height setter ignores it and the height stays at its default, 0. The rectangle is 3 × 0: area 0, and 3 is not equal to 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A new Dice is made, and <code class="inl">getValue()</code> is called before <code class="inl">roll()</code> ever runs. What comes back, and why can a real die never show it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">0</span></p>
+                  <p>No method has set <code class="inl">value</code> yet, so it still holds the default for an int. <code class="inl">roll()</code> only ever produces 1 to 6. This is why the dice example rolls once before its loop.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A Product's price is set to 100, then it gets <code class="inl">applyDiscount(10)</code> twice. Is the price now 80?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">No · 81.0</span></p>
+                  <p>The first discount gives 90. The second takes 10% of <em>90</em>, which is 9, leaving 81. Two 10% discounts are not one 20% discount.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After <code class="inl">setScores(50, 50, 49)</code>, what do <code class="inl">getAverage()</code> and <code class="inl">getLetter()</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">49.666666666666664 · "FF"</span></p>
+                  <p>149 / 3.0 is just under 50, so the <code class="inl">avg &gt;= 50</code> branch fails. A boundary question: one point decides the grade.</p>
                 </div>
               </details>
             </li>
