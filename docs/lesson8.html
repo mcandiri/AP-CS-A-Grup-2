@@ -95,6 +95,17 @@
           <h2 class="lesson-title">Classes &amp; Objects</h2>
         </div>
 
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>What a class is, what an object is, and how <code class="inl">new</code> turns one into the other.</li>
+            <li>Instance variables, and the default values they start with.</li>
+            <li><code class="inl">private</code> and encapsulation: data that can only be changed through methods that check it.</li>
+            <li>Getters, setters and <code class="inl">this</code>.</li>
+            <li>Private helper methods, and passing one object to another object's method.</li>
+          </ul>
+        </div>
+
         <h3 id="l27-why">Too many variables</h3>
 
         <p>The file starts with something we already know how to do — one variable for every piece of information:</p>
@@ -249,6 +260,11 @@ int age2 = 17;</code></pre>
         </div>
 
         <p>A handy trick: read the problem and underline the <strong>nouns</strong> — student, teacher, classroom, grade. The important nouns become classes, and smaller nouns that describe them (name, floor, grade) become their instance variables. Then underline the <strong>verbs</strong> — enter, print, calculate. They become methods. This way of building programs out of objects is called <strong>object-oriented programming</strong>, and Java is built for it from the ground up.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Classes and objects were invented in Norway. In the 1960s Ole-Johan Dahl and Kristen Nygaard were writing programs to simulate real systems — ships, queues, factories — and found it natural to describe each kind of thing once and then make as many of them as they needed. Their language, Simula 67, was the first with classes and objects. In the 1970s Alan Kay and his team at Xerox PARC built Smalltalk on the same idea and gave it the name <em>object-oriented programming</em>. Java, in 1995, brought it to millions of programmers; today almost every large program is written this way.</p>
+        </div>
 
         <h3 id="l27-files">Two files</h3>
 

@@ -42,16 +42,20 @@
         <li><a class="sub" href="#l16-tol">Comparing doubles, properly</a></li>
         <li><a class="sub" href="#l16-pow">Math.pow</a></li>
         <li><a class="sub" href="#l16-sqrt">Math.sqrt</a></li>
+        <li><a class="sub" href="#l16-inside">Inside Math.sqrt</a></li>
         <li><a class="sub" href="#p16">Practice</a></li>
         <li><a href="#l17">17 · Math.random</a></li>
         <li><a class="sub" href="#l17-raw">What it gives you</a></li>
         <li><a class="sub" href="#l17-steps">Stretch, cut, shift</a></li>
         <li><a class="sub" href="#l17-formula">The formula</a></li>
         <li><a class="sub" href="#l17-trap">The cast in the wrong place</a></li>
+        <li><a class="sub" href="#l17-real">Is it really random?</a></li>
         <li><a class="sub" href="#p17">Practice</a></li>
         <li><a href="#l18">18 · Simulations &amp; constants</a></li>
         <li><a class="sub" href="#l18-coin">A coin, fifty times</a></li>
         <li><a class="sub" href="#l18-dice">Two dice, a million times</a></li>
+        <li><a class="sub" href="#l18-large">Law of large numbers</a></li>
+        <li><a class="sub" href="#l18-pidarts">π with darts</a></li>
         <li><a class="sub" href="#l18-pi">Math.PI</a></li>
         <li><a class="sub" href="#l18-int">Integer.MAX_VALUE</a></li>
         <li><a class="sub" href="#p18">Practice</a></li>
@@ -62,12 +66,15 @@
         <li><a class="sub" href="#l19-missing">Missing return statement</a></li>
         <li><a class="sub" href="#l19-note">return ends the method</a></li>
         <li><a class="sub" href="#l19-pow">Math.pow is the same shape</a></li>
+        <li><a class="sub" href="#l19-names">Naming &amp; signatures</a></li>
         <li><a class="sub" href="#p19">Practice</a></li>
         <li><a href="#l20">20 · void &amp; methods calling methods</a></li>
         <li><a class="sub" href="#l20-void">void</a></li>
         <li><a class="sub" href="#l20-prime">isPrime as a method</a></li>
         <li><a class="sub" href="#l20-chain">A method calling a method</a></li>
         <li><a class="sub" href="#l20-cost">What it costs now</a></li>
+        <li><a class="sub" href="#l20-topdown">Top-down design</a></li>
+        <li><a class="sub" href="#l20-pre">Pre- &amp; postconditions</a></li>
         <li><a class="sub" href="#p20">Practice</a></li>
         <li><a href="#extras">Extras · beyond the files</a></li>
         <li><a class="sub" href="#x-old">Old loops as methods</a></li>
@@ -76,6 +83,7 @@
         <li><a class="sub" href="#x-void">void calling void</a></li>
         <li><a class="sub" href="#x-none">No parameters at all</a></li>
         <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
@@ -87,6 +95,19 @@
         <div class="lesson-head">
           <span class="lesson-no">Part 16 · Lesson16.java</span>
           <h2 class="lesson-title">Built-in Math Methods</h2>
+        </div>
+
+        <p>Up to now every program has been one long <code class="inl">main</code>. That works for twenty lines; it does not work for twenty thousand. Real programs are built from small named pieces, each doing one job — and Java calls those pieces <strong>methods</strong>. This lesson starts by <em>using</em> methods that someone else wrote, the ones in <code class="inl">Math</code>, and ends by writing our own.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>Calling a method: arguments in, a return value out — <code class="inl">Math.abs</code>, <code class="inl">pow</code>, <code class="inl">sqrt</code>.</li>
+            <li>Random numbers in any range, and where “random” in a computer really comes from.</li>
+            <li>Simulations: letting the computer throw coins, dice and darts a million times.</li>
+            <li>Writing a method: header, parameters, body, <code class="inl">return</code> — and <code class="inl">void</code>.</li>
+            <li>Splitting a big job into small methods that call each other.</li>
+          </ul>
         </div>
 
         <h3 id="l16-call">What a call looks like</h3>
@@ -217,6 +238,38 @@ NaN</pre></div>
         </div>
 
         <p>Same story as <code class="inl">pow</code>: a <code class="inl">double</code> comes back even when the root is a whole number, and a cast gets you the <code class="inl">int</code>. The last line is new. There is no real number whose square is −25, and Java does not crash or throw an exception the way <code class="inl">5 / 0</code> did in Lesson 1 — it hands back a special <code class="inl">double</code> value called <code class="inl">NaN</code>, <em>Not a Number</em>, and carries on. The program runs; the output is just useless from that point.</p>
+
+        <h3 id="l16-inside">What is inside Math.sqrt?</h3>
+
+        <p>You have used <code class="inl">Math.sqrt</code> without knowing how it works — and that is the whole idea. A method is a promise: <em>give me this, I will give you that</em>. How it keeps the promise is its own business. Programmers call this <strong>abstraction</strong>: hiding the details behind a name, so the person using it only needs to know what it does.</p>
+
+        <p>Still, it is worth peeking once. One of the oldest ways to find a square root is nearly two thousand years old, described by Heron of Alexandria. Guess an answer. If the guess is too big, <code class="inl">n / guess</code> is too small, and the other way round — so their average is a better guess. Repeat. It needs nothing but a loop from Lesson 3:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Heron's square root of 2</span></div>
+          <pre class="code"><code>double n = 2;
+double guess = 1;
+
+for (int i = 1; i &lt;= 5; i++) {
+    guess = (guess + n / guess) / 2;
+    System.out.println(guess);
+}
+
+System.out.println(Math.sqrt(2));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1.5
+1.4166666666666665
+1.4142156862745097
+1.4142135623746899
+1.414213562373095
+1.4142135623730951</pre></div>
+        </div>
+
+        <p>Five passes, and the guess matches <code class="inl">Math.sqrt</code> in every digit but the very last one. Each pass roughly doubles the number of correct digits: 1, then 3, 6, 12, and then all of them. Modern processors use cleverer tricks, but the idea is the same: a loop that improves an answer until it is good enough.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A method call is <code class="inl">Where.name(arguments)</code>, and it is an expression: it is worth its return value. <code class="inl">Math.abs</code> gives back the same type it gets; <code class="inl">pow</code> and <code class="inl">sqrt</code> always give back a <code class="inl">double</code>, so storing one in an <code class="inl">int</code> needs a cast. Compare doubles with <code class="inl">Math.abs(a - b) &lt;= tolerance</code>, never <code class="inl">==</code>. You can use a method without knowing how it works — that is abstraction.</p>
+        </div>
 
         <div class="practice" id="p16">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 16</h3>
@@ -502,6 +555,20 @@ for (int i = 0; i &lt; 10; i++)
           <p><code class="inl">(int) Math.random() * 5</code> and <code class="inl">(int) (Math.random() * 5)</code> look almost the same and behave completely differently. The cast binds to whatever is immediately after it. Put the parentheses around the whole product, every time.</p>
         </div>
 
+        <h3 id="l17-real">Is it really random?</h3>
+
+        <p>A computer is a machine that follows instructions exactly. So how can it produce something unpredictable? Strictly speaking, it cannot. <code class="inl">Math.random</code> runs a formula: it takes the previous number, mixes it with multiplication and remainders — <code class="inl">%</code> again — and produces the next. The numbers look random and pass statistical tests for randomness, but if you knew the starting value, called the <strong>seed</strong>, you could predict every one. They are called <strong>pseudo-random</strong> numbers. Java picks the seed from the computer's clock, which is why each run is different.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>For games and simulations, pseudo-random is perfect. For secrets — passwords, encryption keys — a predictable formula is dangerous, so security systems mix in randomness from the physical world: tiny timing differences in a keyboard, electrical noise, even video. The internet company Cloudflare keeps a wall of about a hundred lava lamps in its San Francisco office, filmed by a camera; the moving wax is turned into random numbers that help protect a large share of the world's web traffic.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">Math.random()</code> gives a double from 0.0 up to, but not including, 1.0. For a whole number from <code class="inl">min</code> to <code class="inl">max</code>: <code class="inl">(int) (Math.random() * (max - min + 1)) + min</code> — multiply for how many values, cast to cut, add to shift. The parentheses around the multiplication are essential. Computer randomness is a formula with a seed: pseudo-random.</p>
+        </div>
+
         <div class="practice" id="p17">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 17</h3>
           <p class="practice-lede">Work them out on paper first, then open the answer.</p>
@@ -652,6 +719,57 @@ System.out.println(counter / 1000000.0);</code></pre>
 
         <p>Notice <code class="inl">counter = 0;</code> at the top — no <code class="inl">int</code>. The variable was declared for the coin; this line just resets it for the dice. Declaring it a second time would be the "already defined" error from Lesson 4.</p>
 
+        <h3 id="l18-large">The more throws, the closer</h3>
+
+        <p>The coin gave 23 heads instead of 25, and that is normal. But what happens as the number of throws grows? Here is one die, rolled 100, then 10,000, then a million times, counting sixes. The true chance is 1 in 6, about 0.1667:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Sixes, at three sizes — one run</span></div>
+          <pre class="code"><code>for (int rolls = 100; rolls &lt;= 1000000; rolls *= 100) {
+    int sixes = 0;
+    for (int i = 1; i &lt;= rolls; i++) {
+        int d = (int) (Math.random() * 6) + 1;
+        if (d == 6) {
+            sixes++;
+        }
+    }
+    System.out.println(rolls + " rolls: " + (double) sixes / rolls);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>100 rolls: 0.09
+10000 rolls: 0.1613
+1000000 rolls: 0.166794</pre></div>
+        </div>
+
+        <p>A hundred rolls can be far off — this run only got nine sixes. A million rolls lands within a thousandth of the truth. This is the <strong>law of large numbers</strong>: the more times you repeat a random experiment, the closer the average gets to the real probability. It is why casinos always win in the long run, and why a simulation needs many runs before anyone believes it.</p>
+
+        <h3 id="l18-pidarts">Finding π with darts</h3>
+
+        <p>Simulations can even answer questions that have nothing random about them. Throw darts at random into a 1 × 1 square. A quarter circle of radius 1 covers π/4 of that square, so about π/4 of the darts land inside it — and a dart at <code class="inl">(x, y)</code> is inside when <code class="inl">x * x + y * y &lt;= 1</code>. Count, multiply by 4, and you have π:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A million darts — one run</span></div>
+          <pre class="code"><code>int inside = 0;
+int total = 1000000;
+
+for (int i = 1; i &lt;= total; i++) {
+    double x = Math.random();
+    double y = Math.random();
+    if (x * x + y * y &lt;= 1) {
+        inside++;
+    }
+}
+
+System.out.println(4.0 * inside / total);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3.139004</pre></div>
+        </div>
+
+        <p>Close to <code class="inl">Math.PI</code>'s 3.14159…, but not exact — and the next run will be a little different. Notice the <code class="inl">4.0</code>: with <code class="inl">4</code> the whole calculation would be ints, and integer division would give 3.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>This way of solving problems with random experiments is called the <strong>Monte Carlo method</strong>, after the famous casino in Monaco. Stanisław Ulam came up with it in 1946 while recovering from an illness and playing solitaire: instead of calculating his chances of winning, he wondered whether he could simply play many games and count. He and John von Neumann used the idea on some of the first electronic computers. Today it predicts weather, prices insurance and tests the designs of aircraft.</p>
+        </div>
+
         <h3 id="l18-pi">Math.PI</h3>
 
         <div class="ex">
@@ -681,6 +799,11 @@ System.out.println(Integer.MIN_VALUE);</code></pre>
         </div>
 
         <p>Two more built-in constants, this time from the class <code class="inl">Integer</code>. They are the two numbers Lesson 2 typed out by hand to show overflow, and now you can name them instead of remembering ten digits. The behaviour at the edge is unchanged: <code class="inl">Integer.MAX_VALUE + 1</code> wraps round to <code class="inl">-2147483648</code>.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <strong>simulation</strong> is a loop that makes random events and counts what happens. One run gives an estimate, never the exact answer; more repetitions give a better estimate (the law of large numbers). Divide counts with a <code class="inl">.0</code> somewhere to get a probability. Built-in constants such as <code class="inl">Math.PI</code> and <code class="inl">Integer.MAX_VALUE</code> are <code class="inl">final</code> values, used without parentheses.</p>
+        </div>
 
         <div class="practice" id="p18">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 18</h3>
@@ -763,6 +886,16 @@ System.out.println(Integer.MIN_VALUE);</code></pre>
         </div>
 
         <p>Everything so far has been <em>calling</em> methods that someone at Oracle wrote. This file turns that around. The file's own summary sits at the top as a comment — <code class="inl">HEADER</code>, <code class="inl">BODY</code>, <code class="inl">RETURN STATEMENT</code> — and every method on this page has those three pieces.</p>
+
+        <p>Why write methods at all? <code class="inl">main</code> can already do everything. Three reasons, and every professional programmer would give the same ones:</p>
+
+        <ul class="plain">
+          <li><strong>Write once, use many times.</strong> The prime test from Lesson 4 is twelve lines. If three parts of a program need it, a method means twelve lines once — and a bug fixed once is fixed everywhere.</li>
+          <li><strong>A name explains the code.</strong> <code class="inl">if (isPrime(n))</code> tells the reader what is happening without making them read a nested loop.</li>
+          <li><strong>Small pieces are easier to get right.</strong> You can test <code class="inl">isEven</code> on its own, with a few values, before anything depends on it.</li>
+        </ul>
+
+        <p>Breaking a program into named methods, each hiding its details behind a header, is called <strong>procedural abstraction</strong>. It is the same idea as <code class="inl">Math.sqrt</code> in Part 16, now in our hands.</p>
 
         <h3 id="l19-anatomy">Header, body, return</h3>
 
@@ -996,6 +1129,17 @@ System.out.println(answer);</code></pre>
           <p>The last line of the file is a comment: <code class="inl">// f(x) = 2 * x + 3</code>. A method <em>is</em> a function in the maths sense — one input, one output. Write <code class="inl">f</code> as a Java method, decide what its return type should be, and call it with 2, 0 and −1.5. We will compare answers in class.</p>
         </div>
 
+        <h3 id="l19-names">Naming a method</h3>
+
+        <p>A variable holds a thing, so it gets a noun: <code class="inl">total</code>, <code class="inl">price</code>. A method <em>does</em> something, so it gets a verb: <code class="inl">printPrimeNumbers</code>, <code class="inl">calculateAge</code>, <code class="inl">rollDie</code>. A method that answers a yes/no question starts like a question: <code class="inl">isEven</code>, <code class="inl">isPrime</code>, <code class="inl">hasSeven</code>. Like variables, methods use camelCase with a small first letter.</p>
+
+        <p>The name together with the list of parameter types is called the method's <strong>signature</strong> — <code class="inl">sum(int, int)</code>. It is everything a caller needs to know to call it correctly: what to call it and what to give it. The return type in the header then says what comes back.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A method is a header — <code class="inl">public static</code>, return type, name, parameters — and a body. Arguments in the call are copied into the parameters in order and must match them in number and type. <code class="inl">return</code> hands back a value of the return type and ends the method at once. Every possible path must reach a <code class="inl">return</code>, judged by the shape of the code. A call that returns something is an expression and can go wherever such a value can go.</p>
+        </div>
+
         <div class="practice" id="p19">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 19</h3>
           <p class="practice-lede">Work them out on paper first, then open the answer.</p>
@@ -1192,6 +1336,30 @@ public static boolean isPrime(int number) {
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p><code class="inl">isPrime(1)</code> returns <code class="inl">true</code>, and so does <code class="inl">isPrime(0)</code>. <code class="inl">Math.sqrt(1)</code> is 1.0, so the loop header <code class="inl">i = 2; i &lt;= 1.0</code> is false at once, nothing runs, and the method falls through to <code class="inl">return true</code>. The file never notices because <code class="inl">printPrimeNumbers</code> starts counting at 2 — but a method should be right on its own, not only for the arguments one caller happens to send. Question 2 below asks for the fix.</p>
+        </div>
+
+        <h3 id="l20-topdown">Big problem, small methods</h3>
+
+        <p>Look at how Lesson20.java was built. “Print the primes below 100” is one job. It splits into “for every number, decide whether it is prime, and print it if so” — that is <code class="inl">printPrimeNumbers</code> — and “decide whether one number is prime” — that is <code class="inl">isPrime</code>. Start from the whole problem and keep cutting it into smaller named jobs until each one is easy to write. This is called <strong>top-down design</strong>, and it is how large programs are planned: a recipe says “make the sauce”, and the sauce has its own recipe.</p>
+
+        <h3 id="l20-pre">Promises in comments</h3>
+
+        <p>The Watch out above found a gap: <code class="inl">isPrime(1)</code> says <code class="inl">true</code>. The method only works for numbers from 2 up. Programmers write that kind of rule above the header, as a comment, so nobody has to discover it by accident:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A method with its promises written down</span></div>
+          <pre class="code"><code>// Precondition:  number &gt;= 2
+// Postcondition: returns true if number is prime, false otherwise
+public static boolean isPrime(int number) {
+    ...
+}</code></pre>
+        </div>
+
+        <p>A <strong>precondition</strong> is what must be true <em>before</em> the call — the caller's responsibility. A <strong>postcondition</strong> is what the method promises <em>after</em> it, as long as the precondition held. If you call <code class="inl">isPrime(1)</code>, you broke the precondition, and the method owes you nothing. AP exam questions often state a precondition, and it is a hint: you do not need to handle the cases it rules out.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <code class="inl">void</code> method returns nothing: its call is a statement on its own, and it cannot be printed or stored. <code class="inl">return</code> inside a loop leaves the loop and the method together. A boolean method can be used directly as a condition. Methods can call methods, in any order in the file. Plan big jobs top-down, and write each method's preconditions and postconditions above its header.</p>
         </div>
 
         <div class="practice" id="p20">
@@ -1563,6 +1731,37 @@ for (int i = 0; i &lt; 10; i++) {
               </details>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The words below are the ones a book, an exam question or another programmer will use without stopping to explain.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>method</strong></td><td>function</td><td>a named piece of code that can be called</td><td class="mono">sum, isPrime</td></tr>
+              <tr><td><strong>call</strong></td><td>invoke</td><td>run a method from somewhere else</td><td class="mono">sum(2, 3)</td></tr>
+              <tr><td><strong>argument</strong></td><td>actual parameter</td><td>the value sent in a call</td><td class="mono">2, 3</td></tr>
+              <tr><td><strong>parameter</strong></td><td>formal parameter</td><td>the variable in the header that receives it</td><td class="mono">int a, int b</td></tr>
+              <tr><td><strong>return type</strong></td><td></td><td>the type of value the method gives back</td><td class="mono">int, boolean, double</td></tr>
+              <tr><td><strong>return value</strong></td><td></td><td>what the call is worth when it finishes</td><td class="mono">5</td></tr>
+              <tr><td><strong>void</strong></td><td></td><td>“nothing comes back”</td><td class="mono">greetings</td></tr>
+              <tr><td><strong>header</strong></td><td></td><td>the first line of a method</td><td class="mono">public static int sum(int a, int b)</td></tr>
+              <tr><td><strong>signature</strong></td><td></td><td>the name and the parameter types</td><td class="mono">sum(int, int)</td></tr>
+              <tr><td><strong>abstraction</strong></td><td>procedural abstraction</td><td>using a method by what it does, not how</td><td class="mono">Math.sqrt</td></tr>
+              <tr><td><strong>top-down design</strong></td><td></td><td>splitting a big job into smaller methods</td><td>printPrimeNumbers → isPrime</td></tr>
+              <tr><td><strong>precondition / postcondition</strong></td><td></td><td>what must be true before a call / what the method promises after</td><td class="mono">number &gt;= 2</td></tr>
+              <tr><td><strong>tolerance</strong></td><td>epsilon</td><td>how close two doubles must be to count as equal</td><td class="mono">0.000001</td></tr>
+              <tr><td><strong>pseudo-random</strong></td><td></td><td>numbers made by a formula that only look random</td><td class="mono">Math.random()</td></tr>
+              <tr><td><strong>seed</strong></td><td></td><td>the starting value of that formula</td><td>the clock</td></tr>
+              <tr><td><strong>simulation</strong></td><td>Monte Carlo method</td><td>estimating by repeating random experiments</td><td>a million dice</td></tr>
+              <tr><td><strong>NaN</strong></td><td>Not a Number</td><td>the double for an impossible answer</td><td class="mono">Math.sqrt(-25)</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 

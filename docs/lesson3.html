@@ -43,6 +43,7 @@
         <li><a class="sub" href="#l7-down">Counting down</a></li>
         <li><a class="sub" href="#l7-any">Any step you like</a></li>
         <li><a class="sub" href="#l7-inf">The loop that never ends</a></li>
+        <li><a class="sub" href="#l7-howmany">How many passes</a></li>
         <li><a class="sub" href="#p7">Practice</a></li>
         <li><a href="#l8">8 · Working inside the loop</a></li>
         <li><a class="sub" href="#l8-sum">Building a sum</a></li>
@@ -60,11 +61,14 @@
         <li><a class="sub" href="#l10-hail">Hailstone sequences</a></li>
         <li><a class="sub" href="#l10-count">Counting the terms</a></li>
         <li><a class="sub" href="#l10-leap">Leap years</a></li>
+        <li><a class="sub" href="#l10-why">Why that rule</a></li>
+        <li><a class="sub" href="#l10-design">Writing a loop</a></li>
         <li><a class="sub" href="#p10">Practice</a></li>
         <li><a href="#l11">11 · Taking a number apart</a></li>
         <li><a class="sub" href="#l11-digits">% 10 and / 10</a></li>
         <li><a class="sub" href="#l11-sum">Digit sum and digit count</a></li>
         <li><a class="sub" href="#l11-zero">Why != 0</a></li>
+        <li><a class="sub" href="#l11-why">Place value &amp; binary</a></li>
         <li><a class="sub" href="#l11-div">Common divisors</a></li>
         <li><a class="sub" href="#p11">Practice</a></li>
         <li><a href="#l12">12 · Where a variable lives</a></li>
@@ -84,6 +88,7 @@
         <li><a class="sub" href="#x-string">Building a line of text</a></li>
         <li><a class="sub" href="#x-trace">Tracing on paper</a></li>
         <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
@@ -95,6 +100,20 @@
         <div class="lesson-head">
           <span class="lesson-no">Part 07 · Lesson7.java</span>
           <h2 class="lesson-title">The for Loop</h2>
+        </div>
+
+        <p>Computers are not clever. What they are is <em>tireless</em>: a laptop can repeat a simple step a billion times a second without getting bored or making a slip. Loops are how you put that to work. Almost every useful program has one somewhere — going through every student in a class, every pixel in a photo, every second of a song.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>The <code class="inl">for</code> loop and its three pieces — and how to tell, before running it, how many times a loop will run.</li>
+            <li>Accumulators: running totals, products and counts.</li>
+            <li>The <code class="inl">while</code> loop, for when nobody knows how many passes it will take.</li>
+            <li>Loops from real mathematics: the hailstone problem and the calendar.</li>
+            <li>Taking numbers apart digit by digit — in base 10 and in base 2.</li>
+            <li>Scope: where a variable is born and where it dies.</li>
+          </ul>
         </div>
 
         <h3 id="l7-idea">Why a loop</h3>
@@ -284,6 +303,37 @@ i= 13
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p>Strictly speaking this loop does end. <code class="inl">i</code> climbs to 2147483647, and then — exactly as in Lesson 2 — the next <code class="inl">i++</code> wraps it around to a negative number, which finally fails <code class="inl">i &gt; 0</code>. That takes <strong>2,147,483,638 passes</strong>, each one printing a line. Nobody is waiting for that. Treat it as infinite and stop the program yourself: the red <span class="err">■</span> button in Eclipse.</p>
+        </div>
+
+        <h3 id="l7-howmany">How many times will it run?</h3>
+
+        <p>A good programmer can say how many passes a loop makes <em>before</em> running it. For a loop that steps by 1, the count is simple:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">Header</th><th>Values of i</th><th>Passes</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">for (int i = 1; i &lt;= 5; i++)</td><td class="mono">1 2 3 4 5</td><td class="mono">5</td></tr>
+              <tr><td class="mono">for (int i = 0; i &lt; 5; i++)</td><td class="mono">0 1 2 3 4</td><td class="mono">5</td></tr>
+              <tr><td class="mono">for (int i = 3; i &lt;= 35; i++)</td><td class="mono">3 … 35</td><td class="mono">33</td></tr>
+              <tr><td class="mono">for (int i = 25; i &gt; 0; i -= 3)</td><td class="mono">25 22 … 1</td><td class="mono">9</td></tr>
+              <tr><td class="mono">for (int i = 2; i &lt; 100; i += 5)</td><td class="mono">2 7 … 97</td><td class="mono">20</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>From <code class="inl">a</code> to <code class="inl">b</code> with both ends included, there are <code class="inl">b - a + 1</code> values — not <code class="inl">b - a</code>. From 3 to 35 is 33 numbers, not 32. With a bigger step, count the values the way the table does: first, last, and how many jumps lie between them, plus one.</p>
+
+        <p>Forgetting that <code class="inl">+ 1</code> is so common it has a name: the <strong>off-by-one error</strong>, also called the <strong>fencepost error</strong>. Build a 10-metre fence with a post every metre and you need 11 posts, not 10 — one at each end. Loops make the same mistake: <code class="inl">&lt;</code> where <code class="inl">&lt;=</code> was meant, or the other way round, and the loop runs once too few or once too many. Nothing crashes; the answer is just one off.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule of thumb</span>
+          <p><code class="inl">for (int i = 0; i &lt; n; i++)</code> runs exactly <code class="inl">n</code> times. Programmers count from 0 so often that this shape becomes automatic — and much of what Java does later on, from the letters of a word to lists of values, is numbered from 0 too.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <code class="inl">for</code> loop has a start (once), a stop (checked before every pass) and a step (after every pass). If the stop is false at the first check, the body never runs. The step must move the counter towards the stop, or the loop never ends. From <code class="inl">a</code> to <code class="inl">b</code> inclusive is <code class="inl">b - a + 1</code> passes; being one off is the most common loop bug of all.</p>
         </div>
 
         <div class="practice" id="p7">
@@ -483,6 +533,17 @@ System.out.println(factorial);</code></pre>
           <p>A product accumulator starts at <strong>1</strong>, never 0. Start it at 0 and the answer is 0 — the first multiplication wipes out everything that follows, and it keeps doing it. A sum starts at 0 for the same reason in reverse: 0 is the value that changes nothing when you add it.</p>
         </div>
 
+        <p>The exclamation mark for factorial was introduced by the French mathematician Christian Kramp in 1808, and factorials grow frighteningly fast — fast enough to remind us of Lesson 2:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>12! and 13!</span></div>
+          <pre class="code"><code>// the same loop with 12, then with 13</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>479001600
+1932053504</pre></div>
+        </div>
+
+        <p>12! is correct. 13! should be 6,227,020,800 — thirteen times bigger than 12! — but it is smaller, and wrong. The real answer does not fit in an <code class="inl">int</code>, the product overflowed, and nothing warned us. An <code class="inl">int</code> can hold factorials only up to 12!.</p>
+
         <h3 id="l8-count">Counting</h3>
 
         <p>A counter is an accumulator that always steps by 1, no matter what value triggered it.</p>
@@ -522,6 +583,25 @@ i= 34 count= 17
               <tr><td>a count</td><td class="mono">0</td><td class="mono">count++;</td></tr>
             </tbody>
           </table>
+        </div>
+
+        <p>Those three rows are really one pattern with three settings. Every accumulator loop in this course has the same three places:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The accumulator pattern</span></div>
+          <pre class="code"><code>// 1. BEFORE the loop: create it, with the value that changes nothing
+// 2. INSIDE the loop: update it, once per pass (or once per passing value)
+// 3. AFTER the loop:  use it — this is where the answer is complete</code></pre>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A phone's step counter is a <code class="inl">count++</code> that runs every time the sensor feels a step. A shopping basket total is a <code class="inl">sum += price</code> for every item added. A bank statement's closing balance is an accumulator that started at the opening balance. Once you know the pattern, you see it everywhere.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An <strong>accumulator</strong> is declared before the loop, updated inside it, and read after it. A sum or a count starts at 0, a product at 1. An <code class="inl">if</code> inside the loop picks which values count. Products grow fast enough to overflow an <code class="inl">int</code> — 13! already does.</p>
         </div>
 
         <div class="practice" id="p8">
@@ -779,6 +859,41 @@ Hello
 
         <p>So which do you reach for? Use <code class="inl">for</code> when you know in advance how many passes there are — ten Hellos, every number from 3 to 35. Use <code class="inl">while</code> when you do not: when the loop runs until something <em>happens</em>. That is the next lesson.</p>
 
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Question</th><th>Loop</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Do you know the number of passes before you start?</td><td class="mono">for</td><td>every number from 1 to 100</td></tr>
+              <tr><td>Do you only know <em>when to stop</em>?</td><td class="mono">while</td><td>until the number reaches 1; until the money doubles</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Here is a while loop from everyday life. You put 1000 TL in a bank account that pays 10% interest a year. How many years until it doubles? Nobody can say how many passes that loop needs — that is the question it answers:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Until the money doubles</span></div>
+          <pre class="code"><code>double money = 1000;
+int years = 0;
+
+while (money &lt; 2000) {
+    money *= 1.1;     // 10% more
+    years++;
+}
+
+System.out.println(years);
+System.out.println(money);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>8
+2143.5888100000006</pre></div>
+        </div>
+
+        <p>Eight years. After seven the account holds about 1948 TL, still short; the eighth year takes it over. (The tail on the second line is Lesson 1's round-off error — the money is right to the kuruş.) Bankers have a shortcut for the same question, the <em>rule of 72</em>: divide 72 by the interest rate, and 72 / 10 ≈ 7.2 years. The loop gives the exact answer: you have to wait for the end of year eight.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <code class="inl">while</code> loop has only the stop in its brackets; the start goes above it and the step inside it — and forgetting the step makes it endless. A <code class="inl">for</code> and a <code class="inl">while</code> can do the same job. Choose <code class="inl">for</code> when the number of passes is known, <code class="inl">while</code> when only the stopping point is.</p>
+        </div>
+
         <div class="practice" id="p9">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 9</h3>
           <p class="practice-lede">Work them out on paper first, then open the answer.</p>
@@ -962,6 +1077,11 @@ System.out.println(count + 1);</code></pre>
           <p>In a counting loop the step is fixed: <code class="inl">i++</code>. Here the "step" is the whole <code class="inl">if / else</code> — it changes <code class="inl">n</code> in a different way depending on what <code class="inl">n</code> currently is. It is still a step: it is still the thing that eventually makes the condition false.</p>
         </div>
 
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>The German mathematician Lothar Collatz asked this question in 1937. It looks like a puzzle for children, and it has beaten every mathematician since. Computers have checked every starting number up to about 3 × 10<sup>20</sup> — every one of them reaches 1 — but checking is not proving. The famous mathematician Paul Erdős said of it: <em>“Mathematics may not be ready for such problems.”</em> Any loop you write for it is a loop that nobody can promise will end.</p>
+        </div>
+
         <h3 id="l10-count">Counting the terms</h3>
 
         <p>Two details in that program are worth slowing down for.</p>
@@ -1026,6 +1146,43 @@ System.out.println(counter);</code></pre>
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p>Drop the last two tests and keep only <code class="inl">i % 4 == 0</code> and the loop happily reports 1900 as a leap year. It compiles, it runs, it counts 4 leap years between 1896 and 1910 instead of 3. A wrong condition is not an error — it is just a wrong answer.</p>
+        </div>
+
+        <h3 id="l10-why">Why the calendar needs that rule</h3>
+
+        <p>The leap-year condition is not something a programmer made up — it is 2,000 years of astronomy squeezed into one line. The Earth takes about <strong>365.2422 days</strong> to go round the Sun. A calendar can only have whole days, so it has to cheat, and the question is how well.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Calendar</th><th>Rule</th><th>Average year</th><th>Error</th></tr></thead>
+            <tbody>
+              <tr><td>no leap years</td><td>always 365</td><td class="mono">365</td><td>a quarter of a day short every year</td></tr>
+              <tr><td>Julian, 46 BC</td><td><code class="inl">% 4 == 0</code></td><td class="mono">365.25</td><td>about 11 minutes too long every year</td></tr>
+              <tr><td>Gregorian, 1582</td><td>the full rule, with 100 and 400</td><td class="mono">365.2425</td><td>about 1 day in 3,000 years</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Julius Caesar's calendar added a day every fourth year. Eleven minutes a year sounds like nothing, but by 1582 it had added up to ten whole days, and spring was arriving on the wrong date. Pope Gregory XIII fixed it in two steps: ten days were simply deleted — in 1582, the day after 4 October was 15 October — and the 100 and 400 exceptions were added so the error would not build up again. Skipping 3 leap days every 400 years is exactly what <code class="inl">i % 100 != 0</code> and <code class="inl">i % 400 == 0</code> do. Turkey switched to this calendar on 1 January 1926.</p>
+
+        <h3 id="l10-design">Writing a loop from nothing</h3>
+
+        <p>Every loop in this lesson was written by answering the same few questions, in the same order. When a problem asks for a loop and you do not know where to start, start here:</p>
+
+        <ol class="plain">
+          <li><strong>What changes on every pass?</strong> That is your loop variable — a counter, <code class="inl">n</code>, <code class="inl">money</code>.</li>
+          <li><strong>Where does it start?</strong> That is the line before the loop, or the first slot of the <code class="inl">for</code>.</li>
+          <li><strong>When does it stop?</strong> Write the condition for <em>carrying on</em>, not for stopping: <code class="inl">n != 1</code>, <code class="inl">money &lt; 2000</code>.</li>
+          <li><strong>How does it move towards the stop?</strong> That is the step. Check that it really does move the right way.</li>
+          <li><strong>What happens on each pass?</strong> Printing, testing, adding to an accumulator.</li>
+          <li><strong>What do you know after the loop?</strong> That is the line after the closing brace.</li>
+        </ol>
+
+        <p>Then test it by hand with a small value, and with the value where the loop should not run at all — like <code class="inl">n = 1</code> for the hailstones.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A <code class="inl">while</code> loop is the right tool when the number of passes depends on what happens along the way. Its “step” can be a whole <code class="inl">if / else</code>, as long as it moves towards the stop. Print the final value after the loop if the loop never gets a pass for it. Real rules, like the leap-year rule, become real conditions built from <code class="inl">%</code>, <code class="inl">&amp;&amp;</code> and <code class="inl">||</code>.</p>
         </div>
 
         <div class="practice" id="p10">
@@ -1237,6 +1394,41 @@ System.out.println(sum + " " + count);</code></pre>
           <p>Homework, left in the file as <code class="inl">/// REVERSE THE NUMBER</code>: using nothing but this loop and the accumulator idea, turn 1234 into 4321. Every piece you need is on this page — the digits already come out back to front. We went through it together at the start of Lesson 4: <a href="lesson4.html#w-reverse">the solution is there</a>.</p>
         </div>
 
+        <h3 id="l11-why">Why it works: place value</h3>
+
+        <p>The trick is not a coincidence. We write numbers in <strong>base 10</strong>: each position is worth ten times the one to its right. That means every whole number is “the rest of it, times 10, plus the last digit”:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Any number, split in two</span></div>
+          <pre class="code"><code>// 1234056  =  123405 * 10  +  6
+//              ^ number / 10   ^ number % 10</code></pre>
+        </div>
+
+        <p>Dividing by 10 asks “how many full tens?”, and the remainder is whatever did not make a full ten — the last digit. Lesson 1's groups-and-leftovers idea, with groups of 10.</p>
+
+        <p>Now the beautiful part. Lesson 1 said that computers store numbers in <strong>base 2</strong>, where each position is worth twice the one to its right. Replace 10 with 2 and the very same loop takes a number apart into its <em>bits</em>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>13 in binary</span></div>
+          <pre class="code"><code>int n = 13;
+String bits = "";
+
+while (n != 0) {
+    bits = n % 2 + bits;   // put the new bit in FRONT
+    n = n / 2;
+}
+
+System.out.println(bits);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1101</pre></div>
+        </div>
+
+        <p>The bits come out back to front, just like the digits — so each new one is glued on the <em>left</em> of the String. Check it: 1101 is 8 + 4 + 0 + 1 = 13. This is exactly how the 32 bits of an <code class="inl">int</code> from Lesson 1 are worked out.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Digit sums catch typing mistakes. The last digit of a Turkish ID number is not random: one of the rules says it must equal the sum of the first ten digits <code class="inl">% 10</code>. Type one digit wrong and the sum changes, so a form can reject the number before it is ever sent. Bank card numbers, ISBNs on books and barcodes in shops all carry a <em>check digit</em> made the same way. (And none of them is stored in an <code class="inl">int</code> — eleven digits do not fit, as Lesson 1 said about phone numbers.)</p>
+        </div>
+
         <h3 id="l11-div">Common divisors</h3>
 
         <p><code class="inl">%</code> answers one more question: does <code class="inl">i</code> divide this number exactly? Ask it of two numbers at once and you get their common divisors.</p>
@@ -1264,6 +1456,11 @@ for (int i = n; i &gt; 0; i--) {
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p>There is no <code class="inl">println</code> after this loop, so <code class="inl">sum</code> and <code class="inl">counter</code> are computed and never shown — the console line even ends without a newline. The values are there (90 and 8); the program simply never prints them. Adding <code class="inl">System.out.println();</code> and one more line is all it takes.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">% 10</code> gives the last digit, <code class="inl">/ 10</code> removes it; in a <code class="inl">while (number != 0)</code> loop they take a number apart back to front. The loop destroys the number, so copy it first if you need it. The same loop with 2 instead of 10 gives the bits. <code class="inl">%</code> also tests whether one number divides another, which finds common divisors.</p>
         </div>
 
         <div class="practice" id="p11">
@@ -1349,6 +1546,8 @@ for (int i = n; i &gt; 0; i--) {
 
         <p>Braces do more than group statements. Every pair of braces is a little world: a variable declared inside one exists from its declaration to the matching <code class="inl">}</code>, and not one line further. That region is called the variable's <strong>scope</strong>.</p>
 
+        <p>Why would a language throw variables away? Think of a classroom whiteboard. Every lesson writes its own notes on it, and every lesson ends with the board being wiped. If nothing were ever wiped, the board would fill up, and nobody could tell which <code class="inl">x</code> belonged to which lesson. Scope is the wiping: a variable lives only as long as the block that needs it, its name becomes free again, and its memory is handed back.</p>
+
         <h3 id="l12-header">Declared in the header</h3>
 
         <div class="ex">
@@ -1428,6 +1627,16 @@ done</pre></div>
         </div>
 
         <p><code class="inl">done</code> appears once. The indentation suggests it is part of the loop; Java does not read indentation. Write the braces and the question never comes up.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule of thumb</span>
+          <p>Give every variable the <strong>smallest scope that works</strong>. A loop counter belongs in the header. A value used only inside one pass belongs inside the body. Only something you need after the loop — a total, a final count — goes above it. The fewer lines that can see a variable, the fewer lines that can break it.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A variable's <strong>scope</strong> runs from its declaration to the closing brace of the block it was declared in. A counter declared in a <code class="inl">for</code> header dies with the loop; one declared before the loop survives it; one declared in the body is reborn on every pass. Without braces, only the first statement belongs to the loop.</p>
+        </div>
 
         <div class="practice" id="p12">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 12</h3>
@@ -1906,10 +2115,39 @@ System.out.println(result);</code></pre>
         </div>
       </section>
 
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The words below are the ones a book, an exam question or another programmer will use without stopping to explain.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>loop</strong></td><td>iteration statement</td><td>code that repeats a block</td><td class="mono">for, while</td></tr>
+              <tr><td><strong>iteration</strong></td><td>pass</td><td>one run through the loop body</td><td>10 iterations</td></tr>
+              <tr><td><strong>loop variable</strong></td><td>counter</td><td>the variable whose value drives the loop</td><td class="mono">i</td></tr>
+              <tr><td><strong>loop condition</strong></td><td>stop, test</td><td>the boolean checked before every pass</td><td class="mono">i &lt;= 10</td></tr>
+              <tr><td><strong>infinite loop</strong></td><td></td><td>a loop whose condition never becomes false</td><td class="mono">i++ with i &gt; 0</td></tr>
+              <tr><td><strong>off-by-one error</strong></td><td>fencepost error</td><td>a loop that runs one time too many or too few</td><td class="mono">&lt; instead of &lt;=</td></tr>
+              <tr><td><strong>accumulator</strong></td><td>running total</td><td>a variable that collects a result across passes</td><td class="mono">sum += i;</td></tr>
+              <tr><td><strong>counter</strong></td><td></td><td>an accumulator that goes up by 1</td><td class="mono">count++;</td></tr>
+              <tr><td><strong>factorial</strong></td><td></td><td>the product 1 × 2 × … × n</td><td class="mono">7! = 5040</td></tr>
+              <tr><td><strong>flag</strong></td><td></td><td>a boolean that records whether something has happened</td><td class="mono">hasSeven</td></tr>
+              <tr><td><strong>base 10 / base 2</strong></td><td>decimal / binary</td><td>number systems with 10 digits / with 2 digits</td><td class="mono">13 = 1101</td></tr>
+              <tr><td><strong>check digit</strong></td><td></td><td>a digit worked out from the others, to catch typing mistakes</td><td>the last digit of an ID number</td></tr>
+              <tr><td><strong>greatest common divisor</strong></td><td>GCD</td><td>the biggest number that divides both</td><td class="mono">GCD(120, 160) = 40</td></tr>
+              <tr><td><strong>scope</strong></td><td></td><td>the lines where a variable exists</td><td>header, body, before the loop</td></tr>
+              <tr><td><strong>trace table</strong></td><td></td><td>the values of every variable, pass by pass</td><td>the r / n table</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Ten traps to remember</h2>
-        <p>Eight of these compile without complaint. The other two refuse to compile at all — and knowing which is which is half the battle.</p>
+        <h2>Twelve traps to remember</h2>
+        <p>Ten of these compile without complaint. The other two refuse to compile at all — and knowing which is which is half the battle.</p>
 
         <div class="scroll">
           <table>
@@ -1976,6 +2214,18 @@ System.out.println(result);</code></pre>
                 <td>the final value</td>
                 <td><span class="err">will not compile</span></td>
                 <td>the header's variable dies with the loop</td>
+              </tr>
+              <tr>
+                <td class="mono">for (int i = 3; i &lt; 35; i++)</td>
+                <td class="mono">3 to 35</td>
+                <td class="mono"><span class="fv">3 to 34</span></td>
+                <td>off by one: &lt; leaves the last value out</td>
+              </tr>
+              <tr>
+                <td class="mono">13! in an int</td>
+                <td class="mono">6227020800</td>
+                <td class="mono"><span class="fv">1932053504</span></td>
+                <td>the product overflows; an int holds up to 12!</td>
               </tr>
             </tbody>
           </table>

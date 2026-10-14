@@ -54,6 +54,7 @@
         <li><a class="sub" href="#l26-door">2 · Guessing “door”</a></li>
         <li><a class="sub" href="#l26-valid">3 · Is the password valid?</a></li>
         <li><a class="sub" href="#l26-gen">4 · Make a valid password</a></li>
+        <li><a class="sub" href="#l26-strategies">Two strategies</a></li>
         <li><a class="sub" href="#p26">Practice</a></li>
         <li><a href="#extras">Extras · more problems</a></li>
         <li><a class="sub" href="#x-pin">A PIN and a colour</a></li>
@@ -62,6 +63,7 @@
         <li><a class="sub" href="#x-caesar">Caesar's secret code</a></li>
         <li><a class="sub" href="#x-why">Why was it rejected?</a></li>
         <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
@@ -73,6 +75,18 @@
         <div class="lesson-head">
           <span class="lesson-no">Part 25 · Lesson25.java</span>
           <h2 class="lesson-title">Escape Sequences &amp; null</h2>
+        </div>
+
+        <p>This lesson has two halves. The first finishes the story of Strings with the characters you cannot simply type between quotes, and with <code class="inl">null</code> — the value that means “no String at all”. The second half adds no new Java. It is about the skill that matters more than any keyword: looking at a problem nobody has solved for you, and finding the steps.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>Escape sequences: <code class="inl">\n</code>, <code class="inl">\t</code>, <code class="inl">\"</code>, <code class="inl">\\</code> — and where they came from.</li>
+            <li>The empty String <code class="inl">""</code> against <code class="inl">null</code>, and how to check for <code class="inl">null</code> safely.</li>
+            <li>A four-step method for attacking any programming problem.</li>
+            <li>Four problems solved with it: random words, guessing, checking and making passwords.</li>
+          </ul>
         </div>
 
         <h3 id="l25-slash">The backslash</h3>
@@ -96,6 +110,11 @@
         </div>
 
         <p>Notice the direction: <code class="inl">\</code> is a <strong>back</strong>slash, the one above Enter on most keyboards. <code class="inl">/</code> is a normal slash — the one in <code class="inl">//</code> comments — and it has no special meaning inside a String.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p><code class="inl">\n</code> and <code class="inl">\t</code> are older than screens. On a typewriter, starting a new line took two movements: push the carriage back to the left edge, and turn the paper up one line. The first computer terminals were typewriters wired to computers, and they kept both as separate signals — <em>carriage return</em> and <em>line feed</em>. The tab key comes from typewriters too: a set of metal stops that let a typist jump straight to the next column of a table. The backslash itself was added to the character set at the start of the 1960s by Bob Bemer, one of the people behind ASCII, who also worked out the idea of an “escape” character that changes the meaning of what follows.</p>
+        </div>
 
         <h3 id="l25-n">\n · new line</h3>
 
@@ -303,6 +322,11 @@ System.out.println(b.length());</code></pre>
           </table>
         </div>
 
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p><code class="inl">null</code> was invented in 1965 by the British computer scientist Tony Hoare, for a language called ALGOL W, “simply because it was so easy to implement.” In 2009 he publicly apologised for it, calling it his <em>billion-dollar mistake</em>: in the decades since, crashes like the <code class="inl">NullPointerException</code> above have cost companies enormous amounts of time and money. Some newer languages are designed so that a variable cannot be <code class="inl">null</code> unless the programmer says so. In Java, the protection is you — checking before you call.</p>
+        </div>
+
         <h3 id="l25-check">Checking for null</h3>
 
         <p>Before you call a method on a String that might be <code class="inl">null</code>, ask first. The question is asked with <code class="inl">==</code> and <code class="inl">!=</code>:</p>
@@ -345,6 +369,11 @@ System.out.println(b.equals(null));</code></pre>
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p>When you build a String with <code class="inl">+=</code> in a loop, start from <code class="inl">""</code>, never from <code class="inl">null</code>. Every method in Part 26 starts with <code class="inl">String result = "";</code> for exactly this reason.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Inside a String, a backslash starts an <strong>escape sequence</strong>: <code class="inl">\n</code> new line, <code class="inl">\t</code> tab to the next column, <code class="inl">\"</code> a quote, <code class="inl">\\</code> a backslash. Each one is stored as a single character. Any other letter after a backslash will not compile. <code class="inl">""</code> is a String with no letters; <code class="inl">null</code> is no String at all, and calling a method on it throws a <code class="inl">NullPointerException</code>. Check with <code class="inl">== null</code> or <code class="inl">!= null</code> before calling.</p>
         </div>
 
         <div class="practice" id="p25">
@@ -461,6 +490,11 @@ System.out.println(s);</code></pre></div>
         <p>For each problem below: read the problem, close your eyes to the code, and try steps 1 and 2 yourself first.</p>
 
         <!-- Problem 1 -->
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>A step-by-step method for solving a problem is called an <strong>algorithm</strong> — <em>algoritma</em> in Turkish. The word comes from the name of Muhammad ibn Musa al-Khwarizmi, a mathematician who worked in Baghdad around the year 820; the title of one of his books also gave us the word <em>algebra</em>. And the four steps above have a famous ancestor: in 1945 the mathematician George Pólya published <em>How to Solve It</em>, which teaches almost the same plan for any maths problem — understand the problem, make a plan, carry it out, look back and check. Programmers have been borrowing it ever since.</p>
+        </div>
+
         <h3 id="l26-rw">Problem 1 · A random word</h3>
 
         <div class="note note--task">
@@ -756,6 +790,22 @@ pass 3: wSuadgLhkMEbkcKBLqVjeWvw (24)</pre></div></div>
         <div class="note note--life">
           <span class="tag">In real life</span>
           <p>The “suggest a strong password” button in Chrome or on your phone does this job. The rules are the same kind as ours — a length range, character groups that must appear — and checking a sign-up form is <code class="inl">isValid</code>, run on every key you press.</p>
+        </div>
+
+        <h3 id="l26-strategies">Two strategies with names</h3>
+
+        <p>Two of the four problems used ideas that are so common they have names. Knowing the names helps you recognise when a new problem needs the same idea.</p>
+
+        <ul class="plain">
+          <li><strong>Brute force</strong> — try every possibility, or random ones, until one works. Problem 2 guessed “door” this way. It is simple and it always works in the end, but the number of possibilities grows by multiplication: 26 for one letter, 456,976 for four. Brute force is fine for small problems and hopeless for big ones — which is exactly what protects a long password.</li>
+          <li><strong>Generate and test</strong> — split the job into a part that <em>makes</em> a candidate and a part that <em>checks</em> it, and repeat until the check passes. Problem 4 made random passwords and let <code class="inl">isValid</code> judge them. Because <code class="inl">isValid</code> was already written and tested, <code class="inl">generatePassword</code> did not have to know a single rule about passwords.</li>
+        </ul>
+
+        <p>That second point is the real lesson of this part. Each problem reused the one before it: randomWord in Problem 2, isValid in Problem 4. Lesson 5 said methods let you write once and use many times; here is what that looks like in practice.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Attack a problem in four steps: say it in words and write the method header; do one example by hand; find the small step that repeats; test with answers you already know. To test whether a character belongs to a group, write the group as a String and ask <code class="inl">group.indexOf(ch) != -1</code>. Build Strings from <code class="inl">""</code>. Reuse methods you have already tested — generate and test.</p>
         </div>
 
         <div class="practice" id="p26">
@@ -1100,6 +1150,29 @@ only letters and !@#$%^&amp;* are allowed</pre></div>
               </details>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The words below are the ones a book, an exam question or another programmer will use without stopping to explain.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>escape sequence</strong></td><td></td><td>a backslash and a character that together mean one special character</td><td class="mono">\n, \t, \", \\</td></tr>
+              <tr><td><strong>backslash</strong></td><td></td><td>the character <code class="inl">\</code> — not the slash <code class="inl">/</code></td><td class="mono">"C:\\Users"</td></tr>
+              <tr><td><strong>empty String</strong></td><td></td><td>a String with zero characters</td><td class="mono">""</td></tr>
+              <tr><td><strong>null</strong></td><td></td><td>no String at all</td><td class="mono">String b = null;</td></tr>
+              <tr><td><strong>NullPointerException</strong></td><td>NPE</td><td>the crash when a method is called on null</td><td class="mono">b.length()</td></tr>
+              <tr><td><strong>algorithm</strong></td><td></td><td>a step-by-step method that solves a problem</td><td>isValid</td></tr>
+              <tr><td><strong>brute force</strong></td><td></td><td>trying possibilities until one works</td><td>guessing “door”</td></tr>
+              <tr><td><strong>generate and test</strong></td><td></td><td>make a candidate, check it, repeat</td><td>generatePassword</td></tr>
+              <tr><td><strong>test case</strong></td><td></td><td>an input whose right answer you already know</td><td class="mono">"aB%cdef" → true</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 

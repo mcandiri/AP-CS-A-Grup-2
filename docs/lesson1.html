@@ -24,7 +24,7 @@
     <h1>Types, Operators &amp; Logic</h1>
     <p class="deck">Everything from our first lesson, spread across the three files we worked in — with the exact examples we ran in class, what each one prints, and six questions after every part.</p>
     <ul class="facts">
-      <li>3 parts</li>
+      <li>3 parts + intro</li>
       <li>Java</li>
       <li>18 questions</li>
       <li>Every output verified</li>
@@ -36,29 +36,157 @@
     <nav class="toc" aria-label="Contents">
       <h2>Contents</h2>
       <ol>
+        <li><a href="#l0">0 · How Java Runs</a></li>
+        <li><a class="sub" href="#l0-java">The JVM</a></li>
+        <li><a class="sub" href="#l0-shape">Shape of a file</a></li>
+        <li><a class="sub" href="#l0-err">Three kinds of mistakes</a></li>
         <li><a href="#l1">1 · Variables &amp; Data Types</a></li>
+        <li><a class="sub" href="#l1-mem">In memory</a></li>
+        <li><a class="sub" href="#l1-names">Naming</a></li>
         <li><a class="sub" href="#l1-int">int</a></li>
+        <li><a class="sub" href="#l1-bits">Why 2,147,483,647</a></li>
         <li><a class="sub" href="#l1-double">double</a></li>
         <li><a class="sub" href="#l1-boolean">boolean</a></li>
         <li><a class="sub" href="#l1-string">String</a></li>
+        <li><a class="sub" href="#l1-choose">Choosing a type</a></li>
         <li><a class="sub" href="#p1">Practice</a></li>
         <li><a href="#l2">2 · Operators &amp; Casting</a></li>
         <li><a class="sub" href="#l2-arith">Arithmetic</a></li>
+        <li><a class="sub" href="#l2-steps">Step by step</a></li>
+        <li><a class="sub" href="#l2-modlife">What % is good for</a></li>
         <li><a class="sub" href="#l2-div">Integer division</a></li>
         <li><a class="sub" href="#l2-cast">Casting</a></li>
+        <li><a class="sub" href="#l2-mix">int meets double</a></li>
+        <li><a class="sub" href="#l2-roundcast">Rounding with a cast</a></li>
         <li><a class="sub" href="#l2-rel">Relational</a></li>
         <li><a class="sub" href="#l2-round">Round-off error</a></li>
+        <li><a class="sub" href="#l2-why">Why not 0.1</a></li>
         <li><a class="sub" href="#l2-str">Comparing Strings</a></li>
         <li><a class="sub" href="#p2">Practice</a></li>
         <li><a href="#l3">3 · Logical Operators</a></li>
+        <li><a class="sub" href="#l3-order">Which goes first</a></li>
+        <li><a class="sub" href="#l3-between">Between two numbers</a></li>
         <li><a class="sub" href="#l3-short">Short-circuit</a></li>
+        <li><a class="sub" href="#l3-guard">Short-circuit on purpose</a></li>
         <li><a class="sub" href="#l3-morgan">De Morgan's Law</a></li>
         <li><a class="sub" href="#p3">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
 
     <main>
+
+      <!-- ============ BEFORE YOU START ============ -->
+      <section class="lesson" id="l0">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 00 · Before the first line</span>
+          <h2 class="lesson-title">How a Java Program Runs</h2>
+        </div>
+
+        <p>Every chapter of this course starts with code we wrote in class. This one starts a step earlier — with the questions nobody asks out loud on the first day. What exactly is a program? Why do we write Java and not English? What does Eclipse do when you press Run? Ten minutes on these now makes everything after it make more sense.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>How the code you type becomes something a computer can run.</li>
+            <li>The four types we use first — <code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code>, <code class="inl">String</code> — and how each one is stored.</li>
+            <li>Arithmetic, integer division, <code class="inl">%</code>, casting, and why <code class="inl">0.1</code> is never quite <code class="inl">0.1</code>.</li>
+            <li>Asking questions with <code class="inl">&lt;</code>, <code class="inl">==</code>, <code class="inl">!=</code>, and combining them with <code class="inl">&amp;&amp;</code>, <code class="inl">||</code>, <code class="inl">!</code>.</li>
+            <li>The three kinds of mistakes a program can have — and which one is the most dangerous.</li>
+          </ul>
+        </div>
+
+        <h3 id="l0-prog">What a program is</h3>
+
+        <p>A computer does not think. It follows instructions — exactly the ones it is given, in exactly the order it is given them, billions of times a second. A <strong>program</strong> is a list of those instructions.</p>
+
+        <p>The hard part is the language. Human languages are full of sentences that mean two things at once: <em>“I saw the man with the telescope”</em> — who has the telescope? A person works it out from context. A computer cannot, so we write to it in a <strong>programming language</strong>: a language with strict rules, where every line can be read in only one way. Java is one of them.</p>
+
+        <h3 id="l0-java">Java, and the machine in the middle</h3>
+
+        <p>Deep down, a processor understands only <strong>machine code</strong> — long rows of numbers, and a different set of numbers for each family of chips. A program written directly in machine code is slow to write, almost impossible to read, and runs on one kind of computer only.</p>
+
+        <p>Java was designed at Sun Microsystems by a team led by James Gosling and released in 1995 with a clever way around this. Your Java code is not translated for <em>your</em> processor. It is translated into <strong>bytecode</strong>: machine code for an imaginary computer called the <strong>Java Virtual Machine (JVM)</strong>. Every real computer — Windows, macOS, Linux, even many phones — gets its own JVM, and the JVM runs the bytecode. Write the program once, and it runs everywhere a JVM exists. That promise is the reason Java became one of the most used languages in the world.</p>
+
+        <div class="flow" role="img" aria-label="Lesson1.java goes through the compiler and becomes Lesson1.class bytecode, which the JVM runs on Windows, macOS or Linux">
+          <div class="st"><small>you write</small><b>Lesson1.java</b><small>source code — text a person can read</small></div>
+          <div class="ar">compiler<i>→</i>javac</div>
+          <div class="st"><small>Eclipse makes</small><b>Lesson1.class</b><small>bytecode — for the JVM, not for people</small></div>
+          <div class="ar">runs on<i>→</i>JVM</div>
+          <div class="st os"><b>Windows</b><b>macOS</b><b>Linux</b></div>
+        </div>
+        <p class="fig-cap">One source file, one translation, any computer. The step in the middle is done by the <strong>compiler</strong>; it is also the step that refuses to continue when your code breaks a rule.</p>
+
+        <p>You never see most of this happen. <strong>Eclipse</strong> is an <strong>IDE</strong> — an <em>integrated development environment</em>: an editor, the compiler and the JVM in one window. It compiles your file every time you save it, which is why a red underline can appear before you ever press Run: that is the compiler, already complaining.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Java was first called <em>Oak</em>, after a tree outside Gosling's office. The name was already taken, so the team renamed it after the coffee they drank — coffee from the island of Java. That is why this page's icon is a cup.</p>
+        </div>
+
+        <h3 id="l0-shape">The shape of every file</h3>
+
+        <p>Every file we wrote in class has the same frame around it. Here is the smallest one that still runs:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson1.java, stripped down</span></div>
+          <pre class="code"><code>package Grup1;                    // the folder this file lives in
+
+public class Lesson1 {            // must match the file name: Lesson1.java
+
+    public static void main(String[] args) {    // the program starts here
+
+        System.out.println(3);    // one statement, ending with ;
+
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><strong>main is the front door.</strong> Java starts at the first line inside <code class="inl">main</code> and works downwards, one statement at a time, until it reaches the closing brace.</li>
+          <li><strong>A statement ends with a semicolon.</strong> The semicolon is the full stop of Java: it tells the compiler where one instruction ends and the next begins.</li>
+          <li><strong>Braces come in pairs.</strong> Every <code class="inl">{</code> has a <code class="inl">}</code> that closes it. Indenting the lines between them is not required — but without it, nobody can see which brace closes which.</li>
+          <li><strong><code class="inl">System.out.println(…)</code></strong> prints whatever is inside the parentheses on the console, then moves to the next line.</li>
+          <li><strong>Java is case-sensitive.</strong> <code class="inl">System</code> and <code class="inl">system</code> are different words. Write the second one and the compiler stops with <em>package system does not exist</em>.</li>
+        </ul>
+
+        <p>The words <code class="inl">class</code>, <code class="inl">public</code>, <code class="inl">static</code> and <code class="inl">void</code> each get a chapter of their own later on. For now they are the frame the picture sits in — the code that matters goes inside <code class="inl">main</code>.</p>
+
+        <h3 id="l0-err">Three kinds of mistakes</h3>
+
+        <p>Every programmer makes mistakes, every day. What matters is knowing which kind you are looking at, because each kind shows up at a different moment — and one of them never shows up at all.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Kind</th><th>When you find out</th><th>What you see</th><th>Example in this lesson</th></tr></thead>
+            <tbody>
+              <tr><td><strong>compile-time error</strong><br><small>also: syntax error</small></td><td>before the program runs</td><td>a red underline; nothing runs at all</td><td class="mono">int m = 3.0;</td></tr>
+              <tr><td><strong>run-time error</strong><br><small>also: exception</small></td><td>while the program runs</td><td>the program stops at that line with a red message</td><td class="mono">12 / 0</td></tr>
+              <tr><td><strong>logic error</strong></td><td>maybe never</td><td>the program finishes happily and prints a wrong answer</td><td class="mono">double answer = 17 / 5;</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>The most common compile-time error there is</span></div>
+          <pre class="code"><code>System.out.println(3)     // the semicolon is missing</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: ';' expected</em></pre></div>
+        </div>
+
+        <p>The compiler is strict, but it is on your side: it catches the mistake before anyone runs the program. A <strong>logic error</strong> gets no such help. The code is perfectly legal Java; it just does not do what you meant. That is why this page keeps showing the console output next to the code — the only way to catch a logic error is to know what the answer <em>should</em> be and check.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>In 1947, engineers working with Grace Hopper on the Harvard Mark II computer found a moth stuck in one of its relays. They taped it into the logbook with the note <em>“first actual case of bug being found.”</em> Engineers had called faults “bugs” before — but since then, finding and removing them has been called <strong>debugging</strong>.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>You write <strong>source code</strong> (<code class="inl">.java</code>); the <strong>compiler</strong> checks it and turns it into <strong>bytecode</strong> (<code class="inl">.class</code>); the <strong>JVM</strong> runs the bytecode on any computer. A program starts in <code class="inl">main</code> and runs top to bottom. Mistakes come in three kinds: the compiler catches <strong>compile-time</strong> errors, the program crashes on <strong>run-time</strong> errors, and nobody warns you about <strong>logic</strong> errors.</p>
+        </div>
+      </section>
 
       <!-- ============ LESSON 1 ============ -->
       <section class="lesson" id="l1">
@@ -78,6 +206,63 @@ int age = 5;</code></pre>
         </div>
 
         <p>Two slashes start a <strong>comment</strong>. Java ignores everything after them on that line, so comments are where you explain the code to yourself and to whoever reads it next.</p>
+
+        <h3 id="l1-mem">What a variable really is</h3>
+
+        <p>“Box” is a good picture, and it is closer to the truth than it sounds. A computer's working memory — its <strong>RAM</strong> — is billions of tiny cells, each holding a 0 or a 1. When Java reaches the line <code class="inl">int age = 5;</code>, it does three things:</p>
+
+        <ol class="plain">
+          <li>sets aside enough cells for one <code class="inl">int</code> (32 of them),</li>
+          <li>remembers that this piece of memory is called <code class="inl">age</code>,</li>
+          <li>writes 5 into it.</li>
+        </ol>
+
+        <div class="objs" role="img" aria-label="Four variables drawn as labelled boxes in memory">
+          <div class="obj"><div class="obj-h"><b>age</b><span>int · 32 bits</span></div><div class="f"><span class="k">value</span><span class="v">5</span></div></div>
+          <div class="obj"><div class="obj-h"><b>y</b><span>double · 64 bits</span></div><div class="f"><span class="k">value</span><span class="v">3.5</span></div></div>
+          <div class="obj"><div class="obj-h"><b>isPositive</b><span>boolean</span></div><div class="f"><span class="k">value</span><span class="v">true</span></div></div>
+          <div class="obj"><div class="obj-h"><b>word</b><span>String</span></div><div class="f"><span class="k">value</span><span class="v">"computer science"</span></div></div>
+        </div>
+        <p class="fig-cap">Each variable is a name, a type and a value. The name never changes, the type never changes — only the value can.</p>
+
+        <p>Two words describe that one line. Writing the type and the name — <code class="inl">int age</code> — <strong>declares</strong> the variable: it tells Java the box exists. Giving it its first value — <code class="inl">= 5</code> — <strong>initializes</strong> it. Our pattern does both in one statement.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>In Java, <code class="inl">=</code> does not mean “is equal to”. It means <em>“work out the right-hand side, then put the result in the box on the left.”</em> It is an instruction, not a statement of fact. Asking whether two things are equal is a different symbol, <code class="inl">==</code>, and it comes in Part 2.</p>
+        </div>
+
+        <h3 id="l1-names">Naming a variable</h3>
+
+        <p>Names in Java follow two sets of rules. The first set is enforced by the compiler — break one and the program does not compile:</p>
+
+        <ul class="plain">
+          <li>A name may contain letters, digits, <code class="inl">_</code> and <code class="inl">$</code> — nothing else, and no spaces.</li>
+          <li>It may not start with a digit.</li>
+          <li>It may not be one of Java's <strong>reserved words</strong> — <code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code>, <code class="inl">class</code>, <code class="inl">public</code>, <code class="inl">static</code>, <code class="inl">void</code>, <code class="inl">package</code>, <code class="inl">true</code>, <code class="inl">false</code> and about forty more. These words already mean something to Java.</li>
+          <li>Upper and lower case are different letters: <code class="inl">age</code> and <code class="inl">Age</code> are two different variables.</li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three names the compiler refuses</span></div>
+          <pre class="code"><code>// int 2nd = 3;       // starts with a digit
+// int my age = 6;    // a space in the middle
+// int double = 4;    // double is a reserved word</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: not a statement
+error: ';' expected</em></pre></div>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same letters, different case, different variables</span></div>
+          <pre class="code"><code>int Age = 1;
+int age = 2;
+
+System.out.println(Age + age);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3</pre></div>
+        </div>
+
+        <p>The second set is enforced by people. Java programmers everywhere write names in <strong>camelCase</strong>: start with a lowercase letter, and begin every following word with a capital — <code class="inl">age</code>, <code class="inl">birthYear</code>, <code class="inl">isPositive</code>. The bumps in the middle are the camel's humps. And a name should say what is in the box: <code class="inl">price</code> beats <code class="inl">p</code>, and <code class="inl">p</code> beats <code class="inl">x</code>. Short names like <code class="inl">x</code> and <code class="inl">y</code> are fine in a five-line example; in a real program, nobody — including you, a month later — will remember what they meant.</p>
+
 
         <h3 id="l1-int">int — whole numbers</h3>
 
@@ -99,6 +284,35 @@ int number = -32432;</code></pre>
 int max = 2147483647;    // the largest int
 int min = -2147483648;   // the smallest int</code></pre>
         </div>
+
+        <h3 id="l1-bits">Why the limit is 2,147,483,647</h3>
+
+        <p>That number looks random, but it comes straight from those 32 bits. A <strong>bit</strong> is one cell of memory: it is either 0 or 1. One bit can tell two things apart. Two bits can make four patterns — 00, 01, 10, 11. Every extra bit doubles the count, so <em>n</em> bits make 2<sup><em>n</em></sup> patterns.</p>
+
+        <p>Imagine an <code class="inl">int</code> with only three bits. That is 2<sup>3</sup> = 8 patterns, and Java splits them in half: if the first bit is 1, the number is negative.</p>
+
+        <div class="bits" role="img" aria-label="The eight patterns of three bits: 000 to 011 are 0 to 3, 100 to 111 are -4 to -1">
+          <div><b>000</b><span>0</span></div>
+          <div><b>001</b><span>1</span></div>
+          <div><b>010</b><span>2</span></div>
+          <div><b>011</b><span>3</span></div>
+          <div class="neg"><b>100</b><span>−4</span></div>
+          <div class="neg"><b>101</b><span>−3</span></div>
+          <div class="neg"><b>110</b><span>−2</span></div>
+          <div class="neg"><b>111</b><span>−1</span></div>
+        </div>
+        <p class="fig-cap">Four patterns for the negatives (−4 to −1), four for the rest (0 to 3). The positive side ends one sooner because 0 takes one of its places.</p>
+
+        <p>Now do the same with 32 bits. That is 2<sup>32</sup> = 4,294,967,296 patterns. Half of them, 2<sup>31</sup>, are negative: −1 down to <strong>−2,147,483,648</strong>. The other half are 0 and the positives: 0 up to <strong>2,147,483,647</strong> — one short, again, because of the zero. That is all <code class="inl">-2^31</code> and <code class="inl">2^31 - 1</code> mean.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One past the limit does not even compile</span></div>
+          <pre class="code"><code>int big = 2147483648;</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: integer number too large</em></pre></div>
+        </div>
+
+        <p>Eight bits together are called a <strong>byte</strong>, so an <code class="inl">int</code> takes 4 bytes. What happens when a calculation — not a typed number — goes past the limit is a story for Lesson 2: <a href="lesson2.html#l4-overflow">arithmetic overflow</a>.</p>
+
 
         <h3 id="l1-double">double — numbers with a decimal point</h3>
 
@@ -125,6 +339,8 @@ double k = -12312.4535;</code></pre>
           <p>Small box into big box is automatic. Big box into small box is an error — unless you force it, which is what casting in Part 2 is for.</p>
         </div>
 
+        <p>A <code class="inl">double</code> takes 64 bits — twice an <code class="inl">int</code> — and spends them differently: some bits hold the digits, others say where the decimal point goes. That is how it reaches numbers far bigger than any <code class="inl">int</code>. The price is precision: a <code class="inl">double</code> is exact to only about 15–16 digits. Part 2 shows what that price looks like.</p>
+
         <h3 id="l1-boolean">boolean — true or false</h3>
 
         <p>A <code class="inl">boolean</code> has exactly two possible values: <code class="inl">true</code> and <code class="inl">false</code>. You can write one down directly, or you can store the answer to a question.</p>
@@ -142,6 +358,8 @@ System.out.println(x);</code></pre>
         </div>
 
         <p>This is worth pausing on. Java works out <code class="inl">3 &gt; 10</code> before the assignment happens. Three is not greater than ten, so the result is <code class="inl">false</code>, and <em>that</em> is what lands in <code class="inl">x</code>.</p>
+
+        <p>Good names for booleans read like a yes/no question: <code class="inl">isPositive</code>, <code class="inl">isValid</code>, <code class="inl">hasPassed</code>. When you later read <em>“is positive? true”</em>, the line explains itself.</p>
 
         <h3 id="l1-string">String — text</h3>
 
@@ -180,6 +398,52 @@ String symbols = "^'+%&amp;/&amp;+%^'";</code></pre>
         </div>
 
         <p>Notice that the three primitive types are written in lowercase, and <code class="inl">String</code> starts with a capital letter. That capital is a hint that <code class="inl">String</code> is a different kind of thing.</p>
+
+        <h3 id="l1-lit">3, 3.0, "3" and true</h3>
+
+        <p>A value typed straight into the code is called a <strong>literal</strong>. The way you write it decides its type — Java does not guess from what it looks like to you.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">Literal</th><th>Type</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">3</td><td class="mono">int</td><td>a whole number with no point</td></tr>
+              <tr><td class="mono">3.0</td><td class="mono">double</td><td>the decimal point makes it a double, even with a zero after it</td></tr>
+              <tr><td class="mono">"3"</td><td class="mono">String</td><td>anything in double quotes is text</td></tr>
+              <tr><td class="mono">true</td><td class="mono">boolean</td><td>one of the two boolean values</td></tr>
+              <tr><td class="mono">"true"</td><td class="mono">String</td><td>four letters inside quotes — text again</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="l1-choose">Choosing a type</h3>
+
+        <p>Before you write a variable, ask what kind of thing it holds. Most of the time the answer is obvious:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Information</th><th>Example</th><th class="mono">Type</th></tr></thead>
+            <tbody>
+              <tr><td>a person's age</td><td class="mono">16</td><td class="mono">int</td></tr>
+              <tr><td>the price of a simit</td><td class="mono">17.5</td><td class="mono">double</td></tr>
+              <tr><td>is the shop open?</td><td class="mono">false</td><td class="mono">boolean</td></tr>
+              <tr><td>a city</td><td class="mono">"İzmir"</td><td class="mono">String</td></tr>
+              <tr><td>a phone number</td><td class="mono">"05321234567"</td><td class="mono"><strong>String</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The last row is the interesting one. A phone number is made of digits, so why not an <code class="inl">int</code>? Three reasons. Nobody ever adds two phone numbers together. The leading 0 would disappear, because the number 05321234567 is just 5321234567. And 5,321,234,567 is bigger than 2,147,483,647 — it does not fit in an <code class="inl">int</code> at all.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule of thumb</span>
+          <p>If you will never do arithmetic with it, it is probably text. Phone numbers, ID numbers, postcodes and student numbers with leading zeros are Strings, even though they are made of digits.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A variable is a named piece of memory with a fixed <strong>type</strong>. <code class="inl">int</code> holds whole numbers in 32 bits (−2,147,483,648 to 2,147,483,647); <code class="inl">double</code> holds decimals in 64 bits; <code class="inl">boolean</code> holds <code class="inl">true</code> or <code class="inl">false</code>; <code class="inl">String</code> holds text and is not primitive. A smaller type goes into a bigger one on its own, never the other way. Names are camelCase and say what they hold.</p>
+        </div>
 
         <div class="practice" id="p1">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 1</h3>
@@ -299,6 +563,8 @@ String language = "Java";</code></pre>
           <h2 class="lesson-title">Operators, Casting and Number Traps</h2>
         </div>
 
+        <p>Part 1 was about storing values. This part is about doing something with them. Two words first, because every book and every exam question uses them: an <strong>operator</strong> is a symbol that does a job, like <code class="inl">+</code> or <code class="inl">&lt;</code>; the values it works on are its <strong>operands</strong>. Put them together — <code class="inl">x / y</code>, <code class="inl">3 &gt; 10</code> — and you have an <strong>expression</strong>: any piece of code that produces a value. Most of the surprises in this part come from one fact: the <em>type</em> of the operands decides the type of the answer.</p>
+
         <h3 id="l2-arith">Arithmetic operators</h3>
 
         <p>Java gives you five: <code class="inl">+</code>, <code class="inl">-</code>, <code class="inl">*</code>, <code class="inl">/</code> and <code class="inl">%</code>. The last one is called <strong>mod</strong> (modulus) and it hands you the remainder of a division.</p>
@@ -349,6 +615,61 @@ System.out.println(5 % 12);    // 12 does not fit at all</code></pre>
         </div>
 
         <p>That last line surprises people. When the left number is smaller than the right one, nothing can be taken out of it, so the whole number is the remainder.</p>
+
+        <h3 id="l2-steps">One step at a time</h3>
+
+        <p>When an expression mixes operators, Java follows the order from the file: parentheses first, then <code class="inl">*</code>, <code class="inl">/</code>, <code class="inl">%</code>, then <code class="inl">+</code>, <code class="inl">-</code>. Operators on the same level go <strong>left to right</strong>. Here is a long one, solved the way Java solves it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>2 + 17 % 5 * 3 - 4 / 3</span></div>
+          <pre class="code"><code>// 2 + 17 % 5 * 3 - 4 / 3
+// 2 +    2   * 3 - 4 / 3     17 % 5 is 2      (first of * / % from the left)
+// 2 +        6   - 4 / 3     2 * 3 is 6
+// 2 +        6   -   1       4 / 3 is 1       (int division)
+//     8          -   1       now + and -, left to right
+//          7
+
+System.out.println(2 + 17 % 5 * 3 - 4 / 3);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>7</pre></div>
+        </div>
+
+        <p>Doing this on paper, one line per step, is exactly how you should attack an expression question on the exam. Skipping steps in your head is where the mistakes hide.</p>
+
+        <h3 id="l2-modlife">What % is good for</h3>
+
+        <p><code class="inl">%</code> looks like a strange extra, but it answers questions you meet every day. Whenever something is counted in groups — minutes into hours, students into teams, days into weeks — <code class="inl">/</code> tells you how many full groups, and <code class="inl">%</code> tells you what is left over.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Groups and leftovers</span></div>
+          <pre class="code"><code>int minutes = 135;
+System.out.println(minutes / 60);    // full hours
+System.out.println(minutes % 60);    // minutes left over
+
+int students = 17;
+System.out.println(students / 5);    // full teams of 5
+System.out.println(students % 5);    // students without a team</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2
+15
+3
+2</pre></div>
+        </div>
+
+        <p>A 135-minute film lasts 2 hours 15 minutes. Seventeen students make 3 teams of five, with 2 left over. Two more tricks come up again and again:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Even numbers and last digits</span></div>
+          <pre class="code"><code>System.out.println(47 % 2 == 0);    // even? an even number leaves 0
+System.out.println(2026 % 10);      // the last digit</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+6</pre></div>
+        </div>
+
+        <p>Every whole number divided by 2 leaves 0 or 1, so <code class="inl">n % 2 == 0</code> asks “is n even?”. And dividing by 10 leaves exactly the last digit — an idea Lesson 3 uses to take whole numbers apart, digit by digit.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>With a negative number on the left, the remainder is negative too: <code class="inl">-7 % 3</code> is <code class="inl">-1</code>, not 2. The sign of the answer follows the left-hand number. Most problems keep to positive numbers, but now you know.</p>
+        </div>
 
         <h3 id="l2-div">Integer division</h3>
 
@@ -411,6 +732,52 @@ System.out.println((int) value2);</code></pre>
         </div>
 
         <p>3.89 does not become 4. The cast chops off everything after the decimal point and keeps the whole part, no matter how close to the next number you were.</p>
+
+        <h3 id="l2-mix">When an int meets a double</h3>
+
+        <p>Every operator looks at its two operands before it does anything. The rule is short:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Operands</th><th>Answer</th><th>Example</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td><code class="inl">int</code> and <code class="inl">int</code></td><td><code class="inl">int</code></td><td class="mono">17 / 5</td><td class="mono">3</td></tr>
+              <tr><td><code class="inl">int</code> and <code class="inl">double</code></td><td><code class="inl">double</code></td><td class="mono">17 / 5.0</td><td class="mono">3.4</td></tr>
+              <tr><td><code class="inl">double</code> and <code class="inl">int</code></td><td><code class="inl">double</code></td><td class="mono">7 + 2.0</td><td class="mono">9.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>When the types differ, Java quietly turns the <code class="inl">int</code> into a <code class="inl">double</code> first — small box into big box, just like in Part 1. This is called <strong>promotion</strong> (or <em>widening</em>), and it is why one cast was enough above.</p>
+
+        <p>But Java promotes one operator at a time, from left to right. A <code class="inl">double</code> later in the line cannot rescue a division that already happened:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same numbers, different order</span></div>
+          <pre class="code"><code>System.out.println(1 / 2 * 4.0);    // 1 / 2 first: two ints, so 0
+System.out.println(4.0 * 1 / 2);    // 4.0 * 1 first: a double from the start</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0.0
+2.0</pre></div>
+        </div>
+
+        <h3 id="l2-roundcast">Rounding with a cast</h3>
+
+        <p><code class="inl">(int)</code> cuts. But one small trick turns cutting into rounding: add 0.5 first.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Add a half, then cut</span></div>
+          <pre class="code"><code>System.out.println((int) (3.89 + 0.5));    // (int) 4.39
+System.out.println((int) (3.19 + 0.5));    // (int) 3.69</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4
+3</pre></div>
+        </div>
+
+        <p>Anything with a fraction of .5 or more is pushed past the next whole number before the cut, so it ends up there. Anything below .5 is not pushed far enough, so it falls back. The parentheses matter: the 0.5 has to be added <em>before</em> the cast, not after.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The trick is for positive numbers. <code class="inl">(int) (-3.89 + 0.5)</code> is <code class="inl">(int) -3.39</code>, which gives <code class="inl">-3</code> — but −3.89 rounds to −4. For a negative number, subtract the half instead: <code class="inl">(int) (-3.89 - 0.5)</code> gives <code class="inl">-4</code>.</p>
+        </div>
 
         <h3>Dividing by zero</h3>
 
@@ -499,6 +866,27 @@ System.out.println(val5 == val6);</code></pre>
 
         <p>The damage comes from <em>arithmetic</em>. Each operation can nudge the value a little, and those nudges are what <code class="inl">==</code> trips over.</p>
 
+        <h3 id="l2-why">Why a double cannot hold 0.1</h3>
+
+        <p>Try to write one third as a decimal. 0.3, 0.33, 0.333… — however many 3s you write, you have to stop somewhere, and wherever you stop, you are a tiny bit short. Some fractions simply do not fit in base 10.</p>
+
+        <p>A computer counts in base 2, and in base 2 the troublemaker is one tenth. Written in bits, 0.1 is <code class="inl">0.000110011001100110011…</code> — the <code class="inl">0011</code> repeats forever. A <code class="inl">double</code> has 64 bits, so it has to stop, and the 0.1 it stores is a hair away from the real 0.1. Usually Java hides that hair when it prints. Arithmetic can make it big enough to show:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Where the hair shows</span></div>
+          <pre class="code"><code>System.out.println(0.1 + 0.2);
+System.out.println(1.0 / 3);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0.30000000000000004
+0.3333333333333333</pre></div>
+        </div>
+
+        <p>That is the whole story of round-off error. It is not a bug in Java — every language that uses the same 64-bit format, which is nearly all of them, prints the same <code class="inl">0.30000000000000004</code>.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Banks cannot afford a hair here and a hair there across millions of payments. That is why money is usually stored as a whole number of the smallest unit — 1750 kuruş instead of 17.50 lira — in an integer type, where every value is exact.</p>
+        </div>
+
         <div class="note note--task">
           <span class="tag">Try it</span>
           <p>Write code that checks whether two <code class="inl">double</code> values are equal <strong>correctly</strong> — in a way that is not fooled by the extra 0.0000000000001. Bring your attempt to class and we will go through it together. We did, in Lesson 5, with <code class="inl">Math.abs</code>: <a href="lesson5.html#l16-tol">the solution is there</a>.</p>
@@ -527,6 +915,11 @@ AB
         <div class="note note--rule">
           <span class="tag">Rule</span>
           <p>Never use <code class="inl">==</code> to compare two Strings. It is not a rule about style — the answer it gives you will be wrong. We will cover the correct way to do it later.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An <strong>expression</strong> runs in a fixed order: parentheses, then <code class="inl">* / %</code>, then <code class="inl">+ -</code>, left to right within a level. Two ints give an int, so <code class="inl">/</code> throws the fraction away and <code class="inl">%</code> gives the remainder. One double makes the answer a double. A cast forces a type: <code class="inl">(double)</code> on an input saves the fraction, <code class="inl">(int)</code> cuts it off. Dividing an int by zero crashes. Doubles are almost never exact, so never compare them with <code class="inl">==</code> — and never compare Strings with it either.</p>
         </div>
 
         <div class="practice" id="p2">
@@ -661,6 +1054,11 @@ System.out.println((x + y) == z);</code></pre>
 
         <p>Relational operators turn numbers into <code class="inl">true</code> and <code class="inl">false</code>. Logical operators take those <code class="inl">true</code> and <code class="inl">false</code> values and combine them, so you can ask one question made of several smaller questions.</p>
 
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>The word <code class="inl">boolean</code> is a person's name. George Boole (1815–1864), an English mathematician, showed in 1854 that logic — <em>and</em>, <em>or</em>, <em>not</em>, <em>true</em>, <em>false</em> — can be calculated just like arithmetic. For eighty years it was pure mathematics. Then in 1937 Claude Shannon showed that electrical switches follow exactly Boole's rules. Every chip in every phone and computer today is built from billions of tiny AND, OR and NOT switches.</p>
+        </div>
+
         <div class="scroll">
           <table>
             <thead>
@@ -716,6 +1114,70 @@ System.out.println((x + y) == z);</code></pre>
           <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
         </div>
 
+        <h3 id="l3-order">Which goes first</h3>
+
+        <p>Now that there are more operators, here is the complete order for everything in this lesson, from first to last:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Order</th><th>Operators</th><th>Name</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">( )</td><td>parentheses</td></tr>
+              <tr><td>2</td><td class="mono">!   (int)   (double)</td><td>NOT and casts — they belong to the one value right after them</td></tr>
+              <tr><td>3</td><td class="mono">*   /   %</td><td>multiplication level</td></tr>
+              <tr><td>4</td><td class="mono">+   -</td><td>addition level</td></tr>
+              <tr><td>5</td><td class="mono">&lt;   &lt;=   &gt;   &gt;=</td><td>relational</td></tr>
+              <tr><td>6</td><td class="mono">==   !=</td><td>equality</td></tr>
+              <tr><td>7</td><td class="mono">&amp;&amp;</td><td>AND</td></tr>
+              <tr><td>8</td><td class="mono">||</td><td>OR</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Notice that <code class="inl">&amp;&amp;</code> comes before <code class="inl">||</code>, the way <code class="inl">*</code> comes before <code class="inl">+</code>. Parentheses change everything:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>&amp;&amp; before ||</span></div>
+          <pre class="code"><code>System.out.println(true || false &amp;&amp; false);      // true || (false &amp;&amp; false)
+System.out.println((true || false) &amp;&amp; false);    // true &amp;&amp; false</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false</pre></div>
+        </div>
+
+        <p>The <code class="inl">!</code> sits very high on the list, which explains why the example above wrote <code class="inl">!(2 &lt; 5)</code> with parentheses. Without them, the <code class="inl">!</code> grabs only the number next to it — and a number cannot be “not”:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>! needs a boolean</span></div>
+          <pre class="code"><code>int x = 5;
+boolean q = !x &lt; 3;      // means (!x) &lt; 3</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: bad operand type int for unary operator '!'</em></pre></div>
+        </div>
+
+        <h3 id="l3-between">Between two numbers</h3>
+
+        <p>In maths you write 0 &lt; x &lt; 10 and everybody understands. Java does not:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Maths notation does not compile</span></div>
+          <pre class="code"><code>int x = 5;
+boolean r = 0 &lt; x &lt; 10;</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: bad operand types for binary operator '&lt;'</em></pre></div>
+        </div>
+
+        <p>Java works left to right: <code class="inl">0 &lt; x</code> becomes <code class="inl">true</code>, and then it is asked whether <code class="inl">true &lt; 10</code> — which means nothing. “Between” is really two questions joined with AND:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two questions, one AND</span></div>
+          <pre class="code"><code>int x = 15;
+System.out.println(x &gt; 0 &amp;&amp; x &lt; 10);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Every form you fill in checks ranges like this. An exam score is valid when <code class="inl">score &gt;= 0 &amp;&amp; score &lt;= 100</code>. It is invalid when <code class="inl">score &lt; 0 || score &gt; 100</code> — and notice that the second line is exactly the first one, put through De Morgan's Law below.</p>
+        </div>
+
         <h3 id="l3-short">Short-circuit evaluation</h3>
 
         <p>Look at the AND table again. If the left side is already <code class="inl">false</code>, the answer is <code class="inl">false</code> no matter what the right side says. And in the OR table, if the left side is already <code class="inl">true</code>, the answer is <code class="inl">true</code> regardless.</p>
@@ -756,6 +1218,21 @@ int d = -3;
           <p>The very same broken right side is harmless in two of these lines and fatal in the other two. Nothing changed about the danger — only whether the left side made Java bother to look.</p>
         </div>
 
+        <h3 id="l3-guard">Short-circuit on purpose</h3>
+
+        <p>In class we used short-circuiting to prove a point. Programmers use it every day as a safety guard. Put the check that keeps you safe on the <em>left</em>, and the dangerous part on the right:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The left side protects the right</span></div>
+          <pre class="code"><code>int b = 5;
+int c = 0;
+
+System.out.println(c != 0 &amp;&amp; b / c &gt; 2);    // c != 0 is false, so b / c never runs</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false</pre></div>
+        </div>
+
+        <p>Swap the two sides — <code class="inl">b / c &gt; 2 &amp;&amp; c != 0</code> — and the program crashes, because now the division runs first. With <code class="inl">&amp;&amp;</code> and <code class="inl">||</code>, the order of the two sides is not just style; it can be the difference between an answer and an exception.</p>
+
         <h3 id="l3-morgan">De Morgan's Law</h3>
 
         <p>Sometimes you need the opposite of a compound condition. Putting a <code class="inl">!</code> in front of the whole thing works, but it is hard to read. De Morgan's Law lets you push that <code class="inl">!</code> all the way inside instead.</p>
@@ -777,6 +1254,56 @@ int d = -3;
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p>Flipping the comparisons but leaving <code class="inl">&amp;&amp;</code> in the middle is the mistake almost everyone makes. Both changes have to happen, or the new condition means something completely different.</p>
+        </div>
+
+        <p>To flip a comparison, take its exact opposite — the one that is true whenever the original is false. Most people get <code class="inl">&lt;</code> wrong the first time: its opposite is <code class="inl">&gt;=</code>, not <code class="inl">&gt;</code>, because “not less than 5” includes 5 itself.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">Comparison</th><th class="mono">Its opposite</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">a &lt; b</td><td class="mono">a &gt;= b</td></tr>
+              <tr><td class="mono">a &gt; b</td><td class="mono">a &lt;= b</td></tr>
+              <tr><td class="mono">a == b</td><td class="mono">a != b</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>In plain words, the law is something you already know. <em>“It is not true that it is cold and raining”</em> means <em>“it is not cold, or it is not raining”</em> — at least one of the two is missing. The law also works the other way round: <em>“it is not true that I have a pen or a pencil”</em> means <em>“I have no pen, and I have no pencil.”</em> Written with <code class="inl">P</code> and <code class="inl">Q</code> for any two conditions:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">This…</th><th class="mono">…is the same as</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">!(P &amp;&amp; Q)</td><td class="mono">!P || !Q</td></tr>
+              <tr><td class="mono">!(P || Q)</td><td class="mono">!P &amp;&amp; !Q</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>You do not have to take it on trust. There are only four possible combinations of <code class="inl">P</code> and <code class="inl">Q</code>, so you can check every one:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">P</th><th class="mono">Q</th><th class="mono">!(P &amp;&amp; Q)</th><th class="mono">!P || !Q</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tv">T</span></td><td><span class="tv">T</span></td><td><span class="fv">F</span></td><td><span class="fv">F</span></td></tr>
+              <tr><td><span class="tv">T</span></td><td><span class="fv">F</span></td><td><span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="fv">F</span></td><td><span class="tv">T</span></td><td><span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+              <tr><td><span class="fv">F</span></td><td><span class="fv">F</span></td><td><span class="tv">T</span></td><td><span class="tv">T</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fig-cap">The last two columns match in every row, so the two expressions are the same — always. Checking all the rows like this is called a <strong>truth table</strong>, and it settles any “are these two the same?” question about booleans.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Augustus De Morgan (1806–1871) taught mathematics in London and wrote down these two rules. He and George Boole knew each other and exchanged letters for years — the two men behind this part of the lesson were friends.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">&amp;&amp;</code> is true only when both sides are; <code class="inl">||</code> when at least one is; <code class="inl">!</code> flips. <code class="inl">!</code> is applied first, <code class="inl">&amp;&amp;</code> before <code class="inl">||</code>. When the left side already decides the answer, the right side is not run at all — so put safety checks on the left. “Between” is two comparisons joined with <code class="inl">&amp;&amp;</code>. De Morgan: moving a <code class="inl">!</code> inside flips every comparison <em>and</em> swaps <code class="inl">&amp;&amp;</code> with <code class="inl">||</code>.</p>
         </div>
 
         <div class="practice" id="p3">
@@ -897,9 +1424,51 @@ m &gt;= n &amp;&amp; p != q</code></pre>
         </div>
       </section>
 
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The book, the exam and other programmers will use these words without explaining them. Each one is on this page.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>source code</strong></td><td></td><td>the program as you write it, in a <code class="inl">.java</code> file</td><td class="mono">Lesson1.java</td></tr>
+              <tr><td><strong>compiler</strong></td><td>javac</td><td>checks the source code and translates it into bytecode</td><td>runs when Eclipse saves</td></tr>
+              <tr><td><strong>bytecode</strong></td><td></td><td>the translated program, in a <code class="inl">.class</code> file</td><td class="mono">Lesson1.class</td></tr>
+              <tr><td><strong>JVM</strong></td><td>Java Virtual Machine</td><td>the program that runs bytecode on a real computer</td><td></td></tr>
+              <tr><td><strong>IDE</strong></td><td></td><td>editor + compiler + runner in one window</td><td>Eclipse</td></tr>
+              <tr><td><strong>statement</strong></td><td></td><td>one instruction, ending with <code class="inl">;</code></td><td class="mono">int age = 5;</td></tr>
+              <tr><td><strong>variable</strong></td><td></td><td>a named piece of memory that holds one value</td><td class="mono">age</td></tr>
+              <tr><td><strong>declare</strong></td><td></td><td>create a variable by giving its type and name</td><td class="mono">int age</td></tr>
+              <tr><td><strong>initialize</strong></td><td></td><td>give a variable its first value</td><td class="mono">= 5</td></tr>
+              <tr><td><strong>data type</strong></td><td>type</td><td>what kind of value a variable can hold</td><td class="mono">int, double, boolean, String</td></tr>
+              <tr><td><strong>primitive type</strong></td><td></td><td>one of Java's built-in basic types, written in lowercase</td><td class="mono">int, double, boolean</td></tr>
+              <tr><td><strong>literal</strong></td><td></td><td>a value typed straight into the code</td><td class="mono">5, 3.5, true, "abc"</td></tr>
+              <tr><td><strong>bit</strong> / <strong>byte</strong></td><td></td><td>one 0-or-1 cell / eight of them</td><td>an int is 32 bits = 4 bytes</td></tr>
+              <tr><td><strong>reserved word</strong></td><td>keyword</td><td>a word Java already uses, not allowed as a name</td><td class="mono">int, class, true</td></tr>
+              <tr><td><strong>camelCase</strong></td><td></td><td>the naming style: lowercase first, capital for each new word</td><td class="mono">birthYear</td></tr>
+              <tr><td><strong>operator</strong> / <strong>operand</strong></td><td></td><td>the symbol / the values it works on</td><td class="mono">x / y</td></tr>
+              <tr><td><strong>expression</strong></td><td></td><td>any piece of code that produces a value</td><td class="mono">3 &gt; 10</td></tr>
+              <tr><td><strong>integer division</strong></td><td></td><td>int divided by int: the fraction is thrown away</td><td class="mono">17 / 5 → 3</td></tr>
+              <tr><td><strong>modulus</strong></td><td>mod, remainder</td><td>what is left over after a division</td><td class="mono">17 % 5 → 2</td></tr>
+              <tr><td><strong>casting</strong></td><td>type cast</td><td>forcing a value into another type</td><td class="mono">(double) x, (int) 3.89</td></tr>
+              <tr><td><strong>promotion</strong></td><td>widening</td><td>Java turning an int into a double on its own</td><td class="mono">17 / 5.0</td></tr>
+              <tr><td><strong>round-off error</strong></td><td></td><td>the tiny error a double carries because it cannot store most decimals exactly</td><td class="mono">0.30000000000000004</td></tr>
+              <tr><td><strong>compile-time error</strong></td><td>syntax error</td><td>a rule broken; the program will not run at all</td><td class="mono">int m = 3.0;</td></tr>
+              <tr><td><strong>run-time error</strong></td><td>exception</td><td>the program crashes while running</td><td class="mono">ArithmeticException</td></tr>
+              <tr><td><strong>logic error</strong></td><td>bug</td><td>the program runs but gives the wrong answer</td><td class="mono">double answer = 17 / 5;</td></tr>
+              <tr><td><strong>short-circuit evaluation</strong></td><td></td><td>skipping the right side of <code class="inl">&amp;&amp;</code> / <code class="inl">||</code> when the left side decides</td><td class="mono">false &amp;&amp; …</td></tr>
+              <tr><td><strong>truth table</strong></td><td></td><td>a table of every true/false combination</td><td>the AND, OR, NOT tables</td></tr>
+              <tr><td><strong>De Morgan's Law</strong></td><td></td><td>how to move a <code class="inl">!</code> inside: flip comparisons, swap <code class="inl">&amp;&amp;</code> and <code class="inl">||</code></td><td class="mono">!(P &amp;&amp; Q) = !P || !Q</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Five traps to remember</h2>
+        <h2>Seven traps to remember</h2>
         <p>Every one of these compiles without complaint. That is exactly what makes them worth memorising.</p>
 
         <div class="scroll">
@@ -937,6 +1506,18 @@ m &gt;= n &amp;&amp; p != q</code></pre>
                 <td class="mono">true</td>
                 <td class="mono"><span class="fv">false</span></td>
                 <td>== is the wrong tool for Strings</td>
+              </tr>
+              <tr>
+                <td class="mono">1 / 2 * 4.0</td>
+                <td class="mono">2.0</td>
+                <td class="mono"><span class="fv">0.0</span></td>
+                <td>1 / 2 is int division and happens first — the 4.0 comes too late</td>
+              </tr>
+              <tr>
+                <td class="mono">(int) (-3.89 + 0.5)</td>
+                <td class="mono">-4</td>
+                <td class="mono"><span class="fv">-3</span></td>
+                <td>the add-a-half trick is for positive numbers</td>
               </tr>
             </tbody>
           </table>

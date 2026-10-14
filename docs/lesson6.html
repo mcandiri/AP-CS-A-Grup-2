@@ -56,6 +56,8 @@
         <li><a class="sub" href="#l22-pairs">Pairs and triples</a></li>
         <li><a class="sub" href="#l22-one">substring(start)</a></li>
         <li><a class="sub" href="#l22-name">Splitting a full name</a></li>
+        <li><a class="sub" href="#l22-why">Why the end is left out</a></li>
+        <li><a class="sub" href="#l22-immutable">A String never changes</a></li>
         <li><a class="sub" href="#p22">Practice</a></li>
         <li><a href="#l23">23 · equals &amp; counting</a></li>
         <li><a class="sub" href="#l23-equals">equals</a></li>
@@ -69,6 +71,7 @@
         <li><a class="sub" href="#l24-codes">Letters are numbers</a></li>
         <li><a class="sub" href="#l24-file">The file, line by line</a></li>
         <li><a class="sub" href="#l24-long">Longer words</a></li>
+        <li><a class="sub" href="#l24-ascii">ASCII &amp; Unicode</a></li>
         <li><a class="sub" href="#p24">Practice</a></li>
         <li><a href="#life">In real life</a></li>
         <li><a class="sub" href="#life-date">Turning a date around</a></li>
@@ -86,6 +89,7 @@
         <li><a class="sub" href="#x-space">Removing spaces</a></li>
         <li><a class="sub" href="#x-first">First in the dictionary</a></li>
         <li><a class="sub" href="#px">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
@@ -97,6 +101,19 @@
         <div class="lesson-head">
           <span class="lesson-no">Part 21 · Lesson21.java</span>
           <h2 class="lesson-title">length &amp; indexOf</h2>
+        </div>
+
+        <p>Most of what people type into a computer is text: names, messages, passwords, searches, addresses. A program that can only do arithmetic cannot deal with any of it. Since Lesson 1 we have been <em>storing</em> text in Strings; this lesson is about taking it apart — measuring it, searching it, cutting it, and comparing it.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>How a String is numbered, and why the numbering starts at 0.</li>
+            <li>The five String methods of the AP exam: <code class="inl">length</code>, <code class="inl">indexOf</code>, <code class="inl">substring</code>, <code class="inl">equals</code>, <code class="inl">compareTo</code>.</li>
+            <li>Walking through a String one letter, two letters, three letters at a time.</li>
+            <li>Why <code class="inl">==</code> must never be used for Strings.</li>
+            <li>How a computer stores letters as numbers — and why <em>Çorum</em> comes after <em>Zonguldak</em>.</li>
+          </ul>
         </div>
 
         <h3 id="l21-five">The five methods</h3>
@@ -132,6 +149,11 @@
           <li><strong>The last index is <code class="inl">length() - 1</code>.</strong> Eight letters, indexes 0 to 7. There is no index 8.</li>
           <li><strong>Spaces are characters too.</strong> They get an index and they count in the length. On this page a space is drawn as <code class="inl">␣</code>.</li>
         </ul>
+
+        <div class="note note--life">
+          <span class="tag">Why 0?</span>
+          <p>Counting from 0 feels strange at first, but think of an index as a <em>distance</em>: how many letters you have to step over from the start to reach this one. To reach the first letter you step over nothing — 0. To reach the fourth, you step over three. That is how the computer finds a letter in memory: start of the String, plus the index. The computer scientist Edsger Dijkstra wrote a famous one-page note in 1982 arguing that numbering should start at zero, and most languages agree with him. You already met the habit in Lesson 3's <code class="inl">for (int i = 0; i &lt; n; i++)</code> — here is where it pays off.</p>
+        </div>
 
         <h3 id="l21-length">length()</h3>
 
@@ -268,6 +290,11 @@ System.out.println(word.indexOf(letter) == word.length() - 1);</code></pre>
             </div>
             <p class="lab-note">Try <code class="inl">e</code>, then <code class="inl">E</code>, then <code class="inl">computers</code>. Try a piece that appears twice.</p>
           </div>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A String is a row of characters numbered from 0, so the last index is <code class="inl">length() - 1</code>. String methods are called on a String with a dot: <code class="inl">word.length()</code>. <code class="inl">indexOf(part)</code> gives where <code class="inl">part</code> first starts, or −1 if it is not there. Upper and lower case are different characters.</p>
         </div>
 
         <div class="practice" id="p21">
@@ -666,6 +693,52 @@ Lovelace</pre></div>
           </div>
         </div>
 
+        <h3 id="l22-why">Why the end is left out</h3>
+
+        <p>“Up to, but not including” looks like an odd rule. It is chosen on purpose, and it makes three things simple at once:</p>
+
+        <ul class="plain">
+          <li><strong>The length is a subtraction.</strong> <code class="inl">substring(start, end)</code> has exactly <code class="inl">end - start</code> letters. No <code class="inl">+ 1</code> to forget — the fencepost error of Lesson 3 cannot happen.</li>
+          <li><strong>Cuts fit together with nothing lost.</strong> Cut at gap 3 and the two halves are <code class="inl">substring(0, 3)</code> and <code class="inl">substring(3)</code>. The 3 is the end of one and the start of the other, and no letter is counted twice or missed.</li>
+          <li><strong>The whole String is <code class="inl">substring(0, length())</code>.</strong> No <code class="inl">- 1</code> needed.</li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two halves make the whole</span></div>
+          <pre class="code"><code>String w = "computer";
+
+System.out.println(w.substring(0, 3) + w.substring(3));
+System.out.println(w.substring(0, 3).length() + w.substring(3).length());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>computer
+8</pre></div>
+        </div>
+
+        <p>You have seen the same idea before: <code class="inl">Math.random()</code> gives [0.0, 1.0) and a <code class="inl">for</code> loop with <code class="inl">i &lt; n</code> runs over [0, n). A range that includes its start and leaves out its end is called <strong>half-open</strong>, and programmers use it almost everywhere.</p>
+
+        <h3 id="l22-immutable">A String never changes</h3>
+
+        <p>Here is a mistake that compiles, runs, and does nothing:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Where did the cut go?</span></div>
+          <pre class="code"><code>String word = "computer";
+
+word.substring(3);           // a new String is made ... and thrown away
+System.out.println(word);
+
+word = word.substring(3);    // now the new String is kept
+System.out.println(word);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>computer
+puter</pre></div>
+        </div>
+
+        <p><code class="inl">substring</code> does not cut the original String. It builds a <em>new</em> String out of a copy of those letters and hands it back, like any method that returns a value. If nobody catches the return value — prints it, stores it, compares it — it is lost. The original never changes: no String method can change a String. Java Strings are <strong>immutable</strong>. To “change” <code class="inl">word</code>, you make a new String and put it in the variable with <code class="inl">=</code>.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">substring(start, end)</code> takes the letters from <code class="inl">start</code> up to but not including <code class="inl">end</code> — think of knives in the gaps — so it has <code class="inl">end - start</code> letters. <code class="inl">substring(start)</code> goes to the end. The letter at index <code class="inl">i</code> is <code class="inl">substring(i, i + 1)</code>. A gap outside 0 … <code class="inl">length()</code>, or start after end, throws a <code class="inl">StringIndexOutOfBoundsException</code> at run time. Strings never change; methods return new ones.</p>
+        </div>
+
         <div class="practice" id="p22">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 22</h3>
           <p class="practice-lede">In every question, <code class="inl">String word = "computer";</code> unless it says otherwise. Draw the gaps.</p>
@@ -968,6 +1041,11 @@ true</pre></div>
           <p>A login screen compares the password you typed with the saved one using an exact match — that is why <em>Ankara06</em> and <em>ankara06</em> are different passwords. Counting is everywhere too: how many times a hashtag appears in a post, how many times a word appears in an essay.</p>
         </div>
 
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">a.equals(b)</code> is true when both Strings have the same characters in the same order — case and spaces included. <code class="inl">==</code> asks something else for Strings and gives wrong answers, sometimes only some of the time. Counting a letter or a piece is the substring loop plus <code class="inl">equals</code> plus a counter; a window of width <code class="inl">w</code> needs <code class="inl">i &lt; length() - w + 1</code>, and it finds the piece inside other words too.</p>
+        </div>
+
         <div class="practice" id="p23">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 23</h3>
           <p class="practice-lede">Trace the loops on paper before opening the answer.</p>
@@ -1179,6 +1257,36 @@ System.out.println(word3.compareTo(word1));</code></pre>
             </div>
             <p class="lab-note">Try <code class="inl">car</code> and <code class="inl">carpet</code>, then <code class="inl">Zebra</code> and <code class="inl">apple</code>, then the same word twice.</p>
           </div>
+        </div>
+
+        <h3 id="l24-ascii">Where the numbers come from</h3>
+
+        <p>A computer stores only numbers — Lesson 1's bits. So every character has to be given a number, and everyone has to agree on the same numbers, or a message written on one computer would be nonsense on another.</p>
+
+        <p>In 1963 American engineers agreed on <strong>ASCII</strong>: 128 codes for the English letters, digits, punctuation and a few control signals. That is where <code class="inl">A</code> = 65 and <code class="inl">a</code> = 97 come from — exactly 32 apart, so a computer could switch between capital and small letters by changing one bit. ASCII had no room for <em>ç, ğ, ı, ö, ş, ü</em>, for Greek, Arabic, Chinese, or anything else, and for decades every country invented its own codes, which did not agree with each other. In 1991 the first version of <strong>Unicode</strong> appeared, and it has been replacing them ever since: one list for every writing system in the world, now over 150,000 characters — Turkish letters, Chinese characters and emoji included. Java uses Unicode, and its first 128 codes are still exactly ASCII.</p>
+
+        <p>That has a surprising effect. The Turkish letters were added to the list long after the English alphabet, so their codes are much bigger: <code class="inl">Ç</code> is 199, <code class="inl">İ</code> is 304, <code class="inl">ğ</code> is 287. <code class="inl">compareTo</code> knows nothing about the Turkish alphabet — it only subtracts codes:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>compareTo does not speak Turkish</span></div>
+          <pre class="code"><code>System.out.println("Ankara".compareTo("Çorum"));     // 65 - 199
+System.out.println("Çorum".compareTo("Zonguldak"));  // 199 - 90
+System.out.println("İzmir".compareTo("Istanbul"));   // 304 - 73</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-134
+109
+231</pre></div>
+        </div>
+
+        <p>Ankara before Çorum is right. But Çorum <em>after</em> Zonguldak, and İzmir after Istanbul, are wrong in any Turkish dictionary. Sorted with <code class="inl">compareTo</code>, every city starting with Ç, Ö, Ş, Ü or İ ends up after Z.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>This is why your phone's contacts app does not use plain <code class="inl">compareTo</code>. Real apps sort with language-aware rules, called <em>collation</em>, that know Ç belongs between C and D in Turkish — and that the same letter goes elsewhere in other languages. On the AP exam, only plain English letters appear, and <code class="inl">compareTo</code>'s simple rule is all you need.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">a.compareTo(b)</code> is negative when <code class="inl">a</code> comes first, 0 when they are equal, positive when <code class="inl">a</code> comes after. It compares character codes from the left; at the first difference it returns the difference of the codes, and if one word runs out first, the shorter one comes first. Every capital comes before every small letter. Codes come from ASCII and Unicode, which is why letters outside English sort after Z.</p>
         </div>
 
         <div class="practice" id="p24">
@@ -1659,10 +1767,37 @@ System.out.println(firstOf("pear", "plum", "apple"));</code></pre>
         </div>
       </section>
 
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The words below are the ones a book, an exam question or another programmer will use without stopping to explain.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>character</strong></td><td>char</td><td>one letter, digit, space or symbol</td><td class="mono">"c", " ", "7"</td></tr>
+              <tr><td><strong>index</strong></td><td>position</td><td>a character's number in the String, from 0</td><td class="mono">"c" is at 0</td></tr>
+              <tr><td><strong>length</strong></td><td></td><td>how many characters</td><td class="mono">"computer".length() → 8</td></tr>
+              <tr><td><strong>substring</strong></td><td></td><td>a piece of a String; also the method that cuts it</td><td class="mono">"mpu"</td></tr>
+              <tr><td><strong>empty String</strong></td><td></td><td>a String with no characters</td><td class="mono">""</td></tr>
+              <tr><td><strong>half-open range</strong></td><td></td><td>start included, end not: [start, end)</td><td class="mono">substring(2, 5)</td></tr>
+              <tr><td><strong>immutable</strong></td><td></td><td>can never be changed after it is made</td><td>every String</td></tr>
+              <tr><td><strong>concatenation</strong></td><td></td><td>joining Strings with <code class="inl">+</code></td><td class="mono">first + " " + last</td></tr>
+              <tr><td><strong>StringIndexOutOfBoundsException</strong></td><td></td><td>the crash when a cut is outside the String</td><td class="mono">substring(3, 9)</td></tr>
+              <tr><td><strong>lexicographic order</strong></td><td>dictionary order</td><td>the order <code class="inl">compareTo</code> uses</td><td class="mono">"apple" before "banana"</td></tr>
+              <tr><td><strong>character code</strong></td><td></td><td>the number that stands for a character</td><td class="mono">A = 65, a = 97</td></tr>
+              <tr><td><strong>ASCII / Unicode</strong></td><td></td><td>the agreed lists of character codes: 128 / over 150,000</td><td class="mono">Ç = 199</td></tr>
+              <tr><td><strong>case-sensitive</strong></td><td></td><td>capital and small letters count as different</td><td class="mono">"C" ≠ "c"</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Fifteen traps to remember</h2>
-        <p>Three of these crash the program, one will not compile, and the other eleven run quietly and give the wrong answer.</p>
+        <h2>Seventeen traps to remember</h2>
+        <p>Three of these crash the program, one will not compile, and the other thirteen run quietly and give the wrong answer.</p>
 
         <div class="scroll">
           <table>
@@ -1685,6 +1820,18 @@ System.out.println(firstOf("pear", "plum", "apple"));</code></pre>
               <tr><td class="mono">"A".compareTo("a")</td><td class="mono">0</td><td class="mono"><span class="fv">-32</span></td><td>capitals and small letters are different codes</td></tr>
               <tr><td class="mono">"abc".compareTo("abchab")</td><td>a letter difference</td><td class="mono"><span class="fv">-3</span></td><td>one word ran out: lengths are subtracted</td></tr>
               <tr><td class="mono">a.compareTo(b) == -1</td><td>“a comes first”</td><td class="mono"><span class="fv">false for "A", "C"</span></td><td>only the sign is promised: write &lt; 0</td></tr>
+              <tr>
+                <td class="mono">word.substring(3);</td>
+                <td>word is cut</td>
+                <td class="mono"><span class="fv">word unchanged</span></td>
+                <td>Strings are immutable — keep the result: word = word.substring(3);</td>
+              </tr>
+              <tr>
+                <td class="mono">"Çorum".compareTo("Zonguldak")</td>
+                <td>negative</td>
+                <td class="mono"><span class="fv">109</span></td>
+                <td>Ç is code 199, after every English letter</td>
+              </tr>
             </tbody>
           </table>
         </div>

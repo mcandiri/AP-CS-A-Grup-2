@@ -762,3 +762,44 @@ figure.fig figcaption{
 .inchgrid-host .strip-cap{margin-top:0;}
 .note--sum{background:var(--surface);border-color:var(--ink-faint);}
 .note--sum .tag{color:var(--ink);}
+
+/* ---------- Book pass: compile pipeline, bit patterns ---------- */
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:22px 0 6px;}
+.flow .st{
+  flex:1 1 9.5rem;min-width:0;
+  border:1px solid var(--line);border-radius:6px;background:var(--surface);
+  padding:10px 14px;display:flex;flex-direction:column;gap:3px;
+}
+.flow .st b{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9rem;color:var(--ink);}
+.flow .st small{font-size:.78rem;color:var(--ink-soft);line-height:1.35;}
+.flow .st.os{flex:0 1 7.5rem;background:var(--accent-soft);border-color:var(--accent);}
+.flow .st.os b{color:var(--accent);}
+.flow .ar{
+  flex:0 0 auto;align-self:center;display:flex;flex-direction:column;align-items:center;gap:1px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.7rem;color:var(--accent);
+}
+.flow .ar i{font-style:normal;font-size:1.3rem;line-height:1;}
+.bits{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.5rem,1fr));gap:6px;margin:20px 0 6px;}
+.bits div{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:6px 10px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
+}
+.bits b{color:var(--ink);letter-spacing:.14em;font-size:.92rem;}
+.bits span{color:var(--ink-soft);font-size:.85rem;}
+.bits div.neg{background:var(--amber-soft);border-color:var(--amber-line);}
+.bits div.neg span{color:var(--amber);font-weight:600;}
+.note ul.plain,.note ol.plain{margin:0 0 12px;}
+ol.plain{max-width:66ch;margin:0 0 16px;padding-left:22px;}
+ol.plain li{margin-bottom:6px;}
+.flowfig{margin:22px 0 6px;overflow-x:auto;}
+.flowfig svg{display:block;width:100%;max-width:520px;min-width:360px;height:auto;}
+.flowfig .ff-box{fill:var(--surface);stroke:var(--line);stroke-width:1.5;}
+.flowfig .ff-hit{fill:var(--moss-soft);stroke:var(--moss);}
+.flowfig .ff-dia{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5;}
+.flowfig .ff-ln{fill:none;stroke:var(--ink-faint);stroke-width:1.5;}
+.flowfig text{font-family:"JetBrains Mono",ui-monospace,monospace;text-anchor:middle;dominant-baseline:middle;}
+.flowfig .ff-t{font-size:12.5px;fill:var(--ink);}
+.flowfig .ff-s{font-size:11px;fill:var(--ink-soft);text-anchor:start;}
+.flowfig .ff-yes{font-size:11.5px;fill:var(--moss);font-weight:700;}
+.flowfig .ff-no{font-size:11.5px;fill:var(--crimson);font-weight:700;}

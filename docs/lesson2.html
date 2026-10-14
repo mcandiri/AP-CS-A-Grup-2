@@ -38,22 +38,33 @@
       <ol>
         <li><a href="#l4">4 · Assignment, final, overflow</a></li>
         <li><a class="sub" href="#l4-assign">Reassigning</a></li>
+        <li><a class="sub" href="#l4-trace">Trace tables</a></li>
+        <li><a class="sub" href="#l4-swap">Swapping</a></li>
+        <li><a class="sub" href="#l4-concat">"a: " + a</a></li>
         <li><a class="sub" href="#l4-compound">Compound operators</a></li>
         <li><a class="sub" href="#l4-incr">++ and --</a></li>
         <li><a class="sub" href="#l4-final">final</a></li>
+        <li><a class="sub" href="#l4-magic">Magic numbers</a></li>
         <li><a class="sub" href="#l4-overflow">Overflow</a></li>
         <li><a class="sub" href="#p4">Practice</a></li>
         <li><a href="#l5">5 · if and else</a></li>
+        <li><a class="sub" href="#l5-flow">A fork in the road</a></li>
         <li><a class="sub" href="#l5-shape">The shape of an if</a></li>
         <li><a class="sub" href="#l5-braces">Braces</a></li>
+        <li><a class="sub" href="#l5-semi">The stray semicolon</a></li>
         <li><a class="sub" href="#l5-else">else</a></li>
         <li><a class="sub" href="#l5-nested">Nested if vs else if</a></li>
+        <li><a class="sub" href="#l5-atm">A cash machine</a></li>
         <li><a class="sub" href="#p5">Practice</a></li>
         <li><a href="#l6">6 · Chains &amp; dangling else</a></li>
         <li><a class="sub" href="#l6-grade">A grade from a number</a></li>
+        <li><a class="sub" href="#l6-test">Testing a chain</a></li>
+        <li><a class="sub" href="#l6-ticket">Ticket prices</a></li>
         <li><a class="sub" href="#l6-separate">Separate ifs</a></li>
         <li><a class="sub" href="#l6-dangling">The dangling else</a></li>
+        <li><a class="sub" href="#l6-and">Nested ifs and &amp;&amp;</a></li>
         <li><a class="sub" href="#p6">Practice</a></li>
+        <li><a href="#words">Words</a></li>
         <li><a href="#recap">Recap</a></li>
       </ol>
     </nav>
@@ -65,6 +76,19 @@
         <div class="lesson-head">
           <span class="lesson-no">Part 04 · Lesson4.java</span>
           <h2 class="lesson-title">Assignment Operators, final and Overflow</h2>
+        </div>
+
+        <p>Lesson 1 created variables and asked questions about them. This lesson makes them move. A variable's value can change as the program runs — that is the whole point of calling it a <em>variable</em> — and once values change, the program can make decisions based on them. Those two ideas, <strong>change</strong> and <strong>choice</strong>, are what turn a calculator into a program.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>Giving a variable a new value, and the shorthands <code class="inl">+=</code>, <code class="inl">-=</code>, <code class="inl">*=</code>, <code class="inl">/=</code>, <code class="inl">%=</code>, <code class="inl">++</code>, <code class="inl">--</code>.</li>
+            <li>Following a variable on paper with a trace table — and swapping two values.</li>
+            <li><code class="inl">final</code>: values that must never change, and why programs name them.</li>
+            <li>What happens when an <code class="inl">int</code> runs out of room — and where that has cost real money.</li>
+            <li><code class="inl">if</code>, <code class="inl">else</code>, <code class="inl">else if</code>: how a program chooses, and the bugs that hide in braces.</li>
+          </ul>
         </div>
 
         <h3 id="l4-assign">Reassigning a variable</h3>
@@ -106,6 +130,77 @@ a: 19</pre></div>
           <span class="tag">Rule</span>
           <p><code class="inl">=</code> is not the equals sign from maths. Java works out the whole right-hand side first, then drops the answer into the box on the left. That is why <code class="inl">a = a + 5</code> makes perfect sense to Java and no sense at all as an equation.</p>
         </div>
+
+        <h3 id="l4-trace">Following a variable on paper</h3>
+
+        <p>Once values change, “what is <code class="inl">a</code> now?” depends on <em>when</em> you ask. The reliable way to answer is a <strong>trace table</strong>: one column per variable, one row per line, and you write down every value the moment it changes. Here is the code above, traced:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">Line</th><th class="mono">a</th><th class="mono">b</th><th>Printed</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">int a = 3;</td><td class="mono">3</td><td class="mono">–</td><td></td></tr>
+              <tr><td class="mono">a = 5;</td><td class="mono"><strong>5</strong></td><td class="mono">–</td><td></td></tr>
+              <tr><td class="mono">int b = 8;</td><td class="mono">5</td><td class="mono">8</td><td></td></tr>
+              <tr><td class="mono">b = 11;</td><td class="mono">5</td><td class="mono"><strong>11</strong></td><td></td></tr>
+              <tr><td class="mono">a = b;</td><td class="mono"><strong>11</strong></td><td class="mono">11</td><td class="mono">a: 11</td></tr>
+              <tr><td class="mono">a = b + 3;</td><td class="mono"><strong>14</strong></td><td class="mono">11</td><td class="mono">a: 14</td></tr>
+              <tr><td class="mono">a = a + 5;</td><td class="mono"><strong>19</strong></td><td class="mono">11</td><td class="mono">a: 19</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fig-cap">Bold marks the value that changed on that line. Notice <code class="inl">a = b</code>: <code class="inl">a</code> gets a copy of 11, and <code class="inl">b</code> keeps its own 11 — nothing ties the two boxes together afterwards.</p>
+
+        <p>Trace tables look slow. They are not — they are the fastest way to get a tracing question right, on paper or on the exam, because they stop you from carrying five changing numbers in your head.</p>
+
+        <h3 id="l4-swap">Swapping two values</h3>
+
+        <p>Here is a puzzle that shows exactly how <code class="inl">=</code> works. You have <code class="inl">a = 3</code> and <code class="inl">b = 8</code>, and you want them the other way round. The obvious attempt fails:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The obvious swap</span></div>
+          <pre class="code"><code>int a = 3;
+int b = 8;
+
+a = b;      // a is 8 ... and the 3 is gone forever
+b = a;      // b gets a's value, which is now 8
+
+System.out.println("a: " + a + "  b: " + b);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 8  b: 8</pre></div>
+        </div>
+
+        <p>The first line overwrites the 3 before anyone saved it. Think of two full glasses of juice you want to swap: you need a third, empty glass. In code, the empty glass is a third variable, usually called <code class="inl">temp</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Swap with a third variable</span></div>
+          <pre class="code"><code>int a = 3;
+int b = 8;
+
+int temp = a;   // keep the 3 safe
+a = b;          // a is 8
+b = temp;       // b gets the 3 back
+
+System.out.println("a: " + a + "  b: " + b);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 8  b: 3</pre></div>
+        </div>
+
+        <h3 id="l4-concat">"a: " + a</h3>
+
+        <p>Every line of this file prints with <code class="inl">"a: " + a</code>. In Lesson 1, <code class="inl">+</code> glued two Strings together. Here one side is a String and the other is an <code class="inl">int</code> — and the rule is: <strong>if either side of a <code class="inl">+</code> is a String, the other side is turned into text and glued on</strong>. That is how a number ends up inside a message.</p>
+
+        <p>Like every operator on the same level, <code class="inl">+</code> works left to right, and that order decides whether you get arithmetic or gluing:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Left to right decides</span></div>
+          <pre class="code"><code>System.out.println("a: " + 2 + 3);      // ("a: " + 2) + 3  -> text all the way
+System.out.println("a: " + (2 + 3));    // the parentheses add first
+System.out.println(2 + 3 + " :a");      // 2 + 3 is maths, then the text</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>a: 23
+a: 5
+5 :a</pre></div>
+        </div>
+
+        <p>Once the String has joined in, every <code class="inl">+</code> after it glues. Before the String arrives, <code class="inl">+</code> still adds. When you want a sum inside a message, put the sum in parentheses.</p>
 
         <h3 id="l4-compound">Compound assignment operators</h3>
 
@@ -157,6 +252,21 @@ a: 0</pre></div>
 d /= 2;                 // you might read this as 3.5
 System.out.println(d);</code></pre>
           <div class="out"><span class="out-label">Console</span><pre><em>3</em></pre></div>
+        </div>
+
+        <p>The shorthands work just as well with doubles, which is where they show up in real programs — scores, prices, balances, anything that keeps growing or shrinking:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A 20% price increase</span></div>
+          <pre class="code"><code>double price = 100;
+price *= 1.2;            // price = price * 1.2
+System.out.println(price);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>120.0</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The shorthand and the long form are not <em>quite</em> twins. With <code class="inl">int x = 7;</code>, the line <code class="inl">x = x / 2.0;</code> does not compile — the right side is a double, and a double does not fit in an int. But <code class="inl">x /= 2.0;</code> compiles and leaves <code class="inl">3</code> in <code class="inl">x</code>: a compound operator quietly casts the answer back to the variable's type. Quietly is the problem — the 0.5 is cut off without a word.</p>
         </div>
 
         <h3 id="l4-incr">++ and --</h3>
@@ -232,6 +342,23 @@ System.out.println("z: " + z + "   y: " + y);</code></pre>
 
         <p><code class="inl">z</code> is not tied to <code class="inl">y</code>. It copied the number 3 and then stopped listening.</p>
 
+        <h3 id="l4-magic">Why name a number at all</h3>
+
+        <p>You could type <code class="inl">0.2</code> straight into every calculation instead of declaring <code class="inl">TAX_RATE</code>. Programmers call a bare number like that a <strong>magic number</strong> — it works, but nobody reading the code knows what it means, and nobody can change it safely.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The number has a name</span></div>
+          <pre class="code"><code>final double TAX_RATE = 0.2;
+double net = 250;
+
+System.out.println(net * TAX_RATE);          // the tax
+System.out.println(net + net * TAX_RATE);    // the price with tax</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>50.0
+300.0</pre></div>
+        </div>
+
+        <p>Two things are better now. The line reads like a sentence: <em>net times tax rate</em>. And when the rate changes — tax rates do — you change one line at the top, not every <code class="inl">0.2</code> scattered through the program. Worse, some of those <code class="inl">0.2</code>s might not have been the tax rate at all.</p>
+
         <h3 id="l4-overflow">Arithmetic overflow</h3>
 
         <p>Back in Lesson 1 we said an <code class="inl">int</code> lives in <strong>32 bits</strong>, and that this gives it a fixed range. Now we find out what happens when a calculation walks off the end of that range.</p>
@@ -278,6 +405,29 @@ System.out.println(min - 1);      // under the bottom</code></pre>
         <div class="note note--rule">
           <span class="tag">Rule</span>
           <p>Overflow produces <strong>no error, no warning and no exception</strong>. The program keeps running happily with a wrong number in it. This is the reason it is worth memorising: nothing will tell you it happened except the nonsense in your output.</p>
+        </div>
+
+        <p>Overflow does not need a giant number in the code. It only needs a calculation whose answer is too big — and the multiplication runs in <code class="inl">int</code> before anything is stored:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>How many seconds in 70 years?</span></div>
+          <pre class="code"><code>int seconds = 70 * 365 * 24 * 60 * 60;
+System.out.println(seconds);    // should be 2,207,520,000</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-2087447296</pre></div>
+        </div>
+
+        <p>A human life does not fit in an <code class="inl">int</code> — not when it is counted in seconds. Every factor is small; only the answer is too big.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p><strong>Gangnam Style, 2014.</strong> YouTube stored view counts in a 32-bit integer. When the video approached 2,147,483,647 views, YouTube had to switch to a bigger number type before the counter wrapped to a negative number.</p>
+          <p><strong>Ariane 5, 1996.</strong> Thirty-seven seconds after its first launch, the European rocket broke apart. A value from its guidance software was squeezed into an integer type too small to hold it; the conversion failed, and the navigation system shut down.</p>
+          <p><strong>The year 2038.</strong> Many computers count time as seconds since 1 January 1970, in a 32-bit int. That count reaches 2,147,483,647 at 03:14:07 UTC on 19 January 2038. One second later, a computer that has not been updated will think it is December 1901.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">=</code> overwrites: the old value is gone. Trace changing values in a table, one row per line. Swapping needs a third variable. The compound operators (<code class="inl">+=</code> … <code class="inl">%=</code>) and <code class="inl">++</code> / <code class="inl">--</code> are shorthands, but integer division still cuts. In a <code class="inl">+</code> with a String, the other side becomes text. <code class="inl">final</code> seals a value; name such constants in ALL_CAPS instead of scattering magic numbers. An <code class="inl">int</code> that goes past its limit wraps around silently.</p>
         </div>
 
         <div class="practice" id="p4">
@@ -404,6 +554,33 @@ total *= 2;</code></pre>
 
         <p>Everything we have written so far runs top to bottom, every line, every time. A <strong>control structure</strong> is what lets the program choose — and the first one is <code class="inl">if</code>.</p>
 
+        <h3 id="l5-flow">A fork in the road</h3>
+
+        <p>Until now every program was a straight line: Java ran line 1, then line 2, then line 3, to the end. The order in which statements run is called the <strong>flow of control</strong>, and an <code class="inl">if</code> is the first thing that bends it. Programmers often draw it as a <strong>flowchart</strong>: a diamond for the question, arrows for the answers.</p>
+
+        <figure class="flowfig">
+          <svg viewBox="0 0 520 300" role="img" aria-label="Flowchart: the condition number % 2 == 0 is checked; true leads to printing Even number, false leads to printing Odd number; both paths join and the program continues">
+            <rect class="ff-box" x="185" y="8" width="150" height="34" rx="6"/>
+            <text class="ff-t" x="260" y="30">int number = 6;</text>
+            <line class="ff-ln" x1="260" y1="42" x2="260" y2="70"/>
+            <polygon class="ff-dia" points="260,70 360,115 260,160 160,115"/>
+            <text class="ff-t" x="260" y="119">number % 2 == 0 ?</text>
+            <polyline class="ff-ln" points="160,115 90,115 90,190"/>
+            <polyline class="ff-ln" points="360,115 430,115 430,190"/>
+            <text class="ff-yes" x="125" y="106">true</text>
+            <text class="ff-no" x="395" y="106">false</text>
+            <rect class="ff-box ff-hit" x="10" y="190" width="160" height="38" rx="6"/>
+            <text class="ff-t" x="90" y="213">"Even number!"</text>
+            <rect class="ff-box" x="350" y="190" width="160" height="38" rx="6"/>
+            <text class="ff-t" x="430" y="213">"Odd number!"</text>
+            <polyline class="ff-ln" points="90,228 90,262 260,262"/>
+            <polyline class="ff-ln" points="430,228 430,262 260,262"/>
+            <line class="ff-ln" x1="260" y1="262" x2="260" y2="292"/>
+            <text class="ff-s" x="272" y="290">the program continues</text>
+          </svg>
+        </figure>
+        <p class="fig-cap">One question, two roads, and the roads meet again underneath. With <code class="inl">number = 6</code> the program takes the left road; the right one is skipped entirely.</p>
+
         <h3 id="l5-shape">The shape of an if</h3>
 
         <div class="ex">
@@ -440,6 +617,24 @@ else
         </div>
 
         <p><code class="inl">number % 2</code> is the remainder after dividing by 2, and comparing it to 0 answers the question "does 2 divide this exactly?". Exactly one of the two branches runs — never both, never neither.</p>
+
+        <p>Since a condition is just a boolean, you can work it out first and keep it in a variable. With a good name, the <code class="inl">if</code> reads like English:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A condition with a name</span></div>
+          <pre class="code"><code>int number = -5;
+boolean isEven = number % 2 == 0;
+
+if (isEven) {
+    System.out.println("even");
+}
+else {
+    System.out.println("odd");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>odd</pre></div>
+        </div>
+
+        <p>Write <code class="inl">if (isEven)</code>, not <code class="inl">if (isEven == true)</code>. Both work, but the second asks “is it true that it is true?” — <code class="inl">isEven</code> already <em>is</em> the answer.</p>
 
         <h3 id="l5-braces">Braces: when they are required, and what happens without them</h3>
 
@@ -484,6 +679,33 @@ if (number > 0)
         <div class="note note--rule">
           <span class="tag">Rule</span>
           <p>Write the braces every time, even for a single line. They cost two characters and they remove this entire category of bug — including the dangling else waiting for us in Part 6.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>In 2014, Apple found a bug in the code that checks secure connections on iPhones and Macs. An <code class="inl">if</code> without braces was followed by a line that had been typed twice by accident. The copy looked indented under the <code class="inl">if</code>, so it looked harmless — but, exactly like <code class="inl">"Positive!"</code> above, it ran every time and skipped the security check that came after it. Millions of devices were affected until the update. It became known as the <em>goto fail</em> bug, after the line that was repeated.</p>
+        </div>
+
+        <h3 id="l5-semi">The semicolon that ends an if</h3>
+
+        <p>A semicolon ends a statement — and a semicolon on its own is a statement too, one that does nothing. Put one straight after the condition, and that empty statement becomes the whole body of the <code class="inl">if</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>One character too many</span></div>
+          <pre class="code"><code>int number = -5;
+
+if (number &gt; 0);           // the if ends here, doing nothing
+{
+    System.out.println("Positive");    // an ordinary block — always runs
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Positive</pre></div>
+        </div>
+
+        <p>It compiles, it runs, and −5 is called positive. When an <code class="inl">if</code> seems to be ignored completely, look at the end of its line first.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Writing <code class="inl">=</code> where you meant <code class="inl">==</code> is a classic slip. Java at least catches it here: <code class="inl">if (x = 5)</code> does not compile — <em>incompatible types: int cannot be converted to boolean</em> — because <code class="inl">x = 5</code> is an assignment, and its result is a number, not a yes-or-no answer.</p>
         </div>
 
         <h3 id="l5-else">else</h3>
@@ -546,6 +768,36 @@ else {
         <div class="note note--trap">
           <span class="tag">Watch out</span>
           <p><code class="inl">else if</code> is not a new keyword. It is an ordinary <code class="inl">else</code> whose action happens to be another <code class="inl">if</code> — the two versions above are the <em>same program</em>, just typed differently. Knowing that is what makes the dangling else in Part 6 make sense.</p>
+        </div>
+
+        <h3 id="l5-atm">An if in the real world</h3>
+
+        <p>Every app you use is full of <code class="inl">if</code>s. A cash machine is a good one to imagine — and it combines this part with Part 4, because the balance only changes in one of the two branches:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A cash machine, twice</span></div>
+          <pre class="code"><code>int balance = 500;
+int amount = 200;
+
+if (balance &gt;= amount) {
+    balance -= amount;
+    System.out.println("Take your cash. Left: " + balance);
+}
+else {
+    System.out.println("Not enough money. Left: " + balance);
+}
+
+amount = 400;    // the same code again, with a bigger request
+// ... same if / else ...</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Take your cash. Left: 300
+Not enough money. Left: 300</pre></div>
+        </div>
+
+        <p>The second request fails, and the balance stays 300 — the <code class="inl">-=</code> sits inside the branch that did not run. Where a line is placed decides <em>whether</em> it happens, not just when.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An <code class="inl">if</code> runs its body only when its condition — any boolean — is true; an <code class="inl">else</code> runs when it is false, so exactly one of the two runs. Braces decide what belongs to an <code class="inl">if</code>; indentation does not. Write them every time. A semicolon right after the condition empties the <code class="inl">if</code>. <code class="inl">else if</code> is an <code class="inl">else</code> whose body is another <code class="inl">if</code>.</p>
         </div>
 
         <div class="practice" id="p5">
@@ -734,6 +986,56 @@ else {
         </div>
 
         <p>0 falls all the way through to the final <code class="inl">else</code> — it is a legal mark, so the first branch does not reject it, and it clears none of the four boundaries.</p>
+
+        <h3 id="l6-test">Testing a chain</h3>
+
+        <p>How do you know the grade chain is right? Running it once with a random number proves almost nothing. Bugs in chains live at the <strong>boundaries</strong> — the exact numbers where one branch hands over to the next. A <code class="inl">&gt;</code> typed where <code class="inl">&gt;=</code> was meant changes the answer for 80 and for no other mark.</p>
+
+        <p>So professional testers pick their values on purpose: each boundary, one below it, one above it, and the values that should be rejected.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">note</th><th>Why test it</th><th>Expected</th><th>Got</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">79</td><td>just below the 80 boundary</td><td class="mono">4</td><td class="mono"><span class="tv">4</span></td></tr>
+              <tr><td class="mono">80</td><td>the boundary itself</td><td class="mono">5</td><td class="mono"><span class="tv">5</span></td></tr>
+              <tr><td class="mono">81</td><td>just above it</td><td class="mono">5</td><td class="mono"><span class="tv">5</span></td></tr>
+              <tr><td class="mono">0</td><td>the smallest valid mark</td><td class="mono">1</td><td class="mono"><span class="tv">1</span></td></tr>
+              <tr><td class="mono">100</td><td>the largest valid mark</td><td class="mono">5</td><td class="mono"><span class="tv">5</span></td></tr>
+              <tr><td class="mono">-1</td><td>one below the valid range</td><td class="mono">INVALID NOTE!!</td><td class="mono"><span class="tv">INVALID NOTE!!</span></td></tr>
+              <tr><td class="mono">101</td><td>one above the valid range</td><td class="mono">INVALID NOTE!!</td><td class="mono"><span class="tv">INVALID NOTE!!</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fig-cap">Write the <em>Expected</em> column before you run anything. A test is only a test if you decided the answer first.</p>
+
+        <h3 id="l6-ticket">A chain from real life</h3>
+
+        <p>Cinema prices by age: under 6 free, under 18 student price, 65 and over senior price, everyone else full price.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ticket price</span></div>
+          <pre class="code"><code>if (age &lt; 6) {
+    System.out.println(age + " -&gt; free");
+}
+else if (age &lt; 18) {
+    System.out.println(age + " -&gt; 60 TL");
+}
+else if (age &gt;= 65) {
+    System.out.println(age + " -&gt; 50 TL");
+}
+else {
+    System.out.println(age + " -&gt; 120 TL");
+}
+
+// run with age = 4, 15, 30 and 70</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 -&gt; free
+15 -&gt; 60 TL
+30 -&gt; 120 TL
+70 -&gt; 50 TL</pre></div>
+        </div>
+
+        <p>Look at the second branch: it says <code class="inl">age &lt; 18</code>, not <code class="inl">age &gt;= 6 &amp;&amp; age &lt; 18</code>. It does not need to — anyone under 6 was already taken by the first branch. The chain does half the work for you, as long as the order is right.</p>
 
         <h3 id="l6-separate">Separate ifs are not a chain</h3>
 
@@ -944,6 +1246,35 @@ number = -3 -&gt;  number is negative!</pre></div>
 
         <p>This version is correct. It is also one deleted line away from being wrong again — which is the real argument for writing the braces every time.</p>
 
+        <h3 id="l6-and">Nested ifs and &amp;&amp;</h3>
+
+        <p>An <code class="inl">if</code> inside an <code class="inl">if</code>, with no <code class="inl">else</code> anywhere, means “both of these must be true” — which is exactly what <code class="inl">&amp;&amp;</code> from Lesson 1 says. These two print the same thing for every number:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two ways to say both</span></div>
+          <pre class="code"><code>if (number &gt; 0) {
+    if (number % 2 == 0) {
+        System.out.println("positive even number");
+    }
+}
+
+if (number &gt; 0 &amp;&amp; number % 2 == 0) {
+    System.out.println("positive even number");
+}</code></pre>
+        </div>
+
+        <p>The second is shorter, and it has no inner <code class="inl">if</code> for a stray <code class="inl">else</code> to attach itself to. Nesting earns its place when each level needs its <em>own</em> <code class="inl">else</code> — like the three-answer version above.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>The dangling else is older than Java. It was spotted in ALGOL 60, one of the first programming languages, around 1960, and language designers have dealt with it ever since. Java, C and C++ all use the same rule: the <code class="inl">else</code> goes to the nearest free <code class="inl">if</code>. Python took another way out — in Python, indentation <em>is</em> the structure, so the code means what it looks like.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An <code class="inl">if / else if / else</code> chain runs exactly one branch: the first true one. Order the conditions so each branch can rely on the ones above it, and put the validity check first. Separate <code class="inl">if</code>s are separate decisions. Test every boundary, one below and one above it. An <code class="inl">else</code> belongs to the nearest <code class="inl">if</code> without one — braces are the only way to say otherwise.</p>
+        </div>
+
         <div class="practice" id="p6">
           <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 6</h3>
           <p class="practice-lede">Work them out on paper first, then open the answer.</p>
@@ -1060,9 +1391,39 @@ else {
         </div>
       </section>
 
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+        <p>The words below are the ones a book, an exam question or another programmer will use without stopping to explain.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>assignment</strong></td><td></td><td>putting a new value into an existing variable</td><td class="mono">a = 5;</td></tr>
+              <tr><td><strong>compound assignment operator</strong></td><td>shorthand</td><td>an operator and an assignment in one</td><td class="mono">a += 2;</td></tr>
+              <tr><td><strong>increment / decrement</strong></td><td></td><td>add 1 / take away 1</td><td class="mono">n++; n--;</td></tr>
+              <tr><td><strong>trace table</strong></td><td></td><td>a table of every value a variable takes, line by line</td><td>the a / b table</td></tr>
+              <tr><td><strong>concatenation</strong></td><td></td><td>gluing text together with <code class="inl">+</code></td><td class="mono">"a: " + a</td></tr>
+              <tr><td><strong>constant</strong></td><td>final variable</td><td>a variable whose value can never change</td><td class="mono">final double PI</td></tr>
+              <tr><td><strong>magic number</strong></td><td></td><td>an unexplained number typed straight into a calculation</td><td class="mono">net * 0.2</td></tr>
+              <tr><td><strong>arithmetic overflow</strong></td><td></td><td>an int result past the limit, wrapping around</td><td class="mono">2147483647 + 1</td></tr>
+              <tr><td><strong>flow of control</strong></td><td></td><td>the order in which statements run</td><td>top to bottom, until an if</td></tr>
+              <tr><td><strong>control structure</strong></td><td></td><td>code that changes the flow of control</td><td class="mono">if, else</td></tr>
+              <tr><td><strong>condition</strong></td><td></td><td>the boolean an if checks</td><td class="mono">number % 2 == 0</td></tr>
+              <tr><td><strong>branch</strong></td><td></td><td>one of the roads an if can take</td><td>the else branch</td></tr>
+              <tr><td><strong>block</strong></td><td></td><td>statements grouped by braces</td><td class="mono">{ … }</td></tr>
+              <tr><td><strong>nested if</strong></td><td></td><td>an if inside another if</td><td>the dangling else code</td></tr>
+              <tr><td><strong>dangling else</strong></td><td></td><td>an else that seems to belong to one if but belongs to another</td><td class="mono">if if else</td></tr>
+              <tr><td><strong>boundary value</strong></td><td>edge case</td><td>a value right where the answer changes</td><td class="mono">79, 80, 81</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Six traps to remember</h2>
+        <h2>Ten traps to remember</h2>
         <p>Every one of these compiles without complaint. That is exactly what makes them worth memorising.</p>
 
         <div class="scroll">
@@ -1106,6 +1467,30 @@ else {
                 <td class="mono">true</td>
                 <td class="mono"><span class="fv">false</span></td>
                 <td>-7 % 2 is -1; test against 0 instead</td>
+              </tr>
+              <tr>
+                <td class="mono">a = b; b = a;</td>
+                <td class="mono">swapped</td>
+                <td class="mono"><span class="fv">both hold b</span></td>
+                <td>the first line destroyed a's value — use a temp</td>
+              </tr>
+              <tr>
+                <td class="mono">"a: " + 2 + 3</td>
+                <td class="mono">a: 5</td>
+                <td class="mono"><span class="fv">a: 23</span></td>
+                <td>after a String, + glues instead of adding</td>
+              </tr>
+              <tr>
+                <td class="mono">70 * 365 * 24 * 60 * 60</td>
+                <td class="mono">2207520000</td>
+                <td class="mono"><span class="fv">-2087447296</span></td>
+                <td>the int calculation overflows before it is stored</td>
+              </tr>
+              <tr>
+                <td class="mono">if (number &gt; 0); { … }</td>
+                <td class="mono">guarded</td>
+                <td class="mono"><span class="fv">always runs</span></td>
+                <td>the semicolon is the whole body of the if</td>
               </tr>
             </tbody>
           </table>
