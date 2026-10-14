@@ -26,7 +26,7 @@
     <ul class="facts">
       <li>2 files</li>
       <li>Java</li>
-      <li>18 questions</li>
+      <li>24 questions</li>
       <li>Every output verified</li>
     </ul>
   </header>
@@ -56,6 +56,16 @@
         <li><a class="sub" href="#l26-gen">4 · Make a valid password</a></li>
         <li><a class="sub" href="#l26-strategies">Two strategies</a></li>
         <li><a class="sub" href="#p26">Practice</a></li>
+        <li><a href="#shop">Workshop · real text jobs</a></li>
+        <li><a class="sub" href="#shop-receipt">A receipt</a></li>
+        <li><a class="sub" href="#shop-csv">CSV to columns</a></li>
+        <li><a class="sub" href="#shop-json">Quotes inside data</a></li>
+        <li><a class="sub" href="#shop-path">File name from a path</a></li>
+        <li><a class="sub" href="#shop-box">Many lines, one String</a></li>
+        <li><a class="sub" href="#shop-lines">Counting lines</a></li>
+        <li><a class="sub" href="#shop-filled">Is it filled in?</a></li>
+        <li><a class="sub" href="#shop-time">A valid time</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
         <li><a href="#extras">Extras · more problems</a></li>
         <li><a class="sub" href="#x-pin">A PIN and a colour</a></li>
         <li><a class="sub" href="#x-scr">Scramble a word</a></li>
@@ -875,6 +885,360 @@ false</pre></div></div>
                 <div class="ans-body">
                   <p><span class="outline">8</span></p>
                   <p><code class="inl">aaa aab aba abb baa bab bba bbb</code>. Two choices for each of three places: 2 × 2 × 2 = 8 — the same counting that gave 26<sup>4</sup> for “door”.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · escapes, null and real problems</span>
+          <h2 class="lesson-title">A Text Workshop</h2>
+        </div>
+
+        <p>Escape sequences and <code class="inl">null</code> can look like small details — until you see where they show up. Receipts, spreadsheets, web data, file paths and every form on the internet depend on them. Each example below is a real job, written as a method with only what we have covered. As in Part 26: read the problem, try it yourself, then read the solution.</p>
+
+        <h3 id="shop-receipt">A receipt that lines up</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Print a café receipt: item, quantity, and the line total, in straight columns.</p>
+        </div>
+
+        <p>Part 25 showed that <code class="inl">\t</code> jumps to the next tab column. A method can build one line of the receipt and leave the printing to the caller:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>receiptLine</span></div>
+          <pre class="code"><code>public static String receiptLine(String item, int qty, double price) {
+    return item + "\t" + qty + "\t" + price * qty;
+}
+
+System.out.println("Item\tQty\tTotal");
+System.out.println(receiptLine("Simit", 3, 17.5));
+System.out.println(receiptLine("Ayran", 2, 25.0));
+System.out.println(receiptLine("Tost", 1, 90.0));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Item	Qty	Total
+Simit	3	52.5
+Ayran	2	50.0
+Tost	1	90.0</pre></div>
+        </div>
+
+        <p>Every item name is shorter than 8 characters, so every first tab lands on column 8 and the quantities line up. <code class="inl">price * qty</code> is a double times an int — a double, so 50 prints as <code class="inl">50.0</code> (Lesson 1). A real till would also print a total: that is one more accumulator.</p>
+
+        <h3 id="shop-csv">From a spreadsheet line to columns</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Spreadsheets and school systems export data as <em>CSV</em> — comma-separated values: <code class="inl">Ali,17,Izmir</code>. Turn a CSV line into a tab-separated one, so it prints in columns and pastes into Excel.</p>
+        </div>
+
+        <p>The step that repeats: find the first comma, take what is before it, throw that part away, and look again — the “eat the line” idea of <code class="inl">longestWord</code> in Lesson 6:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>csvToTabs</span></div>
+          <pre class="code"><code>public static String csvToTabs(String line) {
+    String result = "";
+    int comma = line.indexOf(",");
+    while (comma != -1) {
+        result = result + line.substring(0, comma) + "\t";
+        line = line.substring(comma + 1);       // drop the part we used
+        comma = line.indexOf(",");
+    }
+    return result + line;                       // the last field has no comma after it
+}
+
+System.out.println(csvToTabs("Ali,17,Izmir"));
+System.out.println(csvToTabs("Ece,16,Ankara,AP CS-A"));
+System.out.println(csvToTabs("nothing to split"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ali	17	Izmir
+Ece	16	Ankara	AP CS-A
+nothing to split</pre></div>
+        </div>
+
+        <p>The last field needs the line after the loop — the same reason the hailstone loop in Lesson 3 printed its final 1 after the loop. And a line with no comma at all skips the loop and comes back unchanged.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>e-Okul, bank statements and online shops can all download data as CSV. It is plain text, so any program in any language can read it — which is exactly why it has survived since the 1970s.</p>
+        </div>
+
+        <h3 id="shop-json">Quotes inside data</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Apps talk to servers in a format called <em>JSON</em>, where every name and text value is in double quotes: <code class="inl">{"name": "Ali", "city": "Izmir"}</code>. Build such a line in Java.</p>
+        </div>
+
+        <p>The quotes are part of the text this time, so each one has to be written <code class="inl">\"</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>jsonPair</span></div>
+          <pre class="code"><code>public static String jsonPair(String key, String value) {
+    return "\"" + key + "\": \"" + value + "\"";
+}
+
+System.out.println("{" + jsonPair("name", "Ali") + ", " + jsonPair("city", "Izmir") + "}");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{"name": "Ali", "city": "Izmir"}</pre></div>
+        </div>
+
+        <p>Read <code class="inl">"\""</code> slowly: a quote that opens a String, an escaped quote that is the String's only character, and a quote that closes it. A String containing just one quote mark. When you lose track of which quote is which, count: outside the backslashes, quotes always come in pairs.</p>
+
+        <h3 id="shop-path">The file name from a path</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Given a Windows path like <code class="inl">C:\Users\Ali\odev\Lesson26.java</code>, return only the file name.</p>
+        </div>
+
+        <p>The file name is everything after the <em>last</em> backslash. <code class="inl">indexOf</code> only finds the first one, so walk through the path and remember the position of every backslash you meet; when the loop ends, the one you remember is the last:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>fileName</span></div>
+          <pre class="code"><code>public static String fileName(String path) {
+    int last = -1;
+    for (int i = 0; i &lt; path.length(); i++) {
+        if (path.substring(i, i + 1).equals("\\")) {   // ONE backslash
+            last = i;
+        }
+    }
+    return path.substring(last + 1);
+}
+
+System.out.println(fileName("C:\\Users\\Ali\\odev\\Lesson26.java"));
+System.out.println(fileName("notes.txt"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Lesson26.java
+notes.txt</pre></div>
+        </div>
+
+        <p><code class="inl">"\\"</code> is a String of length 1 — one backslash — so it can be compared with a one-letter <code class="inl">substring</code>. Starting <code class="inl">last</code> at −1 is the clever part: if there is no backslash at all, <code class="inl">substring(-1 + 1)</code> is <code class="inl">substring(0)</code>, the whole String. No <code class="inl">if</code> needed.</p>
+
+        <h3 id="shop-box">Many lines in one String</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>Draw a frame around a title and return the whole picture as one String.</p>
+        </div>
+
+        <p><code class="inl">\n</code> lets a single String hold several lines. Build the top line with a loop, then glue three lines together:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>box</span></div>
+          <pre class="code"><code>public static String box(String text) {
+    String line = "+";
+    for (int i = 0; i &lt; text.length() + 2; i++) {   // + 2 for the spaces beside the text
+        line = line + "-";
+    }
+    line = line + "+";
+    return line + "\n| " + text + " |\n" + line;
+}
+
+System.out.println(box("Lesson 7"));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>+----------+
+| Lesson 7 |
++----------+</pre></div>
+        </div>
+
+        <p>The width comes from <code class="inl">text.length()</code>, so the frame fits any title. And because the method <em>returns</em> the picture instead of printing it, the caller decides what to do with it — print it, save it, or put it inside something bigger.</p>
+
+        <h3 id="shop-lines">Counting lines</h3>
+
+        <p>If <code class="inl">\n</code> is one character, it can be searched for and counted like any other. A message with two line breaks has three lines:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>countLines</span></div>
+          <pre class="code"><code>public static int countLines(String text) {
+    int count = 1;
+    for (int i = 0; i &lt; text.length(); i++) {
+        if (text.substring(i, i + 1).equals("\n")) {
+            count++;
+        }
+    }
+    return count;
+}
+
+String msg = "Hi!\nSee you at 14:30.\nBring your laptop.";
+System.out.println(msg);
+System.out.println(countLines(msg));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Hi!
+See you at 14:30.
+Bring your laptop.
+3</pre></div>
+        </div>
+
+        <p>The same loop as <code class="inl">countWords</code> in Lesson 6, with <code class="inl">"\n"</code> where the space was. Lines are to <code class="inl">\n</code> what words are to spaces.</p>
+
+        <h3 id="shop-filled">Is the field filled in?</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>A sign-up form has an optional nickname. It may be missing completely (<code class="inl">null</code>) or left empty (<code class="inl">""</code>). Show the nickname if there is one, and <code class="inl">Guest</code> otherwise.</p>
+        </div>
+
+        <p>Part 25 drew the difference: <code class="inl">null</code> is no String, <code class="inl">""</code> is a String with no letters. A form has to handle both, and the order of the checks is everything:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>isFilled and displayName</span></div>
+          <pre class="code"><code>public static boolean isFilled(String field) {
+    return field != null &amp;&amp; !field.equals("");
+}
+
+public static String displayName(String nickname) {
+    if (isFilled(nickname)) {
+        return nickname;
+    }
+    return "Guest";
+}
+
+System.out.println(displayName("mcan"));
+System.out.println(displayName(""));
+System.out.println(displayName(null));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>mcan
+Guest
+Guest</pre></div>
+        </div>
+
+        <p>For <code class="inl">null</code>, <code class="inl">field != null</code> is false, and short-circuit evaluation from Lesson 1 means <code class="inl">field.equals("")</code> is <strong>never run</strong>. That is what keeps it safe. Swap the two sides and the guard comes too late:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The same checks, the wrong way round</span></div>
+          <pre class="code"><code>return !field.equals("") &amp;&amp; field != null;
+
+// isFilledWrong("Ali")  -&gt; true
+// isFilledWrong(null)   -&gt; crash</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+<em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.equals(Object)" because "field" is null</em></pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>The <code class="inl">null</code> check always comes first, on the left of the <code class="inl">&amp;&amp;</code>. Lesson 1 called it <em>short-circuit on purpose</em>: the safe question protects the dangerous one.</p>
+        </div>
+
+        <h3 id="shop-time">Problem · Is this a valid time?</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>A booking app asks for a time as <code class="inl">HH:MM</code>. Write <code class="inl">isValidTime(String time)</code>: <code class="inl">"14:35"</code> and <code class="inl">"09:05"</code> are valid; <code class="inl">"24:00"</code>, <code class="inl">"12:60"</code>, <code class="inl">"7:30"</code>, <code class="inl">"12-30"</code>, <code class="inl">"1a:30"</code> and <code class="inl">null</code> are not.</p>
+        </div>
+
+        <p><strong>Step 1 — the header.</strong> In: a String. Out: yes or no — <code class="inl">public static boolean isValidTime(String time)</code>.</p>
+
+        <p><strong>Step 2 — by hand.</strong> How do <em>you</em> check <code class="inl">14:35</code>? Exactly five characters. A colon in the middle, at index 2. Digits everywhere else. Hours no more than 23, minutes no more than 59. Every bad example breaks one of those rules — that list is the plan.</p>
+
+        <p><strong>Step 3 — what repeats.</strong> “Is this character a digit?” for four positions. That is Part 26's group trick: write the digits in a String and ask <code class="inl">indexOf</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>isValidTime</span></div>
+          <pre class="code"><code>public static boolean isValidTime(String time) {
+    if (time == null || time.length() != 5) {
+        return false;
+    }
+    if (!time.substring(2, 3).equals(":")) {
+        return false;
+    }
+    String digits = "0123456789";
+    for (int i = 0; i &lt; 5; i++) {
+        if (i != 2 &amp;&amp; digits.indexOf(time.substring(i, i + 1)) == -1) {
+            return false;
+        }
+    }
+    String hours = time.substring(0, 2);
+    String minutes = time.substring(3);
+    return hours.compareTo("23") &lt;= 0 &amp;&amp; minutes.compareTo("59") &lt;= 0;
+}</code></pre>
+        </div>
+
+        <p>Three ideas from earlier lessons hold it together. The <code class="inl">null</code> check comes first, and <code class="inl">||</code> short-circuits, so <code class="inl">time.length()</code> is never called on <code class="inl">null</code>. Each failed rule returns <code class="inl">false</code> at once — Lesson 5's early <code class="inl">return</code>. And the last line compares numbers <em>without turning them into numbers</em>: two-digit Strings of digits sort exactly like the numbers they show, because <code class="inl">compareTo</code> compares the first digit first, then the second. <code class="inl">"14"</code> comes before <code class="inl">"23"</code>, <code class="inl">"24"</code> comes after. This only works because both have exactly two digits — which the length check already promised.</p>
+
+        <p><strong>Step 4 — test it</strong>, with one input for every rule:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">time</th><th>Rule it tests</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">"14:35"</td><td>a normal time</td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">"09:05"</td><td>leading zeros</td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">"23:59"</td><td>both limits exactly</td><td class="mono"><span class="tv">true</span></td></tr>
+              <tr><td class="mono">"24:00"</td><td>hours too big</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">"12:60"</td><td>minutes too big</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">"7:30"</td><td>wrong length</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">"12-30"</td><td>no colon</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">"1a:30"</td><td>a letter instead of a digit</td><td class="mono"><span class="fv">false</span></td></tr>
+              <tr><td class="mono">null</td><td>no String at all</td><td class="mono"><span class="fv">false</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">\t</code> makes columns, <code class="inl">\n</code> puts many lines in one String, <code class="inl">\"</code> puts quotes in data, and <code class="inl">"\\"</code> is a single backslash you can search for. Every method that receives a String from outside — a form, a file — should check for <code class="inl">null</code> first, on the left of <code class="inl">&amp;&amp;</code> or <code class="inl">||</code>. Turn a list of rules into a list of early <code class="inl">return false</code>s, and test one input per rule.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+          <p class="practice-lede">Work them out on paper first, then open the answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">csvToTabs("a,,b")</code> return? (Write a tab as ⇥.)</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"a⇥⇥b"</span></p>
+                  <p>Between the two commas is an empty field, <code class="inl">""</code>. The loop still adds it, followed by a tab — so an empty spreadsheet cell stays an empty column.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">fileName("C:\\odev\\")</code> return?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"" — the empty String</span></p>
+                  <p>The last backslash is the last character, so <code class="inl">substring(last + 1)</code> starts at the length: no crash, and nothing left. It is a folder, not a file.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">countLines("one\n")</code> return? Would a person agree?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">2</span></p>
+                  <p>One <code class="inl">\n</code>, so 1 + 1. A person sees one line of text with a line break after it. Text editors argue about this exact case; a method has to pick a rule and say so in its postcondition.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What do <code class="inl">isValidTime("19:45")</code> and <code class="inl">isValidTime("29:45")</code> return? Which line of the method decides the second one?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">true · false</span></p>
+                  <p>Both pass the length, colon and digit checks. The last line decides: <code class="inl">"29".compareTo("23")</code> compares <code class="inl">2</code> with <code class="inl">2</code>, then <code class="inl">9</code> with <code class="inl">3</code> — positive, so 29 is after 23.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">displayName(" ")</code> return — a single space?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">" " — a space, not Guest</span></p>
+                  <p>A space is not <code class="inl">null</code> and not <code class="inl">""</code>, so <code class="inl">isFilled</code> says true. The user sees a blank name. Real forms also treat a field of only spaces as empty.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>How many characters long is the String returned by <code class="inl">jsonPair("a", "b")</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">8</span></p>
+                  <p>It prints as <code class="inl">"a": "b"</code> — quote, a, quote, colon, space, quote, b, quote. Each <code class="inl">\"</code> is one character; no backslash is stored.</p>
                 </div>
               </details>
             </li>
