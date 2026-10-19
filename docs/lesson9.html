@@ -1,0 +1,1803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 9: constructors. What a constructor is and what happens at new, writing several constructors, the no-argument constructor, constructors versus setters and getters, a BankAccount that splits a name and makes its own password, and the 2019 AP free-response question StepTracker, solved step by step.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 9 · Constructors — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 9</p>
+    <h1>Constructors</h1>
+    <p class="deck">Last week every object was born empty: <code class="inl">new Height()</code>, then a setter, then another setter. This week objects are born ready. <code class="inl">new Height(6, 19)</code> gives a tidy 7 ft 7 in. in one line, and <code class="inl">new BankAccount("Selin Kavas", 5000)</code> splits the name, checks the balance and makes up a password, all before the first method is called. At the end we use all of this on a real AP exam question: <strong>StepTracker</strong>, 2019.</p>
+    <ul class="facts">
+      <li>3 files + 1 exam question</li>
+      <li>Java</li>
+      <li>24 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#l29">29 · Constructors</a></li>
+        <li><a class="sub" href="#l29-empty">Born empty</a></li>
+        <li><a class="sub" href="#l29-what">What is a constructor?</a></li>
+        <li><a class="sub" href="#l29-how">How to write one</a></li>
+        <li><a class="sub" href="#l29-new">What happens at new</a></li>
+        <li><a class="sub" href="#l29-two">Height(int feet, int inc)</a></li>
+        <li><a class="sub" href="#l29-many">More than one constructor</a></li>
+        <li><a class="sub" href="#l29-noarg">The no-argument constructor</a></li>
+        <li><a class="sub" href="#l29-free">The one Java writes for you</a></li>
+        <li><a class="sub" href="#l29-vs">Constructor, setter, getter</a></li>
+        <li><a class="sub" href="#l29-mist">Mistakes that compile, and ones that don't</a></li>
+        <li><a class="sub" href="#p29a">Practice</a></li>
+        <li><a href="#l29b">29 · BankAccount</a></li>
+        <li><a class="sub" href="#l29b-plan">The plan in the comments</a></li>
+        <li><a class="sub" href="#l29b-name">Splitting the full name</a></li>
+        <li><a class="sub" href="#l29b-pw">A password nobody typed</a></li>
+        <li><a class="sub" href="#l29b-two">The second constructor</a></li>
+        <li><a class="sub" href="#l29b-money">deposit and withdrawal</a></li>
+        <li><a class="sub" href="#l29b-reset">resetPassword</a></li>
+        <li><a class="sub" href="#l29b-tr">transfer</a></li>
+        <li><a class="sub" href="#l29b-run">Running Lesson29</a></li>
+        <li><a class="sub" href="#l29b-holes">Holes in the bank</a></li>
+        <li><a class="sub" href="#p29b">Practice</a></li>
+        <li><a href="#frq">AP exam · StepTracker</a></li>
+        <li><a class="sub" href="#frq-what">What an FRQ is</a></li>
+        <li><a class="sub" href="#frq-task">The question</a></li>
+        <li><a class="sub" href="#frq-think">Remember less</a></li>
+        <li><a class="sub" href="#frq-steps">Solving it, step by step</a></li>
+        <li><a class="sub" href="#frq-full">The whole class</a></li>
+        <li><a class="sub" href="#frq-trace">The trace</a></li>
+        <li><a class="sub" href="#frq-wrong">Three wrong averages</a></li>
+        <li><a class="sub" href="#frq-exam">On the exam</a></li>
+        <li><a class="sub" href="#pfrq">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a href="#shop">Workshop · constructors</a></li>
+        <li><a class="sub" href="#shop-point">Point</a></li>
+        <li><a class="sub" href="#shop-rect">Rectangle</a></li>
+        <li><a class="sub" href="#shop-clock">Clock</a></li>
+        <li><a class="sub" href="#shop-product">Product</a></li>
+        <li><a class="sub" href="#shop-student">Student, again</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 29 · CONSTRUCTORS ============ -->
+      <section class="lesson" id="l29">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 29 · Lesson29.java + Height.java</span>
+          <h2 class="lesson-title">Constructors</h2>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>What a constructor is, how to write one, and what Java does, in order, when you write <code class="inl">new</code>.</li>
+            <li>Several constructors in one class, and how Java picks the right one.</li>
+            <li>The no-argument constructor, and the invisible one Java writes for you.</li>
+            <li>The difference between a constructor, a setter and a getter.</li>
+            <li>A <code class="inl">BankAccount</code> whose constructors do real work: split a name, check a balance, make a password.</li>
+            <li>A real AP exam question, <strong>StepTracker</strong> (2019), solved step by step.</li>
+          </ul>
+        </div>
+
+        <h3 id="l29-empty">Born empty</h3>
+
+        <p>Here is how we made a height last week:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson 8 style</span></div>
+          <pre class="code"><code>Height h1 = new Height();
+h1.setFeet(6);
+h1.setInches(9);
+h1.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 ft. 9 inc.</pre></div>
+        </div>
+
+        <p>It works, but think about what it means. Between the first line and the third, <code class="inl">h1</code> exists, but it is not really a height yet. It is 0 ft 0 in., a person with no height at all. If someone forgets the setter lines, nothing warns them. The object just stays like that. Last week's <code class="inl">Student</code> was worse: until <code class="inl">setName</code> was called, its name was <code class="inl">null</code>, and one call to <code class="inl">getName().length()</code> was enough to crash the program.</p>
+
+        <p>In real life, things are not made empty and filled in later. A baby gets its name on the birth certificate on day one. A new phone leaves the factory with a language, a time zone and a ringtone already set. A bank will not open an account until you give it your name. The object should be <strong>ready the moment it exists</strong>. That is what a constructor is for.</p>
+
+        <h3 id="l29-what">What is a constructor?</h3>
+
+        <p>A <strong>constructor</strong> is a special block of code inside a class that runs <strong>automatically, exactly once, when an object is made with <code class="inl">new</code></strong>. Its job is to give the new object's fields their first values, its <em>starting state</em>.</p>
+
+        <p>Three ideas in that sentence are worth reading again:</p>
+
+        <ul class="plain">
+          <li><strong>Automatically.</strong> You never call a constructor the way you call a method, as <code class="inl">h1.something()</code>. Writing <code class="inl">new Height(…)</code> <em>is</em> the call.</li>
+          <li><strong>Exactly once.</strong> Each object goes through its constructor one time, at its birth, and never again. Every object made later goes through it again, for itself.</li>
+          <li><strong>Its first values.</strong> A constructor sets things up. What happens to the object afterwards is the job of the other methods: setters, <code class="inl">add</code>, <code class="inl">deposit</code>…</li>
+        </ul>
+
+        <p>Here are the three constructors we added to <code class="inl">Height.java</code> in class. The comments above each one show the <code class="inl">new</code> that uses it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · the new part</span></div>
+          <pre class="code"><code>// public classname
+
+// h1 = new Height(6,9);
+public Height(int feet, int inc)
+{
+    this.feet = feet;
+    inches = inc;
+    simplify();
+
+}
+// h2 = new Height(12);
+public Height(int inc) {
+    inches = inc;
+    simplify();
+    System.out.println("Hi");
+}
+// h4 = new Height();
+public Height() // no argument constructor --- default constructor
+{
+    feet = 99;
+    inches = 11;
+
+}</code></pre>
+        </div>
+
+        <h3 id="l29-how">How to write one</h3>
+
+        <p>The comment at the top says it in two words: <code class="inl">// public classname</code>. A constructor looks like a method, with two differences that matter a lot:</p>
+
+        <div class="anat" role="img" aria-label="The parts of a constructor header: public, then the class name Height, then the parameter list, then the body. There is no return type.">
+          <div class="pc"><code>public</code><small>anyone may make one</small></div>
+          <div class="pc gap"><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><small>no return type, not even <b>void</b></small></div>
+          <div class="pc key"><code>Height</code><small>exactly the class name, capital H</small></div>
+          <div class="pc"><code>(int feet, int inc)</code><small>what you must give at <b>new</b></small></div>
+          <div class="pc"><code>{ … }</code><small>sets the fields</small></div>
+        </div>
+        <p class="fig-cap">The empty box is the point: where a method has <code class="inl">void</code> or <code class="inl">int</code>, a constructor has nothing.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A constructor has <strong>the same name as the class</strong>, spelled the same way, and <strong>no return type</strong>, not even <code class="inl">void</code>. In AP code it is always <code class="inl">public</code>. It may have parameters, and a class may have several constructors.</p>
+        </div>
+
+        <p>Why no return type? Because a constructor does not hand anything back. <code class="inl">new</code> makes the object; the constructor only fills it in. The finished object is what <code class="inl">new</code> gives back, and that is always an object of this class, so there is nothing to declare.</p>
+
+        <h3 id="l29-new">What happens at new</h3>
+
+        <p>Take the first line from the top of <code class="inl">Lesson29.java</code>: <code class="inl">Height h1 = new Height(6, 19);</code>. Java does four things, always in this order:</p>
+
+        <div class="flow" role="img" aria-label="Four steps of new Height(6, 19): make room with defaults 0 and 0; pick the constructor with two ints; run its body, giving 6 and 19 then simplify to 7 and 7; give the object to h1">
+          <div class="st"><small>1 · make room</small><b>feet 0 · inches 0</b><small>every field gets its default value first</small></div>
+          <div class="ar">pick<i>→</i>(int, int)</div>
+          <div class="st"><small>2 + 3 · run the body</small><b>feet 6 · inches 19</b><small>this.feet = feet; inches = inc;</small></div>
+          <div class="ar">simplify<i>→</i></div>
+          <div class="st"><small>still inside the constructor</small><b>feet 7 · inches 7</b><small>19 / 12 = 1 more foot, 19 % 12 = 7</small></div>
+          <div class="ar">4<i>→</i>h1</div>
+          <div class="st os"><b>h1</b><small>gets the finished object</small></div>
+        </div>
+        <p class="fig-cap">Step 2 is choosing which constructor to run (there are three). Nobody can use <code class="inl">h1</code> before step 4, so nobody ever sees the 19.</p>
+
+        <ol class="plain">
+          <li><strong>Make room.</strong> Java makes a new object with space for <code class="inl">feet</code> and <code class="inl">inches</code>. Every field starts with its default value, exactly as in Lesson 8: 0 for <code class="inl">int</code>, 0.0 for <code class="inl">double</code>, <code class="inl">null</code> for <code class="inl">String</code>.</li>
+          <li><strong>Pick the constructor</strong> whose parameters match the arguments: two <code class="inl">int</code>s → <code class="inl">Height(int feet, int inc)</code>.</li>
+          <li><strong>Run its body</strong>, with <code class="inl">feet = 6</code> and <code class="inl">inc = 19</code>. The body can call methods too: here it calls the private <code class="inl">simplify()</code>.</li>
+          <li><strong>Hand back the object.</strong> Only now does <code class="inl">h1</code> get it.</li>
+        </ol>
+
+        <p>You can watch it happen. The one-<code class="inl">int</code> constructor prints <code class="inl">"Hi"</code>, so we can see exactly when it runs:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>When does the constructor run?</span></div>
+          <pre class="code"><code>System.out.println("before");
+Height x = new Height(27);
+System.out.println("after");
+x.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>before
+Hi
+after
+2 ft. 3 inc.</pre></div>
+        </div>
+
+        <p>The <code class="inl">"Hi"</code> appears on the <code class="inl">new</code> line, before <code class="inl">"after"</code>, even though nobody called a method named <code class="inl">Hi</code> or anything else. That is what “automatically” means.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>At <code class="inl">new</code>: defaults first, then the constructor body, then the object goes to the variable. A field the constructor does not touch keeps its default.</p>
+        </div>
+
+        <h3 id="l29-two">Height(int feet, int inc)</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java</span></div>
+          <pre class="code"><code>public Height(int feet, int inc)
+{
+    this.feet = feet;
+    inches = inc;
+    simplify();
+}</code></pre>
+        </div>
+
+        <p>Two lines, two styles, both right, and for the same reason as last week:</p>
+
+        <ul class="plain">
+          <li>The first parameter is called <code class="inl">feet</code>, <em>the same name as the field</em>. Inside the constructor, plain <code class="inl">feet</code> means the parameter, so the field must be written <code class="inl">this.feet</code>. Here <code class="inl">this</code> is the brand-new object being built.</li>
+          <li>The second parameter is called <code class="inl">inc</code>, a different name, so <code class="inl">inches</code> can only mean the field. No <code class="inl">this</code> needed.</li>
+        </ul>
+
+        <p>The last line is the important one. The class made a promise last week: <em>inches are always 0 to 11</em>. A constructor that took 19 inches and stopped there would break that promise on day one. So it calls <code class="inl">simplify()</code>, the same private helper the setters use. A private method can be called from a constructor like from any other code inside the class.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · the first lines</span></div>
+          <pre class="code"><code>Height h1 = new Height(6,19);
+
+h1.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>7 ft. 7 inc.</pre></div>
+        </div>
+
+        <div class="objs">
+          <div class="obj is-this">
+            <div class="obj-h"><b>h1</b><span class="this-tag">this, during the constructor</span></div>
+            <div class="f new"><span class="k">feet</span><span class="v">0 → 6 → 7</span></div>
+            <div class="f new"><span class="k">inches</span><span class="v">0 → 19 → 7</span></div>
+          </div>
+        </div>
+
+        <p>The order of the arguments is the order of the parameters, and Java does not guess. <code class="inl">new Height(19, 6)</code> is not the same height:</p>
+
+        <div class="ex">
+          <pre class="code"><code>new Height(19, 6).printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>19 ft. 6 inc.</pre></div>
+        </div>
+
+        <p>The first number goes into the first parameter, every time. Both are <code class="inl">int</code>s, so Java cannot notice the mistake for you.</p>
+
+        <h3 id="l29-many">More than one constructor</h3>
+
+        <p><code class="inl">Height</code> has three constructors, all called <code class="inl">Height</code>. How does Java know which one you mean? It looks at the <strong>arguments</strong>, how many there are and of what types, and picks the constructor whose parameter list matches. Writing several constructors with different parameter lists is called <strong>overloading</strong>.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>You write</th><th>Arguments</th><th>Java runs</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">new Height(6, 19)</td><td>two ints</td><td class="mono">Height(int feet, int inc)</td><td class="mono">7 ft. 7 inc.</td></tr>
+              <tr><td class="mono">new Height(12)</td><td>one int</td><td class="mono">Height(int inc)</td><td>prints Hi · <span class="mono">1 ft. 0 inc.</span></td></tr>
+              <tr><td class="mono">new Height()</td><td>none</td><td class="mono">Height()</td><td class="mono">99 ft. 11 inc.</td></tr>
+              <tr><td class="mono">new Height(1, 2, 3)</td><td>three ints</td><td>none matches</td><td><span class="err">will not compile</span></td></tr>
+              <tr><td class="mono">new Height("6")</td><td>a String</td><td>none matches</td><td><span class="err">will not compile</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The one-<code class="inl">int</code> constructor takes only inches and leaves <code class="inl">feet</code> alone. Step 1 already made it 0, so <code class="inl">new Height(30)</code> is 0 + 30 inches → 2 ft 6 in. It does not need a line <code class="inl">feet = 0;</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · the Height part, uncommented</span></div>
+          <pre class="code"><code>Height h1 = new Height(6,19);
+
+h1.printHeight();
+
+Height h2 = new Height(12);
+
+Height h4 = new Height();
+
+h4.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>7 ft. 7 inc.
+Hi
+99 ft. 11 inc.</pre></div>
+        </div>
+
+        <p><code class="inl">h2</code> is never printed, but the <code class="inl">"Hi"</code> still appears. The constructor ran when <code class="inl">h2</code> was made, whether or not we use <code class="inl">h2</code> afterwards.</p>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>h1</b><span>Height(int, int)</span></div>
+            <div class="f"><span class="k">feet</span><span class="v">7</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">7</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>h2</b><span>Height(int)</span></div>
+            <div class="f"><span class="k">feet</span><span class="v">1</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">0</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>h4</b><span>Height()</span></div>
+            <div class="f"><span class="k">feet</span><span class="v">99</span></div>
+            <div class="f"><span class="k">inches</span><span class="v">11</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">One class, three ways in. Each object remembers nothing about which constructor made it, only the values it left behind.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A café sells the same coffee three ways. “A latte, large, oat milk” gets exactly that. “A latte” gets the café's usual size and milk. Just “a coffee” gets the house filter coffee. Same counter, different amounts of detail, and the barista knows which order it is by what you said. That is overloading.</p>
+        </div>
+
+        <h3 id="l29-noarg">The no-argument constructor</h3>
+
+        <p>The third constructor takes nothing:</p>
+
+        <div class="ex">
+          <pre class="code"><code>public Height() // no argument constructor --- default constructor
+{
+    feet = 99;
+    inches = 11;
+}</code></pre>
+        </div>
+
+        <p>It is used when someone writes <code class="inl">new Height()</code> and gives no information at all. Then the class itself decides what a “fresh” height looks like. In class we picked 99 ft 11 in. on purpose, so that you can <em>see</em> this constructor run. With the defaults, a fresh Height would look like 0 ft 0 in. and you could not tell the difference. In a real program you would choose a sensible starting value, the way a new phone starts at a sensible volume, not at zero and not at maximum.</p>
+
+        <p>That choice has a visible effect on last week's code. <code class="inl">new Height()</code> now means 99 ft 11 in., so a setter that is refused, or never called, leaves those values in place:</p>
+
+        <div class="ex">
+          <pre class="code"><code>Height g = new Height();
+g.setFeet(5);
+g.setInches(0);   // refused: setInches only takes values &gt; 0
+g.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 11 inc.</pre></div>
+        </div>
+
+        <h3 id="l29-free">The one Java writes for you</h3>
+
+        <p>Wait. Last week <code class="inl">Height</code> had <em>no</em> constructor at all, and <code class="inl">new Height()</code> still worked. So did <code class="inl">new Student()</code>. How?</p>
+
+        <p>Because <strong>if a class has no constructor at all, Java quietly gives it one</strong>: public, no parameters, an empty body. It does nothing, so every field keeps its default value. Strictly, the name <strong>default constructor</strong> belongs to <em>that</em> invisible one. Many people, and our comment in the file, also call any no-argument constructor “default”. On the exam, what matters is the rule:</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Java writes the free, empty constructor <strong>only when the class has no constructor at all</strong>. As soon as you write one constructor, any one, the free one is gone. If you still want <code class="inl">new X()</code> to work, you must write <code class="inl">X()</code> yourself, which is exactly what we did in Height.</p>
+        </div>
+
+        <p>Here is what happens without it. A small class with only a one-<code class="inl">int</code> constructor:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Box.java and a main that uses it</span></div>
+          <pre class="code"><code>public class Box {
+    private int w;
+    public Box(int w) { this.w = w; }
+}
+
+// in main:
+Box b = new Box();</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: constructor Box in class Box cannot be applied to given types;
+  required: int
+  found:    no arguments</em></pre></div>
+        </div>
+
+        <p>The compiler is saying: “the only way to make a Box is with one <code class="inl">int</code>, and you gave me nothing.” That is not always a mistake. Sometimes it is the whole idea. A bank account <em>should not</em> exist without a name, so a class can refuse <code class="inl">new BankAccount()</code> simply by not having a no-argument constructor.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Java did not invent the name or the idea. It took both from C++, where Bjarne Stroustrup had added constructors in the early 1980s, along with the rule that the constructor carries the class's name.</p>
+        </div>
+
+        <h3 id="l29-vs">Constructor, setter, getter</h3>
+
+        <p>Now the class has three kinds of code that all touch the fields, and they are easy to mix up. A constructor <em>looks</em> like a setter: it takes values and puts them into fields. The difference is <strong>when</strong> it runs and <strong>how many times</strong>.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th>Constructor</th><th>Setter</th><th>Getter</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Job</strong></td><td>give a new object its <em>first</em> values</td><td><em>change</em> one field later</td><td><em>read</em> one field</td></tr>
+              <tr><td><strong>When</strong></td><td>at <code class="inl">new</code>, automatically</td><td>whenever you call it</td><td>whenever you call it</td></tr>
+              <tr><td><strong>How many times</strong></td><td>once per object, never again</td><td>as often as you like</td><td>as often as you like</td></tr>
+              <tr><td><strong>Called how</strong></td><td class="mono">new Height(6, 9)</td><td class="mono">h.setFeet(5)</td><td class="mono">h.getFeet()</td></tr>
+              <tr><td><strong>Name</strong></td><td>the class name</td><td><code class="inl">set</code> + field</td><td><code class="inl">get</code> + field</td></tr>
+              <tr><td><strong>Return type</strong></td><td>none at all</td><td class="mono">void</td><td>the field's type</td></tr>
+              <tr><td><strong>Usually sets</strong></td><td>all the fields</td><td>one field</td><td>nothing, it only looks</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>All three in one piece of code:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Constructor, then getter, then setters</span></div>
+          <pre class="code"><code>Height k = new Height(6, 9);       // constructor: born as 6 ft 9
+System.out.println(k.getFeet());   // getter: only reads
+k.setInches(15);                   // setter: changes inches later
+k.printHeight();
+k.setFeet(5);                      // setter: changes feet later
+k.printHeight();
+System.out.println(k.getFeet() + " " + k.getInches());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6
+7 ft. 3 inc.
+5 ft. 3 inc.
+5 3</pre></div>
+        </div>
+
+        <p>Read it as a life story. The constructor is the birth: it happens once, and it is where the object gets everything it needs to start. The setters are the changes that come later: a new e-mail address, a new password, a few more inches. The getters are someone asking a question: they never change anything. You can call <code class="inl">setFeet</code> a hundred times. You can never call the constructor again on <code class="inl">k</code>; <code class="inl">k.Height(5)</code> does not even compile.</p>
+
+        <p>There is a second difference, and it is a sneaky one: <strong>the checks</strong>. <code class="inl">setFeet</code> refuses a value that is not above 0. The two-<code class="inl">int</code> constructor checks nothing:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The setter checks, the constructor does not</span></div>
+          <pre class="code"><code>Height h = new Height(6, 9);
+h.setFeet(-5);         // refused by the if in setFeet
+h.printHeight();
+
+Height g = new Height(-5, 3);   // nothing stops it
+g.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 ft. 9 inc.
+-5 ft. 3 inc.</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>A guard on the setter protects only the setter. If the constructor writes straight into the field, a bad value can still get in, through the front door, at birth. A class that checks its values must check them <em>in the constructor too</em>. The easiest way: let the constructor call the setter, so the check is written once. The <a href="#shop-product">Product</a> class in the workshop does exactly that.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Constructor: the first values, once, at <code class="inl">new</code>, no return type. Setter: a change, any time, any number of times, <code class="inl">void</code>. Getter: a look, any time, returns the value, changes nothing. Checks belong wherever a field gets written, and the constructor is one of those places.</p>
+        </div>
+
+        <h3 id="l29-mist">Mistakes that compile, and ones that don't</h3>
+
+        <p><strong>1 · A return type.</strong> Add <code class="inl">void</code> in front, and it is no longer a constructor. It is an ordinary <em>method</em> that happens to be called <code class="inl">Box</code>. Java allows that, so the class still compiles. The error comes later, where you try to use it:</p>
+
+        <div class="ex">
+          <pre class="code"><code>public class Box {
+    private int w;
+    public void Box(int w) { this.w = w; }   // a method, not a constructor!
+}
+
+// in main:
+Box b = new Box(5);</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: constructor Box in class Box cannot be applied to given types;
+  required: no arguments
+  found:    int</em></pre></div>
+        </div>
+
+        <p>Read the message: <em>required: no arguments</em>. The class now has <em>no</em> constructor, so Java gave it the free empty one, and that one takes nothing.</p>
+
+        <p><strong>2 · The same name, without <code class="inl">this</code>.</strong> This one compiles and runs, and gives the wrong answer:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Point.java</span></div>
+          <pre class="code"><code>public class Point {
+    private int x;
+    private int y;
+
+    public Point(int x, int y) {
+        x = x;
+        y = y;
+    }
+
+    public void print() {
+        System.out.println("(" + x + ", " + y + ")");
+    }
+}
+
+// in main:
+Point p = new Point(3, 4);
+p.print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>(0, 0)</pre></div>
+        </div>
+
+        <p>Exactly last week's <code class="inl">inches = inches;</code>, now in a constructor: both names mean the parameter, the fields keep their defaults. Fix: <code class="inl">this.x = x; this.y = y;</code>.</p>
+
+        <p><strong>3 · Calling the constructor like a method.</strong></p>
+
+        <div class="ex">
+          <pre class="code"><code>Height h = new Height(6, 9);
+h.Height(5);</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: cannot find symbol
+  symbol:   method Height(int)</em></pre></div>
+        </div>
+
+        <p>A constructor is not a method of the object. It only runs at <code class="inl">new</code>.</p>
+
+        <p><strong>4 · Arguments that match nothing.</strong> <code class="inl">new Height(1, 2, 3)</code> and <code class="inl">new Height("6")</code> both fail: the first because no constructor takes three <code class="inl">int</code>s, the second because <code class="inl">"6"</code> is a String, not an <code class="inl">int</code>.</p>
+
+        <div class="practice" id="p29a">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on constructors</h3>
+          <p class="practice-lede">Use Height.java exactly as it is in the file, with its three constructors.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>new Height(2, 30).printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>4 ft. 6 inc.</pre></div></div>
+                  <p>The constructor sets 2 and 30, then <code class="inl">simplify()</code>: 30 / 12 = 2 more feet, 30 % 12 = 6 inches.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(40);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Hi
+3 ft. 4 inc.</pre></div></div>
+                  <p>One <code class="inl">int</code> → <code class="inl">Height(int inc)</code>. It prints “Hi” while the object is being made. <code class="inl">feet</code> was 0 by default, plus 40 / 12 = 3; 40 % 12 = 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height();
+h.setFeet(5);
+h.setInches(0);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 11 inc.</pre></div></div>
+                  <p><code class="inl">new Height()</code> starts at 99 ft 11 in. <code class="inl">setFeet(5)</code> works, <code class="inl">setInches(0)</code> is refused, so the 11 from the constructor stays.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these lines compile?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(6, 9);     // A
+Height b = new Height(5, 5, 5);  // B
+Height c = new Height("6");      // C
+a.Height(3);                     // D
+Height e = new Height();         // E</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">A and E</span></p>
+                  <p>B: no constructor takes three ints. C: a String is not an int. D: a constructor cannot be called on an object that already exists.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A class has only this constructor. Name two separate things that are wrong with it.</p>
+              <div class="ex"><pre class="code"><code>public class Lamp {
+    private int watts;
+    public void lamp(int watts) {
+        watts = watts;
+    }
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>It is not a constructor at all: it has a return type (<code class="inl">void</code>), and its name is <code class="inl">lamp</code> with a small l, not the class name <code class="inl">Lamp</code>. Either one alone makes it a plain method. And even as a method, <code class="inl">watts = watts;</code> copies the parameter onto itself. It should be <code class="inl">this.watts = watts;</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Last week's <code class="inl">Student</code> class had no constructor, and <code class="inl">new Student()</code> worked. Someone adds this one constructor. What happens to every <code class="inl">new Student()</code> in <code class="inl">Lesson27.java</code>?</p>
+              <div class="ex"><pre class="code"><code>public Student(String name, int birthYear) {
+    this.name = name;
+    this.birthYear = birthYear;
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Compiler</span><pre><em>error: constructor Student in class Student cannot be applied to given types;
+  required: String,int</em></pre></div></div>
+                  <p>They all stop compiling. As soon as the class has one constructor, Java no longer writes the free empty one. To keep <code class="inl">new Student()</code>, write <code class="inl">public Student() { }</code> as well.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 29 · BANKACCOUNT ============ -->
+      <section class="lesson" id="l29b">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 29 · Lesson29.java + BankAccount.java</span>
+          <h2 class="lesson-title">BankAccount</h2>
+        </div>
+
+        <p>Height's constructors only copy numbers into fields. A real constructor often has more work to do. The person opening an account says their name once, as one piece of text, and maybe gives a first deposit. From that, the account must work out a first name and a last name, check the money, and make a password nobody typed. All of that happens in the constructor, before the account is handed over.</p>
+
+        <h3 id="l29b-plan">The plan in the comments</h3>
+
+        <p>Before any code, the file lists what the class needs. It is the “has / can do” question from Lesson 8, now with a third part: <em>how is it born?</em></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · the comments</span></div>
+          <pre class="code"><code>// firstname
+// surname
+
+// password - 4digits number -- random
+
+//  balance --
+
+// name, balance
+// name
+
+// changepassword
+// deposit
+// withdraw
+// transfer</code></pre>
+        </div>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>BankAccount</b><span>the design</span></div>
+            <div class="sec">has · private</div>
+            <div class="m priv">String firstName · lastName</div>
+            <div class="m priv">String password</div>
+            <div class="m priv">double balance</div>
+            <div class="sec">is born with · constructors</div>
+            <div class="m">BankAccount(String fullName, double balance)</div>
+            <div class="m">BankAccount(String fullName)</div>
+            <div class="sec">can do · public</div>
+            <div class="m">deposit · withdrawal · transfer</div>
+            <div class="m">resetPassword · print</div>
+            <div class="sec">helpers · private</div>
+            <div class="m priv">generatePassword() · isValid(String)</div>
+          </div>
+        </div>
+        <p class="fig-cap">Two ways to be born: with a starting balance, or without one. There is no <code class="inl">BankAccount()</code>, so an account with no name cannot be made at all.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · the fields</span></div>
+          <pre class="code"><code>public class BankAccount {
+
+    private String firstName;
+    private String lastName;
+
+    private String password;
+    private double balance;</code></pre>
+        </div>
+
+        <h3 id="l29b-name">Splitting the full name</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · the first constructor</span></div>
+          <pre class="code"><code>//"firstname lastname"
+public BankAccount(String fullName, double balance)
+{
+    int index = fullName.indexOf(" ");
+    if (index != -1)
+    {
+        firstName = fullName.substring(0, index);
+        lastName = fullName.substring(index + 1);
+    }
+    else
+    {
+        System.out.println("Invalid name");
+    }
+    if (balance &gt; 0)
+    {
+        this.balance = balance;
+    }
+    password = generatePassword();
+
+}</code></pre>
+        </div>
+
+        <p>The constructor receives <code class="inl">"Selin Kavas"</code> as one String. Lesson 6 has everything it needs: find the space, cut before it, cut after it.</p>
+
+        <div class="strip-wrap" data-word="Selin Kavas" data-marks="5" data-mlen="1"><span class="strip-cap">fullName.indexOf(" ") → 5 · substring(0, 5) → "Selin" · substring(6) → "Kavas"</span></div>
+
+        <ul class="plain">
+          <li><code class="inl">substring(0, index)</code> stops <em>before</em> the space: <code class="inl">"Selin"</code>.</li>
+          <li><code class="inl">substring(index + 1)</code> starts <em>after</em> the space and runs to the end: <code class="inl">"Kavas"</code>. Without the <code class="inl">+ 1</code> the last name would start with a space.</li>
+          <li><code class="inl">indexOf</code> finds the <em>first</em> space. For <code class="inl">"Ayşe Nur Kaya"</code> the first name is <code class="inl">"Ayşe"</code> and the last name is everything after: <code class="inl">"Nur Kaya"</code>.</li>
+          <li>No space at all → <code class="inl">-1</code> → the name is refused.</li>
+        </ul>
+
+        <p>Then the balance. The parameter is called <code class="inl">balance</code>, like the field, so the field is <code class="inl">this.balance</code>, last week's rule again, now inside a constructor. A balance that is not above 0 is simply not copied, and the field keeps its default, 0.0.</p>
+
+        <h3 id="l29b-pw">A password nobody typed</h3>
+
+        <p>The last line of the constructor is <code class="inl">password = generatePassword();</code>. A constructor can call the class's private helper methods, and this one returns a String of four random digits:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · generatePassword</span></div>
+          <pre class="code"><code>private String generatePassword()
+{
+//  int p = (int)(Math.random() * 9000) + 1000;
+//  return p + "";
+
+    String numbers = "0123456789";  // 0897
+    String pw = "";
+    for (int i = 0; i &lt; 4; i++) {
+        int r = (int)(Math.random() * numbers.length());
+        pw += numbers.substring(r, r + 1);
+    }
+    return pw;
+
+}</code></pre>
+        </div>
+
+        <p>This is Lesson 7's <code class="inl">randomWord</code>, with digits instead of letters: four times, pick a random index from 0 to 9 and add that one digit to the result.</p>
+
+        <p>The two commented-out lines are the first idea: a random <em>number</em> from 1000 to 9999, turned into a String. It works, but look at the comment next to <code class="inl">numbers</code>: <code class="inl">// 0897</code>. A four-digit PIN may start with 0. The number version can never make one, because 1000 is its smallest value, and the int <code class="inl">0897</code> is just 897. Building the password digit by digit, as a String, keeps the zero. That is why the password is a <code class="inl">String</code> field and not an <code class="inl">int</code>.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>When a bank sends a new card, the PIN in the envelope was made by the bank, not by you. You change it later at an ATM. Here, <code class="inl">generatePassword()</code> in the constructor is the envelope; <code class="inl">resetPassword</code> is the ATM.</p>
+        </div>
+
+        <h3 id="l29b-two">The second constructor</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java</span></div>
+          <pre class="code"><code>public BankAccount(String fullName)
+{
+    int index = fullName.indexOf(" ");
+    if (index != -1)
+    {
+        firstName = fullName.substring(0, index);
+        lastName = fullName.substring(index + 1);
+    }
+    else
+    {
+        System.out.println("Invalid name");
+    }
+//  balance = 0 ; (optional)
+    password = generatePassword();
+
+}</code></pre>
+        </div>
+
+        <p>For someone who opens an account with no money. The name part and the password are the same; the balance part is gone. The comment explains why: <code class="inl">balance = 0;</code> is <em>optional</em>, because step 1 of <code class="inl">new</code> already set it to 0.0. Writing it does no harm and makes the starting value easy to see; leaving it out is not a mistake.</p>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>acc1</b><span>("Selin Kavas", 5000)</span></div>
+            <div class="f new"><span class="k">firstName</span><span class="v">"Selin"</span></div>
+            <div class="f new"><span class="k">lastName</span><span class="v">"Kavas"</span></div>
+            <div class="f new"><span class="k">password</span><span class="v">"9089"</span></div>
+            <div class="f new"><span class="k">balance</span><span class="v">5000.0</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>acc2</b><span>("Ceyda Yazıcı")</span></div>
+            <div class="f new"><span class="k">firstName</span><span class="v">"Ceyda"</span></div>
+            <div class="f new"><span class="k">lastName</span><span class="v">"Yazıcı"</span></div>
+            <div class="f new"><span class="k">password</span><span class="v">"0330"</span></div>
+            <div class="f"><span class="k">balance</span><span class="v">0.0</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">Right after <code class="inl">new</code>. The passwords are from one real run; yours will be different every time.</p>
+
+        <h3 id="l29b-money">deposit and withdrawal</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java</span></div>
+          <pre class="code"><code>public void deposit(double amount)
+{
+    if (amount &gt; 0) {
+        balance += amount;
+        System.out.println("Current balance: " + balance);
+    }
+    else {
+        System.out.println("Amount must be positive!");
+    }
+}
+public void withdrawal(double amount)
+{
+    if (amount &gt; 0 &amp;&amp; amount &lt;= balance) {
+        balance -= amount;
+        System.out.println("Current balance: " + balance);
+    }
+    else {
+        System.out.println("Invalid amount!");
+    }
+}</code></pre>
+        </div>
+
+        <p>There is no <code class="inl">setBalance</code>. Nobody outside may just <em>set</em> a balance; money comes in and goes out, and every change is checked. <code class="inl">deposit</code> takes only positive amounts. <code class="inl">withdrawal</code> also checks that the money is really there: <code class="inl">amount &lt;= balance</code>. Both conditions must be true, hence <code class="inl">&amp;&amp;</code>.</p>
+
+        <h3 id="l29b-reset">resetPassword</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java</span></div>
+          <pre class="code"><code>public void resetPassword(String p) {
+
+    if (isValid(p)) {
+        password = p;
+    }
+    else {
+        System.out.println("Invalid Password");
+    }
+}
+private boolean isValid(String p) {
+    String numbers = "0123456789";
+    if (p.length() != 4) {
+        return false;
+    }
+    for (int i = 0; i &lt; p.length(); i++) {
+        if (numbers.indexOf(p.substring(i, i + 1)) == -1)
+        {
+            return false;
+        }
+    }
+    return true;
+}</code></pre>
+        </div>
+
+        <p>This is a setter with a check, like <code class="inl">setYear</code> in Student. The check is long enough to get its own private method. <code class="inl">isValid</code> uses Lesson 7's trick: to ask “is this character a digit?”, look it up in a String of all the digits. If <code class="inl">indexOf</code> says <code class="inl">-1</code>, it is not one of them, and the answer is <code class="inl">false</code> at once. Only a password that survives all four checks reaches <code class="inl">return true</code>.</p>
+
+        <h3 id="l29b-tr">transfer</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java</span></div>
+          <pre class="code"><code>public void transfer(BankAccount other, double amount, String password)
+{
+    if (amount &lt;= balance) {
+
+        if (amount &gt; 1000 &amp;&amp; this.password.equals(password)) {
+            balance -= amount;
+            other.balance += amount;
+        }
+        if (amount &gt; 1000 &amp;&amp; !this.password.equals(password))
+        {
+            System.out.println("Incorrect password!");
+        }
+        if (amount &lt;= 1000) {
+            balance -= amount;
+            other.balance += amount;
+        }
+
+    } else {
+        System.out.println("Invalid amount!");
+
+    }
+}</code></pre>
+        </div>
+
+        <p>The bank's rule: small transfers (up to 1000) go through without a password; larger ones need the right password. Two accounts are involved, the same picture as <code class="inl">h1.addHeight(h2)</code>: <code class="inl">this</code> is the account in front of the dot, the one that pays; <code class="inl">other</code> is the one in the parentheses, the one that receives.</p>
+
+        <p>Two names to keep apart. The <em>parameter</em> is called <code class="inl">password</code>, the password the user typed. The <em>field</em> is also called <code class="inl">password</code>, the real one. So the real one is <code class="inl">this.password</code>, and the check is <code class="inl">this.password.equals(password)</code>: <em>is the real password equal to the typed one?</em> And never <code class="inl">==</code> for Strings.</p>
+
+        <p><code class="inl">other.balance += amount;</code> writes a private field of a <em>different</em> object. It compiles for the same reason <code class="inl">other.feet</code> did last week: the line is inside the BankAccount class, and <code class="inl">private</code> is about where the code is written.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Situation</th><th>Example</th><th>What happens</th></tr></thead>
+            <tbody>
+              <tr><td>more than the balance</td><td class="mono">15000 from 5000</td><td>“Invalid amount!” · nothing moves</td></tr>
+              <tr><td>up to 1000</td><td class="mono">1000, any password</td><td>moves, no password needed, nothing printed</td></tr>
+              <tr><td>over 1000, right password</td><td class="mono">2000, "1905"</td><td>moves, nothing printed</td></tr>
+              <tr><td>over 1000, wrong password</td><td class="mono">2000, "1234"</td><td>“Incorrect password!” · nothing moves</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="objs">
+          <div class="obj is-this">
+            <div class="obj-h"><b>x</b><span class="this-tag">this · pays</span></div>
+            <div class="f"><span class="k">password</span><span class="v">"1905"</span></div>
+            <div class="f new"><span class="k">balance</span><span class="v">5000 − 2000 = 3000.0</span></div>
+          </div>
+          <div class="obj">
+            <div class="obj-h"><b>y</b><span>other · receives</span></div>
+            <div class="f new"><span class="k">balance</span><span class="v">0 + 2000 = 2000.0</span></div>
+          </div>
+        </div>
+        <p class="fig-cap"><code class="inl">x.transfer(y, 2000, "1905")</code>: over 1000 and the right password, so both balances change.</p>
+
+        <h3 id="l29b-run">Running Lesson29</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · main</span></div>
+          <pre class="code"><code>BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+
+acc1.print();
+BankAccount acc2 = new BankAccount("Ceyda Yazıcı");
+
+acc2.print();
+acc2.resetPassword("1237");
+acc2.deposit(100);
+acc2.deposit(800);
+acc1.resetPassword("1905");
+
+acc2.withdrawal(1500);
+
+acc1.print();
+acc2.print();
+
+acc1.transfer(acc2, 15000, "1905");
+acc1.print();
+acc2.print();</code></pre>
+          <div class="out"><span class="out-label">Console · one run; the first two passwords will differ</span><pre>**************
+Customer's name: Selin Kavas
+Customer's password: 9089
+Customer's balance: $5000.0
+**************
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 0330
+Customer's balance: $0.0
+**************
+Current balance: 100.0
+Current balance: 900.0
+Invalid amount!
+**************
+Customer's name: Selin Kavas
+Customer's password: 1905
+Customer's balance: $5000.0
+**************
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 1237
+Customer's balance: $900.0
+**************
+Invalid amount!
+**************
+Customer's name: Selin Kavas
+Customer's password: 1905
+Customer's balance: $5000.0
+**************
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 1237
+Customer's balance: $900.0
+**************</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li>Ceyda deposits 100 and 800, so 900. Then <code class="inl">withdrawal(1500)</code>: 1500 is more than 900, so it is refused.</li>
+          <li>Both passwords are replaced with ones the users chose. The random ones were only for day one.</li>
+          <li><code class="inl">acc1.transfer(acc2, 15000, "1905")</code>: the password is right, but 15000 is more than Selin has. The first <code class="inl">if</code> already fails, and the password is never even checked.</li>
+        </ul>
+
+        <h3 id="l29b-holes">Holes in the bank</h3>
+
+        <p>A bank class is a good place to practise thinking like an attacker: <em>what can I give this class that it does not expect?</em> Every one of these runs without an error message from Java.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A negative transfer steals money.</strong> <code class="inl">transfer</code> never checks that <code class="inl">amount</code> is positive. −500 is “not more than the balance” and “not over 1000”, so no password is needed:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount s = new BankAccount("Selin Kavas", 5000);
+BankAccount c = new BankAccount("Ceyda Yazıcı", 900);
+s.transfer(c, -500, "wrong");
+s.print();
+c.print();</code></pre>
+            <div class="out"><span class="out-label">Console · balances only</span><pre>Customer's balance: $5500.0
+Customer's balance: $400.0</pre></div>
+          </div>
+          <p><code class="inl">balance -= -500</code> <em>adds</em> 500 to Selin, and <code class="inl">other.balance += -500</code> takes 500 from Ceyda. Selin just took money from Ceyda's account without her password. One more condition, <code class="inl">amount &gt; 0</code>, closes the hole, the same check <code class="inl">deposit</code> and <code class="inl">withdrawal</code> already have.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A refused name leaves <code class="inl">null</code> behind.</strong> The constructor prints “Invalid name”, but it cannot stop the object from being made. A constructor has no way to say “no”. The object exists anyway, with both names still <code class="inl">null</code>:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount b = new BankAccount("Can", 100);
+b.print();</code></pre>
+            <div class="out"><span class="out-label">Console · without the password line</span><pre>Invalid name
+**************
+Customer's name: null null
+Customer's balance: $100.0
+**************</pre></div>
+          </div>
+          <p>Notice that the balance was still set: the name check and the balance check are separate <code class="inl">if</code>s.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>Silence.</strong> A negative starting balance, <code class="inl">new BankAccount("Ali Can", -50)</code>, becomes 0.0 without a word. And a transfer that <em>works</em> prints nothing at all. Only the failures talk. A user who sends money and sees an empty screen has no idea whether it happened.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A constructor can do real work: cut a String, check a value, call a private helper, before anyone gets the object. Two constructors give two ways to be born; no no-argument constructor means no account without a name. A constructor cannot refuse to make the object, so a bad argument leaves fields at their defaults. Every method that moves money needs every check, including <code class="inl">amount &gt; 0</code>.</p>
+        </div>
+
+        <div class="practice" id="p29b">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on BankAccount</h3>
+          <p class="practice-lede">Use BankAccount.java exactly as it is in the file. Password lines from <code class="inl">print()</code> are left out of the answers.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>BankAccount acc = new BankAccount("Ali Can", 300);
+acc.withdrawal(500);
+acc.deposit(-20);
+acc.deposit(200);
+acc.withdrawal(500);
+acc.withdrawal(0);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Invalid amount!
+Amount must be positive!
+Current balance: 500.0
+Current balance: 0.0
+Invalid amount!</pre></div></div>
+                  <p>500 &gt; 300 is refused; −20 is refused; 300 + 200 = 500; taking all 500 is allowed (<code class="inl">&lt;=</code>); 0 fails <code class="inl">amount &gt; 0</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p><code class="inl">x</code> was made with 5000 and its password reset to <code class="inl">"1905"</code>; <code class="inl">y</code> was made with only a name. What is printed, and what are the two balances at the end?</p>
+              <div class="ex"><pre class="code"><code>x.transfer(y, 2000, "1234");
+x.transfer(y, 2000, "1905");
+x.transfer(y, 1000, "abc");
+x.transfer(y, 3000, "1905");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Incorrect password!
+Invalid amount!</pre></div></div>
+                  <p><span class="outline">x 2000.0 · y 3000.0</span></p>
+                  <p>Wrong password, nothing moves. Right password, 2000 moves (x 3000, y 2000). 1000 needs no password, it moves (x 2000, y 3000). 3000 is more than x has left.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After <code class="inl">new BankAccount("Ayşe Nur Kaya", 50)</code>, what are <code class="inl">firstName</code> and <code class="inl">lastName</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">"Ayşe" · "Nur Kaya"</span></p>
+                  <p><code class="inl">indexOf(" ")</code> finds the <em>first</em> space, at 4. Everything after it is the last name, spaces included. <code class="inl">print()</code> still shows “Ayşe Nur Kaya”.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>BankAccount acc = new BankAccount("Selin Kavas", 100);
+acc.resetPassword("12a4");
+acc.resetPassword("12345");
+acc.resetPassword("0042");</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Invalid Password
+Invalid Password</pre></div></div>
+                  <p><code class="inl">"12a4"</code>: the <code class="inl">"a"</code> is not in <code class="inl">"0123456789"</code>. <code class="inl">"12345"</code>: five characters. <code class="inl">"0042"</code> is valid and silently becomes the new password, leading zeros and all.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why is <code class="inl">password</code> a <code class="inl">String</code> and not an <code class="inl">int</code>? What would the commented-out version, <code class="inl">(int)(Math.random() * 9000) + 1000</code>, never produce?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>A PIN like <code class="inl">0897</code> starts with 0. As an <code class="inl">int</code> it would be 897, only three digits. The commented-out version gives numbers from 1000 to 9999, so it can never make a PIN that starts with 0. A tenth of all four-digit PINs would be missing.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Rewrite the first line of <code class="inl">transfer</code> so that the negative-amount hole is closed.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>if (amount &gt; 0 &amp;&amp; amount &lt;= balance) {</code></pre></div>
+                  <p>The same two conditions <code class="inl">withdrawal</code> already uses. Now −500 goes to the <code class="inl">else</code> and prints “Invalid amount!”.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ FRQ · STEPTRACKER ============ -->
+      <section class="lesson" id="frq">
+        <div class="lesson-head">
+          <span class="lesson-no">AP exam · 2019 free-response, question 2</span>
+          <h2 class="lesson-title">StepTracker</h2>
+        </div>
+
+        <p>Everything so far, fields, a constructor, methods that change the object and methods that only report, comes together in one of the classic AP exam questions. We solved it in class. Here it is again, slowly, with every decision explained.</p>
+
+        <h3 id="frq-what">What an FRQ is</h3>
+
+        <p>The AP CS A exam has two halves. The first is multiple choice. The second is <strong>free response</strong>: a few questions where you write real Java code by hand, with no computer and no compiler to warn you. These are the <strong>FRQ</strong>s, <em>free-response questions</em>.</p>
+
+        <p>One of them is always a <strong>class-writing</strong> question. You get a description of what a class should do, sometimes with a table of example calls, and you write the <em>whole class</em>: the header, the private fields, the constructor, every method. The fields are not given to you. Choosing them is part of the question. StepTracker, from 2019, is a perfect example: short, and every point in it is about a decision.</p>
+
+        <h3 id="frq-task">The question</h3>
+
+        <div class="note note--task">
+          <span class="tag">Problem</span>
+          <p>A fitness tracker counts how many steps a person takes each day. Write a class <code class="inl">StepTracker</code> that keeps track of these days.</p>
+          <ul class="plain">
+            <li>Its <strong>constructor</strong> takes one <code class="inl">int</code>: the minimum number of steps a day needs to count as an <strong>active day</strong>.</li>
+            <li><code class="inl">addDailySteps(int steps)</code> records the steps of one more day.</li>
+            <li><code class="inl">activeDays()</code> returns how many of the recorded days were active, that is, had <em>at least</em> the minimum.</li>
+            <li><code class="inl">averageSteps()</code> returns the average number of steps per day as a <code class="inl">double</code>. If no day has been recorded yet, it returns <code class="inl">0.0</code>.</li>
+          </ul>
+        </div>
+
+        <p>The question shows the class at work with a table like this one. Read it as a test you have to pass:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Call</th><th>Returns</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">StepTracker tr = new StepTracker(10000);</td><td></td><td>active means 10000 or more</td></tr>
+              <tr><td class="mono">tr.activeDays();</td><td class="mono">0</td><td>no days yet</td></tr>
+              <tr><td class="mono">tr.averageSteps();</td><td class="mono">0.0</td><td>no days yet, so 0.0, not a crash</td></tr>
+              <tr><td class="mono">tr.addDailySteps(9000);</td><td></td><td>not active</td></tr>
+              <tr><td class="mono">tr.addDailySteps(5000);</td><td></td><td>not active</td></tr>
+              <tr><td class="mono">tr.activeDays();</td><td class="mono">0</td><td></td></tr>
+              <tr><td class="mono">tr.averageSteps();</td><td class="mono">7000.0</td><td>(9000 + 5000) / 2</td></tr>
+              <tr><td class="mono">tr.addDailySteps(13000);</td><td></td><td>active</td></tr>
+              <tr><td class="mono">tr.activeDays();</td><td class="mono">1</td><td></td></tr>
+              <tr><td class="mono">tr.averageSteps();</td><td class="mono">9000.0</td><td>27000 / 3</td></tr>
+              <tr><td class="mono">tr.addDailySteps(23000);</td><td></td><td>active</td></tr>
+              <tr><td class="mono">tr.activeDays();</td><td class="mono">2</td><td></td></tr>
+              <tr><td class="mono">tr.averageSteps();</td><td class="mono">12500.0</td><td>50000 / 4</td></tr>
+              <tr><td class="mono">tr.addDailySteps(1111);</td><td></td><td>not active</td></tr>
+              <tr><td class="mono">tr.activeDays();</td><td class="mono">2</td><td></td></tr>
+              <tr><td class="mono">tr.averageSteps();</td><td class="mono">10222.2</td><td>51111 / 5, not a whole number</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="frq-think">Remember less</h3>
+
+        <p>The first idea most people have: <em>keep every day</em>. Day 1 was 9000, day 2 was 5000… But how? We have no way to store a list of numbers whose length we do not know. And here is the good news: <strong>we do not need to</strong>.</p>
+
+        <p>Ask the class's two questions from Lesson 8, but about what the <em>methods</em> will need:</p>
+
+        <ul class="plain">
+          <li><code class="inl">activeDays()</code> needs <strong>how many</strong> days were active. Not which ones. One counter.</li>
+          <li><code class="inl">averageSteps()</code> needs <strong>the total</strong> of all steps and <strong>how many</strong> days there were. Average = total ÷ days. Two more numbers.</li>
+          <li>To decide whether a new day is active, <code class="inl">addDailySteps</code> needs <strong>the minimum</strong>. It is given once, to the constructor, so it must be kept in a field.</li>
+        </ul>
+
+        <div class="objs">
+          <div class="obj">
+            <div class="obj-h"><b>a notebook</b><span>what we do NOT keep</span></div>
+            <div class="f bad"><span class="k">day 1</span><span class="v">9000</span></div>
+            <div class="f bad"><span class="k">day 2</span><span class="v">5000</span></div>
+            <div class="f bad"><span class="k">day 3</span><span class="v">13000</span></div>
+            <div class="f bad"><span class="k">…</span><span class="v">…</span></div>
+          </div>
+          <div class="obj is-this">
+            <div class="obj-h"><b>tr</b><span class="this-tag">four ints are enough</span></div>
+            <div class="f"><span class="k">minSteps</span><span class="v">10000</span></div>
+            <div class="f new"><span class="k">totalSteps</span><span class="v">27000</span></div>
+            <div class="f new"><span class="k">days</span><span class="v">3</span></div>
+            <div class="f new"><span class="k">activeCount</span><span class="v">1</span></div>
+          </div>
+        </div>
+        <p class="fig-cap">After three days. The class never needs to know that day 2 was 5000. It only needs the running totals: the accumulators from Lesson 3.</p>
+
+        <p>This is the same idea as the accumulator loops from Lesson 3, where <code class="inl">sum += i</code> never remembered the earlier values of <code class="inl">i</code>, only their total. The difference: the “loop” is now spread over many method calls, so the accumulators must live in <strong>fields</strong>, which last as long as the object, not in local variables, which disappear at the end of each call.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Before writing a class, list what each method will need to <em>know</em> to give its answer. Whatever must be remembered from one call to the next becomes a private field. Keep the smallest set that works.</p>
+        </div>
+
+        <h3 id="frq-steps">Solving it, step by step</h3>
+
+        <p><strong>Step 1 · The header and the fields.</strong> The class is public; every field is private. That is the first thing graders look for.</p>
+
+        <div class="ex">
+          <pre class="code"><code>public class StepTracker {
+    private int minSteps;
+    private int totalSteps;
+    private int days;
+    private int activeCount;</code></pre>
+        </div>
+
+        <p>Why <code class="inl">activeCount</code> and not <code class="inl">activeDays</code>? Java would allow a field and a method with the same name, but reading <code class="inl">return activeDays;</code> inside <code class="inl">activeDays()</code> is confusing. A different name keeps it clear.</p>
+
+        <p><strong>Step 2 · The constructor.</strong> The question says it takes one <code class="inl">int</code>, the minimum. The parameter has the same name as the field, so: <code class="inl">this</code>.</p>
+
+        <div class="ex">
+          <pre class="code"><code>    public StepTracker(int minSteps) {
+        this.minSteps = minSteps;
+    }</code></pre>
+        </div>
+
+        <p>What about the other three fields? They must start at 0, and step 1 of <code class="inl">new</code> already did that. You <em>may</em> write <code class="inl">totalSteps = 0;</code> and so on. It is a good habit on the exam, since it shows the grader that you thought about it. It is not required.</p>
+
+        <p><strong>Step 3 · <code class="inl">addDailySteps</code>.</strong> One more day has arrived. What changes? The total grows by <code class="inl">steps</code>, the day count by one, and, only if the day was active, the active counter by one.</p>
+
+        <div class="ex">
+          <pre class="code"><code>    public void addDailySteps(int steps) {
+        totalSteps += steps;
+        days++;
+        if (steps &gt;= minSteps) {
+            activeCount++;
+        }
+    }</code></pre>
+        </div>
+
+        <p>Notice <code class="inl">&gt;=</code>. The question says <em>at least</em> the minimum. A day of exactly 10000 is active. Writing <code class="inl">&gt;</code> is a classic mistake on this question, and it costs points.</p>
+
+        <p><strong>Step 4 · <code class="inl">activeDays</code>.</strong> All the counting already happened in <code class="inl">addDailySteps</code>. This method only reports, like a getter:</p>
+
+        <div class="ex">
+          <pre class="code"><code>    public int activeDays() {
+        return activeCount;
+    }</code></pre>
+        </div>
+
+        <p><strong>Step 5 · <code class="inl">averageSteps</code>.</strong> Two traps, both from earlier lessons. First, no days: dividing by <code class="inl">days</code> when it is 0 must not happen, so that case returns <code class="inl">0.0</code> before any division. Second, <code class="inl">totalSteps</code> and <code class="inl">days</code> are both <code class="inl">int</code>, and Lesson 1 warned us what <code class="inl">int / int</code> does. Cast <em>before</em> dividing:</p>
+
+        <div class="ex">
+          <pre class="code"><code>    public double averageSteps() {
+        if (days == 0) {
+            return 0.0;
+        }
+        return (double) totalSteps / days;
+    }
+}</code></pre>
+        </div>
+
+        <h3 id="frq-full">The whole class</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>StepTracker.java</span></div>
+          <pre class="code"><code>public class StepTracker {
+    private int minSteps;
+    private int totalSteps;
+    private int days;
+    private int activeCount;
+
+    public StepTracker(int minSteps) {
+        this.minSteps = minSteps;
+    }
+
+    public void addDailySteps(int steps) {
+        totalSteps += steps;
+        days++;
+        if (steps &gt;= minSteps) {
+            activeCount++;
+        }
+    }
+
+    public int activeDays() {
+        return activeCount;
+    }
+
+    public double averageSteps() {
+        if (days == 0) {
+            return 0.0;
+        }
+        return (double) totalSteps / days;
+    }
+}</code></pre>
+        </div>
+
+        <p>And the test, the question's table turned into a <code class="inl">main</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Testing it</span></div>
+          <pre class="code"><code>StepTracker tr = new StepTracker(10000);
+System.out.println(tr.activeDays() + " " + tr.averageSteps());
+tr.addDailySteps(9000);
+tr.addDailySteps(5000);
+System.out.println(tr.activeDays() + " " + tr.averageSteps());
+tr.addDailySteps(13000);
+System.out.println(tr.activeDays() + " " + tr.averageSteps());
+tr.addDailySteps(23000);
+System.out.println(tr.activeDays() + " " + tr.averageSteps());
+tr.addDailySteps(1111);
+System.out.println(tr.activeDays() + " " + tr.averageSteps());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0 0.0
+0 7000.0
+1 9000.0
+2 12500.0
+2 10222.2</pre></div>
+        </div>
+
+        <p>Every line matches the table.</p>
+
+        <h3 id="frq-trace">The trace</h3>
+
+        <p>What the four fields hold after each call:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>After</th><th class="mono">minSteps</th><th class="mono">totalSteps</th><th class="mono">days</th><th class="mono">activeCount</th><th class="mono">averageSteps()</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">new StepTracker(10000)</td><td class="mono">10000</td><td class="mono">0</td><td class="mono">0</td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">addDailySteps(9000)</td><td class="mono">10000</td><td class="mono">9000</td><td class="mono">1</td><td class="mono">0</td><td class="mono">9000.0</td></tr>
+              <tr><td class="mono">addDailySteps(5000)</td><td class="mono">10000</td><td class="mono">14000</td><td class="mono">2</td><td class="mono">0</td><td class="mono">7000.0</td></tr>
+              <tr><td class="mono">addDailySteps(13000)</td><td class="mono">10000</td><td class="mono">27000</td><td class="mono">3</td><td class="mono">1</td><td class="mono">9000.0</td></tr>
+              <tr><td class="mono">addDailySteps(23000)</td><td class="mono">10000</td><td class="mono">50000</td><td class="mono">4</td><td class="mono">2</td><td class="mono">12500.0</td></tr>
+              <tr><td class="mono">addDailySteps(1111)</td><td class="mono">10000</td><td class="mono">51111</td><td class="mono">5</td><td class="mono">2</td><td class="mono">10222.2</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><code class="inl">minSteps</code> never changes: the constructor set it once, and no method writes it again. The other three only ever grow.</p>
+
+        <h3 id="frq-wrong">Three wrong averages</h3>
+
+        <p>The last method is where most of the lost points are. With the numbers from the end of the table, <code class="inl">totalSteps = 51111</code> and <code class="inl">days = 5</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Four ways to write the division</span></div>
+          <pre class="code"><code>System.out.println(totalSteps / days);
+double a = totalSteps / days;
+System.out.println(a);
+System.out.println((double) (totalSteps / days));
+System.out.println((double) totalSteps / days);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>10222
+10222.0
+10222.0
+10222.2</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><strong>Wrong 1</strong>, <code class="inl">totalSteps / days</code>: <code class="inl">int / int</code> throws the .2 away. Returned from a <code class="inl">double</code> method, Java quietly widens 10222 to 10222.0, so it compiles and is still wrong.</li>
+          <li><strong>Wrong 2</strong>, storing in a <code class="inl">double</code>: too late. The division already happened in <code class="inl">int</code>.</li>
+          <li><strong>Wrong 3</strong>, <code class="inl">(double) (totalSteps / days)</code>: the parentheses make Java divide first and cast afterwards. Lesson 1's <code class="inl">(double)(x / y)</code> trap.</li>
+          <li><strong>Right</strong>, <code class="inl">(double) totalSteps / days</code>: the cast happens first, so it is <code class="inl">double / int</code>, a real division.</li>
+        </ul>
+
+        <p>And the zero check? Without it, a brand-new tracker does this:</p>
+
+        <div class="ex">
+          <pre class="code"><code>int total = 0;
+int days = 0;
+System.out.println((double) total / days);
+System.out.println(total / days);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>NaN
+<em>Exception in thread "main" java.lang.ArithmeticException: / by zero</em></pre></div>
+        </div>
+
+        <p>With the cast, 0.0 / 0 is <code class="inl">NaN</code>, “not a number”, not the 0.0 the question asks for. Without the cast, it is Lesson 1's crash. The <code class="inl">if (days == 0)</code> must come <em>before</em> the division.</p>
+
+        <h3 id="frq-exam">On the exam</h3>
+
+        <p>Graders mark a class-writing question piece by piece. Most of the points are for things that look small:</p>
+
+        <ul class="plain">
+          <li><strong>The header</strong>, <code class="inl">public class StepTracker</code>, and every method header <em>exactly</em> as described: same name, same parameter type, same return type. <code class="inl">averageSteps</code> returns <code class="inl">double</code>, <code class="inl">activeDays</code> returns <code class="inl">int</code>.</li>
+          <li><strong>Private fields</strong>, all of them. One public field can cost a point.</li>
+          <li><strong>The constructor</strong> saves its parameter in a field. A constructor that does nothing with the minimum makes <code class="inl">addDailySteps</code> impossible to write correctly.</li>
+          <li><strong>Return, don't print.</strong> <code class="inl">activeDays()</code> must <code class="inl">return</code> the number. <code class="inl">System.out.println(activeCount);</code> in its place is wrong, even though it shows the right number on the screen.</li>
+          <li><strong>The details</strong>: <code class="inl">&gt;=</code>, the cast, the zero check.</li>
+        </ul>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A class-writing FRQ is “has, is born with, can do” on paper. Choose fields by asking what each method needs to know; usually a few running totals are enough. The constructor stores what it is given; the other fields start at 0. Methods that <em>change</em> the object do the work; methods that <em>report</em> just return. Cast before dividing, and check for zero before that.</p>
+        </div>
+
+        <div class="practice" id="pfrq">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on StepTracker</h3>
+          <p class="practice-lede">Use the class exactly as written above.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>StepTracker t = new StepTracker(5000);
+t.addDailySteps(7000);
+t.addDailySteps(3000);
+t.addDailySteps(5000);
+System.out.println(t.activeDays() + " " + t.averageSteps());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>2 5000.0</pre></div></div>
+                  <p>7000 and 5000 are at least 5000, so 2 active days. 15000 / 3 = 5000.0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>StepTracker q = new StepTracker(10000);
+q.addDailySteps(10000);
+q.addDailySteps(9999);
+System.out.println(q.activeDays() + " " + q.averageSteps());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>1 9999.5</pre></div></div>
+                  <p>Exactly 10000 is active because of <code class="inl">&gt;=</code>; 9999 is not. 19999 / 2 = 9999.5, which only the cast keeps.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Two trackers, the same day. What is printed?</p>
+              <div class="ex"><pre class="code"><code>StepTracker a = new StepTracker(10000);
+StepTracker b = new StepTracker(5000);
+a.addDailySteps(7000);
+b.addDailySteps(7000);
+System.out.println(a.activeDays() + " " + b.activeDays());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0 1</pre></div></div>
+                  <p>Each object has its own <code class="inl">minSteps</code>, given by its own constructor. The same 7000 steps is a lazy day for one and an active day for the other.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A student writes <code class="inl">activeDays()</code> so that it counts the active days at the moment it is called. Why can't that work with the four fields we chose?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Because by then the steps of each single day are gone. Only their total is left. Whether a day was active can only be decided at the moment that day's steps arrive, in <code class="inl">addDailySteps</code>. So the counting must happen there.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A student writes the last line of <code class="inl">averageSteps</code> as <code class="inl">return totalSteps / days;</code>. It compiles. What does the method return at the end of the question's table, and why does it compile at all?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">10222.0</span></p>
+                  <p><code class="inl">51111 / 5</code> is integer division, 10222. Returning an <code class="inl">int</code> from a <code class="inl">double</code> method is allowed: Java widens it to 10222.0. Compiling does not mean it is right; the table says 10222.2.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Add a method <code class="inl">bestDay()</code> that returns the most steps on any single day so far (0 if there are no days). What must change in the class?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>private int maxSteps;   // a new field, starts at 0
+
+// in addDailySteps:
+if (steps &gt; maxSteps) {
+    maxSteps = steps;
+}
+
+public int bestDay() {
+    return maxSteps;
+}</code></pre></div>
+                  <p>Lesson 3's max-so-far, kept in a field. For the question's table, <code class="inl">bestDay()</code> returns 23000. Same lesson as before: a method that reports needs a field that was updated while the data arrived.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ IN REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">Where Constructors Live</h2>
+        </div>
+
+        <p>Every app makes objects all day long, and every one of them goes through a constructor. A useful way to see it: <strong>what must you give to get one?</strong> Whatever you <em>must</em> give becomes a constructor parameter. Whatever can be changed later becomes a setter.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Real thing</th><th>Constructor: given at the start</th><th>Made by the constructor itself</th><th>Setters: changed later</th></tr></thead>
+            <tbody>
+              <tr><td>Signing up for an app</td><td>e-mail, password</td><td>user number, sign-up date</td><td>profile photo, bio</td></tr>
+              <tr><td>A bank account</td><td>name, maybe a first deposit</td><td>account number, first PIN</td><td>PIN, address</td></tr>
+              <tr><td>A new phone</td><td>nothing: no-argument</td><td>factory language, volume, ringtone</td><td>all of them</td></tr>
+              <tr><td>A school report card</td><td>student, term</td><td>empty grade boxes</td><td>grades, one by one</td></tr>
+              <tr><td>A fitness band</td><td>daily step goal</td><td>step count 0, days 0</td><td>nothing; steps are <em>added</em></td></tr>
+              <tr><td>An online order</td><td>items, address</td><td>order number, time</td><td>status: packed, shipped…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The middle column is the interesting one. An order number is never typed by the customer. The shop's code makes it inside the constructor, exactly like <code class="inl">generatePassword()</code>. And the last row of the table explains why the constructor can refuse to exist without information: an order with no address is useless. That is why a class with no no-argument constructor is a <em>design decision</em>, not a missing piece.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>When a form on a website marks some boxes with a red star (<em>required</em>) and leaves others optional, you are looking at a constructor and its setters. The starred boxes are the parameters; without them, the object is not made. The rest can be filled in later from the “edit profile” page.</p>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop</span>
+          <h2 class="lesson-title">Five Classes, Five Constructors</h2>
+        </div>
+
+        <p>Short classes, each showing one thing about constructors. Every output below was run.</p>
+
+        <h3 id="shop-point">Point · the missing this</h3>
+
+        <p>Already seen in <a href="#l29-mist">the mistakes</a>: <code class="inl">x = x;</code> in a constructor leaves the object at <code class="inl">(0, 0)</code>. The fixed version:</p>
+
+        <div class="ex">
+          <pre class="code"><code>public Point(int x, int y) {
+    this.x = x;
+    this.y = y;
+}</code></pre>
+        </div>
+
+        <h3 id="shop-rect">Rectangle · two constructors, one of them a square</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Rectangle.java</span></div>
+          <pre class="code"><code>public class Rectangle {
+    private int width;
+    private int height;
+
+    public Rectangle(int w, int h) {
+        width = w;
+        height = h;
+    }
+
+    public Rectangle(int side) {
+        width = side;
+        height = side;
+    }
+
+    public int area() {
+        return width * height;
+    }
+
+    public void print() {
+        System.out.println(width + " x " + height + " = " + area());
+    }
+}
+
+// in main:
+new Rectangle(3, 5).print();
+new Rectangle(4).print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3 x 5 = 15
+4 x 4 = 16</pre></div>
+        </div>
+
+        <p>The one-<code class="inl">int</code> constructor is a shortcut for a common case: a square is a rectangle whose two sides are the same. The person making one does not have to repeat the number.</p>
+
+        <h3 id="shop-clock">Clock · a constructor that tidies up</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Clock.java</span></div>
+          <pre class="code"><code>public class Clock {
+    private int hours;
+    private int minutes;
+
+    public Clock(int h, int m) {
+        hours = h;
+        minutes = m;
+        simplify();
+    }
+
+    public Clock(int m) {
+        minutes = m;
+        simplify();
+    }
+
+    private void simplify() {
+        hours += minutes / 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+    }
+
+    public void print() {
+        System.out.println(hours + ":" + minutes);
+    }
+}
+
+// in main:
+new Clock(9, 75).print();
+new Clock(150).print();
+new Clock(23, 90).print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>10:15
+2:30
+0:30</pre></div>
+        </div>
+
+        <p>Height with 60 instead of 12, plus one more rule: after 23 comes 0. <code class="inl">23:90</code> is 24:30, and <code class="inl">24 % 24</code> is 0. Like Height, every constructor ends with <code class="inl">simplify()</code>, so no Clock is ever born untidy.</p>
+
+        <h3 id="shop-product">Product · the constructor calls the setter</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Product.java</span></div>
+          <pre class="code"><code>public class Product {
+    private String name;
+    private int priceKurus;
+
+    public Product(String name, int priceKurus) {
+        this.name = name;
+        setPrice(priceKurus);
+    }
+
+    public void setPrice(int p) {
+        if (p &gt; 0) {
+            priceKurus = p;
+        } else {
+            System.out.println("Invalid price!");
+        }
+    }
+
+    public void print() {
+        System.out.println(name + ": " + priceKurus / 100 + " TL " + priceKurus % 100 + " kr");
+    }
+}
+
+// in main:
+new Product("Simit", 1750).print();
+new Product("Ayran", -5).print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Simit: 17 TL 50 kr
+Invalid price!
+Ayran: 0 TL 0 kr</pre></div>
+        </div>
+
+        <p>This is the answer to the Height Watch-out. Instead of writing straight into the field and skipping the check, the constructor <em>calls the setter</em>. The rule “a price must be positive” is written once, in <code class="inl">setPrice</code>, and both ways in, birth and later changes, go through it. The Ayran shows the constructor's limit again: it can refuse the price, but not the object, so the price stays 0.</p>
+
+        <h3 id="shop-student">Student, again · born with a name</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>A Student that is born with a name and a year</span></div>
+          <pre class="code"><code>public class Student {
+    private String name;
+    private int birthYear;
+    private double average;
+
+    public Student(String name, int birthYear) {
+        this.name = name;
+        this.birthYear = birthYear;
+    }
+
+    public int calculateAge() {
+        return 2026 - birthYear;
+    }
+
+    public void print() {
+        System.out.println(name + ", " + calculateAge() + ", " + average);
+    }
+}
+
+// in main:
+Student s = new Student("Selin", 2010);
+s.print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Selin, 16, 0.0</pre></div>
+        </div>
+
+        <p>Last week's <code class="inl">Student</code> could exist with a <code class="inl">null</code> name. This one cannot: the only way to make it requires a name. The average is not a parameter. A new student has no grades yet, so it starts at its default, 0.0, and a setter can fill it in later.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Several constructors give shortcuts for common cases (a square). A constructor that ends with <code class="inl">simplify()</code> never makes an untidy object. A constructor that calls the setter gets the setter's check for free. And the parameter list decides what an object cannot be born without.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+
+          <ol class="qs">
+            <li>
+              <p>What does <code class="inl">new Clock(150).print();</code> print, and which constructor runs?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>2:30</pre></div></div>
+                  <p>One int → <code class="inl">Clock(int m)</code>. Hours start at 0; 150 / 60 = 2, 150 % 60 = 30.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">new Product("Su", 900).print();</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Su: 9 TL 0 kr</pre></div></div>
+                  <p>900 / 100 = 9, 900 % 100 = 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which Rectangle constructor runs for <code class="inl">new Rectangle(4)</code>, and what is the area?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Rectangle(int side) · 16</span></p>
+                  <p>One argument matches only the one-parameter constructor; width and height both become 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>With the workshop's Student class, does <code class="inl">Student t = new Student();</code> compile? Why?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>No. The class has a constructor, so Java gives it no free empty one, and the only constructor needs a <code class="inl">String</code> and an <code class="inl">int</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Rewrite Height's two-<code class="inl">int</code> constructor so that <code class="inl">new Height(-5, 3)</code> can no longer make a negative height. Use what Height already has.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public Height(int feet, int inc)
+{
+    setFeet(feet);
+    setInches(inc);
+}</code></pre></div>
+                  <p>The setters already refuse values that are not above 0, and <code class="inl">setInches</code> already calls <code class="inl">simplify()</code>. The check is reused, not copied. Now <code class="inl">new Height(-5, 3)</code> gives <code class="inl">0 ft. 3 inc.</code>, and <code class="inl">new Height(6, 19)</code> is still <code class="inl">7 ft. 7 inc.</code></p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write the constructors for a class <code class="inl">Counter</code> with one field, <code class="inl">private int count;</code>, so that <code class="inl">new Counter()</code> starts at 0 and <code class="inl">new Counter(10)</code> starts at 10.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public Counter() {
+    count = 0;
+}
+
+public Counter(int start) {
+    count = start;
+}</code></pre></div>
+                  <p>The <code class="inl">count = 0;</code> line is optional, since the default is already 0. But <code class="inl">Counter()</code> itself is <em>not</em> optional: once <code class="inl">Counter(int start)</code> exists, Java no longer writes the empty one for you.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>constructor</strong></td><td></td><td>code with the class's name and no return type that runs once, at <code class="inl">new</code></td><td class="mono">Height(int feet, int inc)</td></tr>
+              <tr><td><strong>parameter</strong></td><td></td><td>the variable in the constructor's header</td><td class="mono">int feet, int inc</td></tr>
+              <tr><td><strong>argument</strong></td><td></td><td>the value you give at <code class="inl">new</code></td><td class="mono">6, 19</td></tr>
+              <tr><td><strong>overloading</strong></td><td></td><td>several constructors with different parameter lists</td><td>Height's three, BankAccount's two</td></tr>
+              <tr><td><strong>no-argument constructor</strong></td><td>no-arg</td><td>a constructor with no parameters</td><td class="mono">Height()</td></tr>
+              <tr><td><strong>default constructor</strong></td><td></td><td>the empty one Java writes only when a class has no constructor at all</td><td>last week's Student and Height</td></tr>
+              <tr><td><strong>state</strong></td><td>starting state</td><td>the values in an object's fields right now / at birth</td><td class="mono">7 ft. 7 inc.</td></tr>
+              <tr><td><strong>FRQ</strong></td><td>free-response question</td><td>an exam question answered by writing code by hand</td><td>StepTracker, 2019</td></tr>
+              <tr><td><strong>accumulator field</strong></td><td>running total</td><td>a field that grows a little with every call</td><td class="mono">totalSteps, days, activeCount</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Twelve traps to remember</h2>
+        <p>Five will not compile, one crashes, and the rest run and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">public void Box(int w)</td><td>a constructor</td><td><span class="err">new Box(5) will not compile</span></td><td>a return type makes it a method</td></tr>
+              <tr><td class="mono">new Box() with only Box(int)</td><td>an empty box</td><td><span class="err">will not compile</span></td><td>one constructor written → no free one</td></tr>
+              <tr><td class="mono">h.Height(5);</td><td>h is rebuilt</td><td><span class="err">will not compile</span></td><td>a constructor only runs at new</td></tr>
+              <tr><td class="mono">new Height(1, 2, 3)</td><td>a height</td><td><span class="err">will not compile</span></td><td>no constructor takes three ints</td></tr>
+              <tr><td class="mono">new Height("6")</td><td>6 ft.</td><td><span class="err">will not compile</span></td><td>a String is not an int</td></tr>
+              <tr><td class="mono">total / days with days 0</td><td class="mono">0</td><td><span class="err">ArithmeticException</span></td><td>check days == 0 first</td></tr>
+              <tr><td class="mono">x = x; in a constructor</td><td class="mono">(3, 4)</td><td class="mono"><span class="fv">(0, 0)</span></td><td>both names are the parameter, write this.x</td></tr>
+              <tr><td class="mono">new Height(19, 6)</td><td>6 ft 19 → 7 ft 7</td><td class="mono"><span class="fv">19 ft. 6 inc.</span></td><td>arguments go in parameter order</td></tr>
+              <tr><td class="mono">new Height(-5, 3)</td><td>refused, like setFeet</td><td class="mono"><span class="fv">-5 ft. 3 inc.</span></td><td>the constructor has no check, so call the setter</td></tr>
+              <tr><td class="mono">transfer(c, -500, "x")</td><td>refused</td><td class="mono"><span class="fv">+500 for this</span></td><td>transfer never checks amount &gt; 0</td></tr>
+              <tr><td class="mono">(double)(total / days)</td><td class="mono">10222.2</td><td class="mono"><span class="fv">10222.0</span></td><td>divide in int first, cast too late</td></tr>
+              <tr><td class="mono">(double) total / days, days 0</td><td class="mono">0.0</td><td class="mono"><span class="fv">NaN</span></td><td>check days == 0 first</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 9, part 29 and the 2019 StepTracker question. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson8.html">← Lesson 8</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

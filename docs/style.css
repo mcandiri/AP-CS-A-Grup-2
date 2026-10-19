@@ -860,3 +860,14 @@ ol.plain li{margin-bottom:6px;}
   .cover-art{font-size:.64rem;justify-self:center;}
   .cover-foot{padding:10px 22px 12px 24px;}
 }
+/* constructor anatomy (lesson 9) */
+.anat{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin:20px 0 6px;}
+.anat .pc{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;}
+.anat .pc code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9rem;font-weight:700;color:var(--ink);
+  border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:6px 10px;white-space:pre;
+}
+.anat .pc small{font-size:.76rem;line-height:1.3;color:var(--ink-soft);text-align:center;max-width:9rem;}
+.anat .pc.key code{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
+.anat .pc.gap code{border-style:dashed;border-color:var(--crimson-line);background:transparent;}
+.anat .pc.gap small{color:var(--crimson);}

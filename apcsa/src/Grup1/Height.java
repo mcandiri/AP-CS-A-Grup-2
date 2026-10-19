@@ -6,6 +6,31 @@ public class Height {
 	private int feet ;
 	private int inches ;
 	
+	
+	// public classname
+	
+	// h1 = new Height(6,9);
+	public Height(int feet,int inc)
+	{
+		this.feet = feet;
+		inches = inc ;
+		simplify();
+
+	}
+	// h2 = new Height(12);
+	public Height(int inc) {
+		inches = inc; 
+		simplify();
+		System.out.println("Hi");
+	}
+	// h4 = new Height();
+	public Height() // no argument constructor --- default constructor
+	{
+		feet = 99 ; 
+		inches =11 ;
+		
+	}
+	
 	// this keyword
 	
 	public void setFeet(int feet) {
