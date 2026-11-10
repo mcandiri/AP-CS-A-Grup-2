@@ -80,5 +80,6 @@ public class Height {
 	public void addHeight(Height other) {
 		this.feet += other.feet;
 		inches += other.inches;
+		simplify();
 	}
 }

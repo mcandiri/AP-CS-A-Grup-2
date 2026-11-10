@@ -498,3 +498,229 @@
     render();
   })(labs[l]);
 })();
+
+/* ---------- Lesson 10: the reference lab (Lesson30 step by step) and the bank lab (static fields) ---------- */
+(function(){
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function jd(x){ return Number.isInteger(x) && Math.abs(x) < 1e7 ? x.toFixed(1) : String(x); }
+  function card(name, type, rows, cls){
+    var c = el('div', 'obj' + (cls ? ' ' + cls : ''));
+    var h = el('div', 'obj-h'); h.appendChild(el('b', null, name)); h.appendChild(el('span', null, type));
+    c.appendChild(h);
+    rows.forEach(function(r){
+      var f = el('div', 'f' + (r[2] ? ' ' + r[2] : ''));
+      f.appendChild(el('span', 'k', r[0]));
+      f.appendChild(el('span', 'v' + (r[1] === 'null' ? ' nul' : ''), r[1]));
+      c.appendChild(f);
+    });
+    return c;
+  }
+
+  /* ----- reference lab: every line of Lesson30's main, one click at a time ----- */
+  var STEPS = [
+    { code: 'Height a = new Height(3,9);', note: 'new makes object #1. The variable a does not hold the object, it holds the way to it: an arrow to #1.' },
+    { code: 'Height b = new Height(5,3);', note: 'A second object, #2, and a second arrow.' },
+    { code: 'a.printHeight();\nb.printHeight();', note: 'Each arrow leads to a different object, so two different heights.' },
+    { code: 'a = b ;', note: 'The arrow in b is copied into a. No Height is copied. #1 has no arrow left: nobody can ever reach it again.' },
+    { code: 'a.printHeight();\nb.printHeight();', note: 'Two names, one object: both lines print #2.' },
+    { code: 'b.add(2);', note: 'Changed through b ...' },
+    { code: 'a.printHeight();\nb.printHeight();', note: '... and a sees it too, because there is only one object.' },
+    { code: 'a.add(3);', note: 'Changed through a this time. Still the same object #2.' },
+    { code: 'a.printHeight();\nb.printHeight();', note: 'Both 5 ft 8.' },
+    { code: 'Height c = a ;', note: 'c gets a copy of the arrow in a. Three names for #2 now, and still no new object.' },
+    { code: 'b.add(3);', note: 'One change, through b.' },
+    { code: 'a.printHeight();\nb.printHeight();\nc.printHeight();', note: 'All three names print the same object.' },
+    { code: 'a = new Height();', note: 'A brand-new object #3 (99 ft 11, the no-argument constructor). Only a moves; b and c still point at #2.' },
+    { code: 'int x = 8 ;\nint y = 4 ;', note: 'Primitive variables: the number itself is in the box. No arrows.' },
+    { code: 'x = y ;', note: 'The value 4 is copied into x.' },
+    { code: 'y = 9 ;', note: 'y changes, x does not. Two boxes, two separate numbers.' }
+  ];
+
+  function refState(n){
+    var s = { vars: {}, order: [], objs: {}, next: 1, out: [], moved: {}, changed: {} };
+    function mk(f, i){ var id = s.next++; s.objs[id] = { f: f, i: i }; return id; }
+    function setv(k, v){ if (s.order.indexOf(k) === -1) s.order.push(k); s.vars[k] = v; }
+    function add(id, inc){ var o = s.objs[id]; o.i += inc; o.f += Math.floor(o.i / 12); o.i = o.i % 12; }
+    function pr(k){ var o = s.objs[s.vars[k].ref]; s.out.push(o.f + ' ft. ' + o.i + ' inc.'); }
+    for (var k = 0; k < n; k++){
+      s.moved = {}; s.changed = {};
+      switch (k){
+        case 0: setv('a', { ref: mk(3, 9) }); s.moved.a = 1; break;
+        case 1: setv('b', { ref: mk(5, 3) }); s.moved.b = 1; break;
+        case 2: case 4: case 6: case 8: pr('a'); pr('b'); break;
+        case 3: setv('a', { ref: s.vars.b.ref }); s.moved.a = 1; break;
+        case 5: add(s.vars.b.ref, 2); s.changed[s.vars.b.ref] = 1; break;
+        case 7: add(s.vars.a.ref, 3); s.changed[s.vars.a.ref] = 1; break;
+        case 9: setv('c', { ref: s.vars.a.ref }); s.moved.c = 1; break;
+        case 10: add(s.vars.b.ref, 3); s.changed[s.vars.b.ref] = 1; break;
+        case 11: pr('a'); pr('b'); pr('c'); break;
+        case 12: setv('a', { ref: mk(99, 11) }); s.moved.a = 1; break;
+        case 13: setv('x', { val: 8 }); setv('y', { val: 4 }); s.moved.x = 1; s.moved.y = 1; break;
+        case 14: s.vars.x = { val: s.vars.y.val }; s.moved.x = 1; break;
+        case 15: s.vars.y = { val: 9 }; s.moved.y = 1; break;
+      }
+    }
+    return s;
+  }
+
+  var rl = document.querySelectorAll('.lab[data-mode="refs"]');
+  for (var r = 0; r < rl.length; r++) (function(lab){
+    var view = lab.querySelector('.lab-view');
+    var code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out');
+    var stepLbl = lab.querySelector('.lab-step');
+    var why = lab.querySelector('.lab-why');
+    var n = 0;
+    function render(){
+      var s = refState(n);
+      view.textContent = '';
+      var mem = el('div', 'mem');
+      var left = el('div'); left.appendChild(el('p', 'mem-lbl', 'variables'));
+      var vars = el('div', 'vars');
+      if (!s.order.length) vars.appendChild(el('div', 'lab-step', '(nothing yet)'));
+      s.order.forEach(function(k){
+        var v = s.vars[k], prim = v.val !== undefined;
+        var box = el('div', 'var' + (prim ? ' prim' : '') + (s.moved[k] ? ' moved' : ''));
+        box.appendChild(el('b', null, (prim ? 'int ' : 'Height ') + k));
+        box.appendChild(el('span', 'to', prim ? String(v.val) : '→ #' + v.ref));
+        vars.appendChild(box);
+      });
+      left.appendChild(vars);
+      var right = el('div'); right.appendChild(el('p', 'mem-lbl', 'objects'));
+      var heap = el('div', 'heap');
+      Object.keys(s.objs).forEach(function(id){
+        var o = s.objs[id];
+        var names = s.order.filter(function(k){ return s.vars[k].ref === +id; });
+        var c = card('#' + id, 'Height', [
+          ['feet', String(o.f), s.changed[id] ? 'new' : null],
+          ['inches', String(o.i), s.changed[id] ? 'new' : null]
+        ], names.length ? null : 'gone');
+        c.appendChild(el('div', 'who', names.length ? 'arrows from: ' + names.join(', ') : 'no arrows · garbage'));
+        heap.appendChild(c);
+      });
+      if (!Object.keys(s.objs).length) heap.appendChild(el('div', 'lab-step', '(no objects yet)'));
+      right.appendChild(heap);
+      mem.appendChild(left); mem.appendChild(right);
+      view.appendChild(mem);
+      var lines = [];
+      STEPS.forEach(function(st, i){
+        st.code.split('\n').forEach(function(line){
+          lines.push((i === n - 1 ? '→ ' : i < n ? '  ' : '  ') + (i < n ? line : '// ' + line));
+        });
+      });
+      code.textContent = lines.join('\n');
+      out.textContent = s.out.join('\n');
+      stepLbl.textContent = 'step ' + n + ' of ' + STEPS.length;
+      why.textContent = n ? STEPS[n - 1].note : 'Press Next to run the first line of Lesson30.main.';
+    }
+    lab.querySelector('[data-act="next"]').addEventListener('click', function(){ if (n < STEPS.length){ n++; render(); } });
+    lab.querySelector('[data-act="prev"]').addEventListener('click', function(){ if (n > 0){ n--; render(); } });
+    lab.querySelector('[data-act="reset"]').addEventListener('click', function(){ n = 0; render(); });
+    render();
+  })(rl[r]);
+
+  /* ----- bank lab: BankAccount with its three static fields ----- */
+  var bl = document.querySelectorAll('.lab[data-mode="bank"]');
+  for (var b = 0; b < bl.length; b++) (function(lab){
+    var view = lab.querySelector('.lab-view');
+    var code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out');
+    var fName = lab.querySelector('[data-f="name"]');
+    var fBal = lab.querySelector('[data-f="bal"]');
+    var pick = lab.querySelector('[data-f="acc"]');
+    var fAmt = lab.querySelector('[data-f="amt"]');
+    var st, lines, outs, mark;
+    function reset(){
+      st = { count: 0, fees: 0, accs: [] };
+      lines = []; outs = []; mark = {};
+    }
+    function say(t, bad){ outs.push({ t: t, bad: bad }); }
+    function q(s){ return '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'; }
+    function money(raw){
+      var v = raw.trim();
+      if (!/^-?\d{1,6}(\.\d{1,2})?$/.test(v)) return null;
+      return parseFloat(v);
+    }
+    function open(nameRaw, balRaw){
+      if (st.accs.length >= 4){ say('(this lab keeps at most four accounts — press start over)', true); return; }
+      var v = 'acc' + (st.accs.length + 1);
+      var hasBal = balRaw.trim() !== '';
+      var amt = hasBal ? money(balRaw) : 0;
+      lines.push('BankAccount ' + v + ' = new BankAccount(' + q(nameRaw) + (hasBal ? ', ' + balRaw.trim() : '') + ');');
+      if (amt === null){ say('will not compile — the balance must be a number, like 5000', true); lines.pop(); return; }
+      var a = { v: v, first: null, last: null, bal: 0 };
+      var i = nameRaw.indexOf(' ');
+      if (i !== -1){ a.first = nameRaw.substring(0, i); a.last = nameRaw.substring(i + 1); }
+      else say('Invalid name');
+      if (amt > 0) a.bal = amt;
+      st.accs.push(a);
+      st.count++;
+      mark = { count: 1, acc: v };
+    }
+    function fee(a, amount){ var f = amount * 0.05; st.fees += f; a.bal -= f; }
+    function move(kind){
+      var a = st.accs[+pick.value];
+      if (!a){ say('make an account first', true); return; }
+      var raw = fAmt.value.trim();
+      lines.push(a.v + '.' + kind + '(' + raw + ');');
+      var amount = money(raw);
+      if (amount === null){ say('will not compile — ' + kind + ' needs a number', true); return; }
+      if (kind === 'deposit'){
+        if (amount > 0){ a.bal += amount; fee(a, amount); say('Current balance: ' + jd(a.bal)); mark = { fees: 1, acc: a.v }; }
+        else say('Amount must be positive!');
+      } else {
+        if (amount > 0 && amount <= a.bal){ a.bal -= amount; fee(a, amount); say('Current balance: ' + jd(a.bal)); mark = { fees: 1, acc: a.v }; }
+        else say('Invalid amount!');
+      }
+    }
+    function render(){
+      view.textContent = '';
+      var share = el('div', 'share');
+      share.appendChild(card('BankAccount', 'static · one copy for all', [
+        ['bankName', '"Garanti"'],
+        ['customersCount', String(st.count), mark.count ? 'new' : null],
+        ['totalFees', jd(st.fees), mark.fees ? 'new' : null]
+      ], 'static'));
+      if (st.accs.length){
+        share.appendChild(el('div', 'down', '↓ every object reads and writes this one box ↓'));
+        var row = el('div', 'objs');
+        st.accs.forEach(function(a){
+          row.appendChild(card(a.v, 'one per object', [
+            ['firstName', a.first === null ? 'null' : q(a.first)],
+            ['lastName', a.last === null ? 'null' : q(a.last)],
+            ['balance', jd(a.bal), mark.acc === a.v ? 'new' : null]
+          ]));
+        });
+        share.appendChild(row);
+      }
+      view.appendChild(share);
+      var keep = pick.value;
+      pick.textContent = '';
+      st.accs.forEach(function(a, i){ var o = el('option', null, a.v); o.value = i; pick.appendChild(o); });
+      if (keep !== '' && +keep < st.accs.length) pick.value = keep;
+      else if (st.accs.length) pick.value = st.accs.length - 1;
+      code.textContent = lines.length ? lines.join('\n') : '// make an account';
+      out.textContent = '';
+      outs.forEach(function(o){
+        out.appendChild(o.bad ? el('span', 'bad', o.t) : document.createTextNode(o.t));
+        out.appendChild(document.createTextNode('\n'));
+      });
+    }
+    lab.querySelector('[data-act="open"]').addEventListener('click', function(){ mark = {}; open(fName.value, fBal.value); render(); });
+    lab.querySelector('[data-act="deposit"]').addEventListener('click', function(){ mark = {}; move('deposit'); render(); });
+    lab.querySelector('[data-act="withdrawal"]').addEventListener('click', function(){ mark = {}; move('withdrawal'); render(); });
+    lab.querySelector('[data-act="count"]').addEventListener('click', function(){ mark = {}; lines.push('BankAccount.printCount();'); say(String(st.count)); render(); });
+    lab.querySelector('[data-act="fees"]').addEventListener('click', function(){ mark = {}; lines.push('BankAccount.printTotalFees();'); say(jd(st.fees)); render(); });
+    lab.querySelector('[data-act="reset"]').addEventListener('click', function(){ reset(); render(); });
+    reset();
+    open('Selin Kavas', '5000');
+    open('Ceyda Yazıcı', '');
+    mark = {};
+    render();
+  })(bl[b]);
+})();

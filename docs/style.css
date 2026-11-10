@@ -871,3 +871,37 @@ ol.plain li{margin-bottom:6px;}
 .anat .pc.key code{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
 .anat .pc.gap code{border-style:dashed;border-color:var(--crimson-line);background:transparent;}
 .anat .pc.gap small{color:var(--crimson);}
+
+/* ---------- Lesson 10: memory pictures (variables → objects), the shared static box, reference + bank labs ---------- */
+.mem{display:grid;grid-template-columns:minmax(0,12rem) minmax(0,1fr);gap:14px 26px;margin:20px 0 8px;align-items:start;}
+.mem-lbl{
+  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);
+  margin:0 0 8px;font-family:"Source Sans 3",system-ui,sans-serif;
+}
+.mem .vars{display:grid;gap:8px;}
+.mem .var{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;
+  border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:7px 12px;
+}
+.mem .var b{color:var(--ink);}
+.mem .var .to{color:var(--accent);font-weight:700;}
+.mem .var.prim .to{color:var(--ink);}
+.mem .var .to.nul{color:var(--crimson);font-weight:400;}
+.mem .var.moved{background:var(--moss-soft);border-color:var(--moss-line);}
+.mem .var.moved .to{color:var(--moss);}
+.mem .heap{display:flex;flex-wrap:wrap;gap:12px;}
+.mem .obj{flex:0 1 13rem;}
+.obj .who{padding:5px 12px;font-size:.72rem;color:var(--accent);background:var(--accent-soft);border-top:1px solid var(--line-soft);}
+.obj.gone{opacity:.5;border-style:dashed;}
+.obj.gone .who{color:var(--crimson);background:var(--crimson-soft);}
+.obj.static{border:1.5px solid var(--amber);}
+.obj.static .obj-h{background:var(--amber-soft);}
+.obj.static .obj-h span{color:var(--amber);}
+.share{margin:20px 0 8px;display:grid;gap:10px;justify-items:center;}
+.share > .obj{width:100%;max-width:22rem;}
+.share .down{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.78rem;color:var(--amber);text-align:center;}
+.share .objs{margin:0;justify-content:center;width:100%;}
+.lab-step{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.78rem;color:var(--ink-soft);align-self:center;}
+.lab .mem{margin:14px 0 12px;}
+@media (max-width:560px){ .mem{grid-template-columns:1fr;} }

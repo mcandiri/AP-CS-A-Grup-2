@@ -1,0 +1,2142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 10: static and references. Static fields and static methods (one copy for the whole class), what static code can and cannot see, a BankAccount that counts its customers and collects fees, and references: what a variable of a class type really holds, a = b, one object with several names, lost objects, null, and objects passed to methods.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 10 · Static and References — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 10</p>
+    <h1>Static and References</h1>
+    <p class="deck">Two questions this week, and they turn out to be about the same thing: <em>where does a value live?</em> Some values belong to every object separately, like a customer's balance. Some belong to the whole class at once, like the number of customers the bank has. Those are <strong>static</strong>. And when you write <code class="inl">a = b</code> with two Heights, no height is copied at all. Only an arrow is. That arrow is a <strong>reference</strong>, and once you can see it, a lot of strange things from earlier lessons suddenly make sense.</p>
+    <ul class="facts">
+      <li>4 files</li>
+      <li>Java</li>
+      <li>24 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#warm">Warm-up · two loose ends</a></li>
+        <li><a class="sub" href="#warm-add">addHeight, fixed</a></li>
+        <li><a class="sub" href="#warm-cup">CupcakeMachine</a></li>
+        <li><a href="#st">30 · Static</a></li>
+        <li><a class="sub" href="#st-why">One number for the whole bank</a></li>
+        <li><a class="sub" href="#st-what">What static means</a></li>
+        <li><a class="sub" href="#st-fields">Three static fields</a></li>
+        <li><a class="sub" href="#st-count">Counting customers</a></li>
+        <li><a class="sub" href="#st-methods">Static methods</a></li>
+        <li><a class="sub" href="#st-seen">You have used static since Lesson 5</a></li>
+        <li><a class="sub" href="#st-rules">What static code cannot see</a></li>
+        <li><a class="sub" href="#st-out">From outside the class</a></li>
+        <li><a class="sub" href="#st-when">Static or not?</a></li>
+        <li><a class="sub" href="#p30a">Practice</a></li>
+        <li><a href="#bank">30 · BankAccount, round 2</a></li>
+        <li><a class="sub" href="#bank-fee">A fee on every move</a></li>
+        <li><a class="sub" href="#bank-merge">merge: a method that returns an object</a></li>
+        <li><a class="sub" href="#bank-run">Running Lesson29</a></li>
+        <li><a class="sub" href="#bank-lab">The bank lab</a></li>
+        <li><a class="sub" href="#bank-holes">Holes in the bank</a></li>
+        <li><a class="sub" href="#p30b">Practice</a></li>
+        <li><a href="#ref">30 · References</a></li>
+        <li><a class="sub" href="#ref-two">Two kinds of variables</a></li>
+        <li><a class="sub" href="#ref-what">What a reference is</a></li>
+        <li><a class="sub" href="#ref-assign">a = b</a></li>
+        <li><a class="sub" href="#ref-alias">One object, two names</a></li>
+        <li><a class="sub" href="#ref-new">Pointing somewhere else</a></li>
+        <li><a class="sub" href="#ref-lab">The reference lab</a></li>
+        <li><a class="sub" href="#ref-gc">Lost objects</a></li>
+        <li><a class="sub" href="#ref-null">null: an arrow to nothing</a></li>
+        <li><a class="sub" href="#ref-param">Objects go into methods by reference</a></li>
+        <li><a class="sub" href="#ref-copy">Making a real copy</a></li>
+        <li><a class="sub" href="#ref-eq">Why == failed for Strings</a></li>
+        <li><a class="sub" href="#p30c">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a href="#shop">Workshop · static and references</a></li>
+        <li><a class="sub" href="#shop-cup">CupcakeMachine, static</a></li>
+        <li><a class="sub" href="#shop-ticket">Ticket</a></li>
+        <li><a class="sub" href="#shop-conv">Converter</a></li>
+        <li><a class="sub" href="#shop-player">Player</a></li>
+        <li><a class="sub" href="#shop-swap">The swap that doesn't swap</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ WARM-UP ============ -->
+      <section class="lesson" id="warm">
+        <div class="lesson-head">
+          <span class="lesson-no">Warm-up · Height.java + CupcakeMachine.java</span>
+          <h2 class="lesson-title">Two Loose Ends</h2>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>A one-line fix in <code class="inl">Height</code>, and a small class written in class: <code class="inl">CupcakeMachine</code>.</li>
+            <li><strong>Static</strong>: fields and methods that belong to the class, one copy shared by every object.</li>
+            <li>What static code can and cannot see, and the error messages that tell you.</li>
+            <li><code class="inl">BankAccount</code> counts its customers, collects a fee on every move and can merge two accounts into one.</li>
+            <li><strong>References</strong>: what a variable like <code class="inl">Height a</code> really holds, and what <code class="inl">a = b</code> really does.</li>
+            <li>One object with several names, objects nobody can reach, <code class="inl">null</code>, and objects passed into methods.</li>
+          </ul>
+        </div>
+
+        <h3 id="warm-add">addHeight, fixed</h3>
+
+        <p>In Lesson 8 there was a Watch-out about <code class="inl">addHeight</code>: it added the feet and the inches but never tidied up, so 6'9" + 5'5" came out as “11 ft 14 in.”. The method now ends with one more line:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · addHeight now</span></div>
+          <pre class="code"><code>// h1.addHeight(h2);
+public void addHeight(Height other) {
+    this.feet += other.feet;
+    inches += other.inches;
+    simplify();
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <pre class="code"><code>Height t1 = new Height(6, 9);
+Height t2 = new Height(5, 5);
+t1.addHeight(t2);
+t1.printHeight();
+t2.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>12 ft. 2 inc.
+5 ft. 5 inc.</pre></div>
+        </div>
+
+        <p>11 feet and 14 inches, tidied: 14 inches is 1 more foot and 2 inches. Now every way a Height can change (the constructors, <code class="inl">setInches</code>, <code class="inl">add</code>, <code class="inl">addHeight</code>) ends with <code class="inl">simplify()</code>, and the class keeps its promise: inches are always 0 to 11. And <code class="inl">t2</code> is untouched. Only the object in front of the dot changes.</p>
+
+        <h3 id="warm-cup">CupcakeMachine</h3>
+
+        <p>A short class we wrote in class: a machine that sells cupcakes. It knows how many cakes it has, what one costs, and how many orders it has taken so far.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>CupcakeMachine.java</span></div>
+          <pre class="code"><code>public class CupcakeMachine {
+
+    private int numCakes;
+    private double price;
+    private int orderNum;
+
+    public CupcakeMachine(int c, double p) {
+        numCakes = c;
+        price = p;
+    }
+
+    public String takeOrder(int amount)
+    {
+        if (amount &gt; numCakes) {
+            return "Order cannot be filled";
+        }
+        double cost = amount * price;
+        numCakes -= amount;
+        orderNum++;
+        return "Order number " + orderNum + ", cost $" + cost;
+    }
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong>The constructor</strong> takes two of the three fields. <code class="inl">orderNum</code> is not a parameter: a new machine has taken no orders, and the default 0 is exactly right.</li>
+          <li><strong><code class="inl">takeOrder</code> returns a String</strong>, it does not print one. Whoever called it decides what to do with the message: print it, show it on a screen, save it.</li>
+          <li><strong>The early return.</strong> If there are not enough cakes, the method returns at once. Nothing below runs: no cost, no cakes taken, no order number used up.</li>
+          <li><strong>The order of the last lines matters.</strong> <code class="inl">orderNum++</code> comes <em>before</em> the String is built, so the first order is number 1, not 0.</li>
+        </ul>
+
+        <div class="ex">
+          <pre class="code"><code>CupcakeMachine k = new CupcakeMachine(6, 4.0);
+System.out.println(k.takeOrder(4));
+System.out.println(k.takeOrder(3));
+System.out.println(k.takeOrder(2));
+System.out.println(k.takeOrder(1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Order number 1, cost $16.0
+Order cannot be filled
+Order number 2, cost $8.0
+Order cannot be filled</pre></div>
+        </div>
+
+        <p>Six cakes. 4 are sold, 2 left. 3 is too many, refused, and the order number is <em>not</em> used up, so the next good order is number 2. Then 0 cakes are left, and even 1 is too many.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Lesson 1 is back. With a price of <code class="inl">0.1</code>, three cupcakes do not cost 0.3:</p>
+          <div class="ex">
+            <pre class="code"><code>CupcakeMachine z = new CupcakeMachine(10, 0.1);
+System.out.println(z.takeOrder(3));</code></pre>
+            <div class="out"><span class="out-label">Console</span><pre>Order number 1, cost $0.30000000000000004</pre></div>
+          </div>
+          <p>That is why real shops keep money in whole kuruş or cents, as an <code class="inl">int</code>, like the Product class in Lesson 9.</p>
+        </div>
+
+        <p>Keep this class in mind. Each machine counts its <em>own</em> orders. In the <a href="#shop-cup">workshop</a> we change one word, <code class="inl">static</code>, and the numbering becomes shared by every machine in the shop.</p>
+      </section>
+
+      <!-- ============ PART 30 · STATIC ============ -->
+      <section class="lesson" id="st">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 30 · Lesson29.java + BankAccount.java + Lesson30.java</span>
+          <h2 class="lesson-title">Static</h2>
+        </div>
+
+        <h3 id="st-why">One number for the whole bank</h3>
+
+        <p>Since Lesson 8, every field we have written belongs to <em>one object</em>. <code class="inl">acc1</code> has its own <code class="inl">balance</code>, <code class="inl">acc2</code> has its own. That is the whole point of objects: two customers, two separate balances.</p>
+
+        <p>Now the bank asks a new question: <strong>how many customers do we have?</strong> Where should that number live? It is not Selin's number, and it is not Ceyda's. Let us try the obvious thing first, an ordinary field that every constructor adds one to:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A first try · an ordinary field</span></div>
+          <pre class="code"><code>public class Account1 {
+    private int customersCount = 0;
+    private String name;
+
+    public Account1(String name) {
+        this.name = name;
+        customersCount++;
+    }
+
+    public void printCount() {
+        System.out.println(name + ": " + customersCount);
+    }
+}
+
+// in main:
+Account1 a = new Account1("Selin");
+Account1 b = new Account1("Ceyda");
+Account1 c = new Account1("Ali");
+a.printCount();
+b.printCount();
+c.printCount();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Selin: 1
+Ceyda: 1
+Ali: 1</pre></div>
+        </div>
+
+        <p>Three customers, and every one of them says “1”. Of course: each object got its <em>own</em> <code class="inl">customersCount</code>, it started at 0, and its own constructor added 1 to it, once. Three separate counters, each counting one customer. What we need is <strong>one counter that all the objects share</strong>. Add one word:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The same class, with static</span></div>
+          <pre class="code"><code>public class Account2 {
+    private static int customersCount = 0;
+    private String name;
+
+    public Account2(String name) {
+        this.name = name;
+        customersCount++;
+    }
+
+    public void printCount() {
+        System.out.println(name + ": " + customersCount);
+    }
+}
+
+// in main: the same six lines, with Account2</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Selin: 3
+Ceyda: 3
+Ali: 3</pre></div>
+        </div>
+
+        <p>Now there is only one <code class="inl">customersCount</code>. Every constructor adds 1 to <em>that same</em> number, so after three accounts it is 3, and every object that looks at it sees 3.</p>
+
+        <h3 id="st-what">What static means</h3>
+
+        <p>A <strong>static</strong> field belongs to the <strong>class itself</strong>, not to any one object. There is <strong>exactly one copy</strong> of it, however many objects you make: zero, one or a million. Every object of the class can read it and change it, and they all see the same value.</p>
+
+        <p>An ordinary field (one without <code class="inl">static</code>) is called an <strong>instance variable</strong>, because every <em>instance</em>, every object, gets its own. That is the kind we have written since Lesson 8. A static field is also called a <strong>class variable</strong>.</p>
+
+        <div class="share" role="img" aria-label="One BankAccount class box with the three static fields bankName, customersCount and totalFees, shared by acc1 and acc2, each of which has its own firstName, lastName, password and balance.">
+          <div class="obj static">
+            <div class="obj-h"><b>BankAccount</b><span>static · one copy for all</span></div>
+            <div class="f"><span class="k">bankName</span><span class="v">"Garanti"</span></div>
+            <div class="f"><span class="k">customersCount</span><span class="v">2</span></div>
+            <div class="f"><span class="k">totalFees</span><span class="v">0.0</span></div>
+          </div>
+          <div class="down">↓ both objects read and write this one box ↓</div>
+          <div class="objs">
+            <div class="obj">
+              <div class="obj-h"><b>acc1</b><span>its own fields</span></div>
+              <div class="f"><span class="k">firstName</span><span class="v">"Selin"</span></div>
+              <div class="f"><span class="k">lastName</span><span class="v">"Kavas"</span></div>
+              <div class="f"><span class="k">password</span><span class="v">"3136"</span></div>
+              <div class="f"><span class="k">balance</span><span class="v">5000.0</span></div>
+            </div>
+            <div class="obj">
+              <div class="obj-h"><b>acc2</b><span>its own fields</span></div>
+              <div class="f"><span class="k">firstName</span><span class="v">"Ceyda"</span></div>
+              <div class="f"><span class="k">lastName</span><span class="v">"Yazıcı"</span></div>
+              <div class="f"><span class="k">password</span><span class="v">"7497"</span></div>
+              <div class="f"><span class="k">balance</span><span class="v">0.0</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">The amber box exists once, inside the class. The white boxes exist once per object. Make a third account and you get a third white box, but still one amber box.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Think of a classroom. Every student has their own notebook: what is written in Ece's notebook is not in Can's. That is an instance variable. The board at the front is one board for everybody: when the teacher writes the date on it, every student sees the same date, and if one student wipes it, it is gone for all of them. That is a static variable.</p>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A field marked <code class="inl">static</code> has <strong>one copy for the whole class</strong>, shared by every object. A field without <code class="inl">static</code> has <strong>one copy per object</strong>. Ask: <em>does this value describe one object, or the class as a whole?</em></p>
+        </div>
+
+        <h3 id="st-fields">Three static fields</h3>
+
+        <p>Here are the new lines at the top of <code class="inl">BankAccount.java</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · the fields now</span></div>
+          <pre class="code"><code>public class BankAccount {
+
+    private static String bankName = "Garanti";
+    private static int customersCount = 0;
+    private static double totalFees = 0;
+    private String firstName;
+    private String lastName;
+
+    private String password;
+    private double balance;</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">bankName</code>: every account is at the same bank. Storing <code class="inl">"Garanti"</code> in every single object would be a waste, and if the bank changed its name, every object would have to be changed one by one.</li>
+          <li><code class="inl">customersCount</code>: how many accounts exist. Not a fact about one account, a fact about all of them.</li>
+          <li><code class="inl">totalFees</code>: all the money the bank has earned from fees, from every account together.</li>
+        </ul>
+
+        <p>Notice the <code class="inl">= "Garanti"</code> and <code class="inl">= 0</code> right on the field line. A static field is set up <strong>once</strong>, when Java first loads the class, before any object exists. It is not reset when a new object is made. That is exactly what we want from a counter. (<code class="inl">= 0</code> is optional, like for any field: the default for a number is already 0.)</p>
+
+        <p>The word order is <code class="inl">private static int</code>: first who may see it, then <code class="inl">static</code>, then the type. They are still <code class="inl">private</code>. Static is about <em>how many copies</em>; private is about <em>who may touch it</em>. The two are separate questions.</p>
+
+        <h3 id="st-count">Counting customers</h3>
+
+        <p>Both constructors got one new line at the end:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · end of both constructors</span></div>
+          <pre class="code"><code>    password = generatePassword();
+    customersCount++;
+}</code></pre>
+        </div>
+
+        <p>A constructor runs once per object, so this line runs once per new account. Since there is only one <code class="inl">customersCount</code>, it counts every account ever made, whichever constructor made it. Here is the start of <code class="inl">Lesson29.java</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · the first lines</span></div>
+          <pre class="code"><code>BankAccount.printBankName();
+BankAccount.printCount();
+
+BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+BankAccount.printCount();
+
+BankAccount acc2 = new BankAccount("Ceyda Yazıcı");
+BankAccount.printCount();</code></pre>
+          <div class="out"><span class="out-label">Console · print() lines left out</span><pre>Garanti
+0
+1
+2</pre></div>
+        </div>
+
+        <p>Look at the first two lines. <strong>There is no account yet</strong>, and we already ask the class for its bank name and its customer count. That works because these values belong to the class, not to an object. The count is 0; then 1 after <code class="inl">acc1</code>; then 2 after <code class="inl">acc2</code>.</p>
+
+        <h3 id="st-methods">Static methods</h3>
+
+        <p>The three methods that print these values are static too:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · the static methods</span></div>
+          <pre class="code"><code>public static void printBankName() {
+    System.out.println(bankName);
+}
+public static void printTotalFees() {
+    System.out.println(totalFees);
+}
+public static void printCount() {
+//  System.out.println(this.customersCount); Cannot use this in a static context
+    System.out.println(customersCount);
+}</code></pre>
+        </div>
+
+        <p>A <strong>static method</strong> belongs to the class, like a static field. You call it on the <strong>class name</strong>, not on an object:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th></th><th>Instance method</th><th>Static method</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Header</strong></td><td class="mono">public void print()</td><td class="mono">public static void printCount()</td></tr>
+              <tr><td><strong>Called on</strong></td><td>an object</td><td>the class</td></tr>
+              <tr><td><strong>How</strong></td><td class="mono">acc1.print();</td><td class="mono">BankAccount.printCount();</td></tr>
+              <tr><td><strong>Needs an object?</strong></td><td>yes, the one in front of the dot</td><td>no, it works even before any object exists</td></tr>
+              <tr><td><strong>Has <code class="inl">this</code>?</strong></td><td>yes</td><td>no</td></tr>
+              <tr><td><strong>Can use</strong></td><td>its object's fields <em>and</em> the static fields</td><td>only the static fields</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The dot in <code class="inl">acc1.print()</code> means “<em>ask this object</em>”. The dot in <code class="inl">BankAccount.printCount()</code> means “<em>ask the class</em>”. You can tell them apart by the capital letter: class names start with a capital, variables with a small letter.</p>
+
+        <h3 id="st-seen">You have used static since Lesson 5</h3>
+
+        <p>This is not new, only its name is. The top of <code class="inl">Lesson30.java</code> puts the two kinds side by side:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson30.java · the first lines</span></div>
+          <pre class="code"><code>// non static
+
+String str = "abc";
+
+str.length();
+
+// static
+
+Math.pow(2, 3);</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">str.length()</code> is an <strong>instance method</strong>. Its answer depends on <em>which</em> String you ask: <code class="inl">"abc"</code> says 3, <code class="inl">"hello"</code> says 5. So you must ask a String object.</li>
+          <li><code class="inl">Math.pow(2, 3)</code> is a <strong>static method</strong>. Its answer depends only on its arguments, 2 and 3. There is no “Math object” to ask. Nobody ever writes <code class="inl">new Math()</code>. <code class="inl">Math</code> is simply a box of useful static methods: <code class="inl">pow</code>, <code class="inl">sqrt</code>, <code class="inl">abs</code>, <code class="inl">random</code>.</li>
+          <li><code class="inl">Math.PI</code> and <code class="inl">Integer.MAX_VALUE</code> from Lesson 5 are <strong>static fields</strong>: one value, written on the class name.</li>
+        </ul>
+
+        <p>And look at every method header we wrote in Lessons 5 to 7:</p>
+
+        <div class="ex">
+          <pre class="code"><code>public static void main(String[] args)
+public static boolean isPrime(int number)
+public static String randomWord(int length)</code></pre>
+        </div>
+
+        <p>All static. Back then we wrote <code class="inl">static</code> because we had to, and now we can say why. <code class="inl">main</code> is where the program starts. At that moment no object exists yet, so Java can only call a method that needs no object: a static one. And a static <code class="inl">main</code> can only call other methods without an object if they are static too. Take the word away from <code class="inl">isPrime</code> and see:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>isPrime without static</span></div>
+          <pre class="code"><code>public class L {
+    public static void main(String[] args) {
+        System.out.println(isPrime(7));
+    }
+    public boolean isPrime(int number) {
+        ...
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: non-static method isPrime(int) cannot be referenced from a static context
+    System.out.println(isPrime(7));
+                       ^</em></pre></div>
+        </div>
+
+        <p>A method without <code class="inl">static</code> needs an object in front of its dot, and <code class="inl">main</code> has none to give. That is the same rule as the next section, seen from the other side.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Static field: one copy, belongs to the class, shared by all objects. Static method: called on the class name, needs no object. Instance field and instance method: one per object, called on an object. <code class="inl">Math.pow</code>, <code class="inl">Math.PI</code> and <code class="inl">main</code> were static all along.</p>
+        </div>
+
+        <h3 id="st-rules">What static code cannot see</h3>
+
+        <p>The commented-out lines in <code class="inl">BankAccount.java</code> are the errors we got in class, kept as comments so we remember them. Here is the first one:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · commented out at the bottom</span></div>
+          <pre class="code"><code>// public static void someFunction() { // Cannot make a static reference to the non-static field balance
+//     System.out.println(balance);
+// }</code></pre>
+          <div class="out"><span class="out-label">Compiler · with the comments removed</span><pre><em>error: non-static variable balance cannot be referenced from a static context
+        System.out.println(balance);
+                           ^</em></pre></div>
+        </div>
+
+        <p>The comment holds Eclipse's wording; the box shows what <code class="inl">javac</code> says. Same error, two ways to say it. Why is it an error? Ask yourself: <em>whose</em> balance? A static method is called as <code class="inl">BankAccount.someFunction()</code>, with no object in front of the dot. There may be two accounts, or a hundred, or none at all. Java has no way to know which <code class="inl">balance</code> you mean, so it refuses.</p>
+
+        <p>The second error is in <code class="inl">printCount</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>printCount with the comment removed</span></div>
+          <pre class="code"><code>public static void printCount() {
+    System.out.println(this.customersCount);
+}</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: non-static variable this cannot be referenced from a static context
+    System.out.println(this.customersCount);
+                       ^</em></pre></div>
+        </div>
+
+        <p>Eclipse says it shorter: <em>Cannot use this in a static context</em>. <code class="inl">this</code> means “the object in front of the dot”, and a static method has no object in front of its dot. There is no <code class="inl">this</code> to use. Note that the field is static, so <code class="inl">customersCount</code> on its own is fine; only the <code class="inl">this.</code> is wrong.</p>
+
+        <p>The same goes for calling an instance method. Suppose <code class="inl">printCount</code> also wanted to print the account:</p>
+
+        <div class="ex">
+          <pre class="code"><code>public static void printCount() {
+    System.out.println(customersCount);
+    print();
+}</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: non-static method print() cannot be referenced from a static context
+        print();
+        ^</em></pre></div>
+        </div>
+
+        <p><em>Print which account?</em> Same question, same answer.</p>
+
+        <p>The other direction is no problem at all. An instance method may use static fields as much as it likes. The constructors do <code class="inl">customersCount++</code>, and the new <code class="inl">fee</code> method adds to <code class="inl">totalFees</code>. Every object knows where the one shared box is.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>From</th><th>uses</th><th>Allowed?</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>instance method / constructor</td><td>instance field (<code class="inl">balance</code>)</td><td class="tv">yes</td><td>it is this object's own field</td></tr>
+              <tr><td>instance method / constructor</td><td>static field (<code class="inl">customersCount</code>)</td><td class="tv">yes</td><td>there is only one, so no question which</td></tr>
+              <tr><td>static method</td><td>static field</td><td class="tv">yes</td><td>both belong to the class</td></tr>
+              <tr><td>static method</td><td>instance field or method</td><td class="fv">no</td><td><em>whose?</em> there is no object</td></tr>
+              <tr><td>static method</td><td><code class="inl">this</code></td><td class="fv">no</td><td>no object in front of the dot</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A static method has <strong>no <code class="inl">this</code></strong>. It can use static fields and call static methods directly, but it cannot touch an instance field or call an instance method without an object to ask. Instance methods can use everything.</p>
+        </div>
+
+        <h3 id="st-out">From outside the class</h3>
+
+        <p><code class="inl">Lesson29.java</code> has more commented-out lines, from outside the class this time:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · commented out</span></div>
+          <pre class="code"><code>// System.out.println(BankAccount.bankName); // The field BankAccount.bankName is not visible
+
+// System.out.println(acc1.bankName); // The static field BankAccount.bankName should be accessed in a static way
+//                                    // The field BankAccount.bankName is not visible</code></pre>
+        </div>
+
+        <p><strong>“Not visible.”</strong> <code class="inl">bankName</code> is <code class="inl">private static</code>. Static does not mean public: private still means “only code inside BankAccount”. That is exactly why the class has <code class="inl">printBankName()</code>: a public static method that hands the private value out in a controlled way, like a getter. <code class="inl">javac</code> words it as <em>bankName has private access in BankAccount</em>.</p>
+
+        <p><strong>“Should be accessed in a static way.”</strong> Writing a static member on an object, <code class="inl">acc1.bankName</code>, is allowed by Java if the field is visible, but Eclipse warns you, and with good reason. It looks as if the bank name belongs to <code class="inl">acc1</code>. It does not. Here is a public static field to show how misleading that is:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A public static field, written on objects</span></div>
+          <pre class="code"><code>public class Shop {
+    public static String city = "Istanbul";
+}
+
+// in main:
+Shop s1 = new Shop();
+Shop s2 = new Shop();
+s1.city = "Ankara";
+System.out.println(s2.city);
+System.out.println(Shop.city);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ankara
+Ankara</pre></div>
+        </div>
+
+        <p>The line <em>reads</em> like “change the city of s1”. What it <em>does</em> is change the one city of the whole class, so <code class="inl">s2</code> moved to Ankara too. Write it as <code class="inl">Shop.city = "Ankara";</code> and nobody is fooled.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Always write static things on the <strong>class name</strong>: <code class="inl">BankAccount.printCount()</code>, <code class="inl">Math.pow(2, 3)</code>. <code class="inl">acc1.printCount()</code> compiles too, and prints the same number, but the code then lies about whose number it is.</p>
+        </div>
+
+        <p>And the opposite mistake, an instance method on the class name, does not compile at all:</p>
+
+        <div class="ex">
+          <pre class="code"><code>BankAccount.print();
+BankAccount.deposit(100);</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: non-static method print() cannot be referenced from a static context
+error: non-static method deposit(double) cannot be referenced from a static context</em></pre></div>
+        </div>
+
+        <p>Print <em>whose</em> account? Deposit into <em>which</em> one?</p>
+
+        <h3 id="st-when">Static or not?</h3>
+
+        <p>When you write a class, every field and method gets this question. The test is always the same: <strong>does the answer depend on which object you ask?</strong></p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>In BankAccount</th><th>Different for each account?</th><th>So it is</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">firstName, lastName</td><td>yes, every customer has a name</td><td>instance</td></tr>
+              <tr><td class="mono">password, balance</td><td>yes</td><td>instance</td></tr>
+              <tr><td class="mono">bankName</td><td>no, one bank</td><td><strong>static</strong></td></tr>
+              <tr><td class="mono">customersCount</td><td>no, it is about all accounts together</td><td><strong>static</strong></td></tr>
+              <tr><td class="mono">totalFees</td><td>no, the bank's total</td><td><strong>static</strong></td></tr>
+              <tr><td class="mono">deposit, withdrawal, print</td><td>yes, they use this account's balance</td><td>instance</td></tr>
+              <tr><td class="mono">printCount, printTotalFees</td><td>no, they only use static fields</td><td><strong>static</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Making <code class="inl">balance</code> static would compile perfectly, and it would be a disaster: every customer would share <em>one</em> balance. Selin deposits 100, and Ceyda's balance goes up by 100. Static is not an extra feature to sprinkle on. It changes what the field <em>means</em>.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>The word comes from C, the language Java borrowed much of its look from. In C, a <code class="inl">static</code> variable is one that stays in the same place in memory for the whole run of the program, instead of being made and thrown away again. Java kept the word for things that exist once, for as long as the class does.</p>
+        </div>
+
+        <div class="practice" id="p30a">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on static</h3>
+          <p class="practice-lede">Use BankAccount.java exactly as it is in the file. Each question is a fresh program.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>BankAccount.printCount();
+BankAccount a = new BankAccount("Ali Can", 100);
+BankAccount b = new BankAccount("Ece Su");
+BankAccount.printCount();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0
+2</pre></div></div>
+                  <p>Before any account the count is 0. Each constructor adds 1 to the one shared counter, whichever constructor it is.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>These lines are in <code class="inl">Lesson29.java</code>, after <code class="inl">acc1</code> has been made. Which of them compile?</p>
+              <div class="ex"><pre class="code"><code>BankAccount.printCount();                      // A
+BankAccount.print();                           // B
+acc1.printCount();                             // C
+System.out.println(BankAccount.customersCount); // D
+acc1.print();                                  // E</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">A, C and E</span></p>
+                  <p>B: <code class="inl">print</code> is an instance method, and the class name gives it no account. D: <code class="inl">customersCount</code> is private. C compiles and prints the right number, but Eclipse warns that a static method should be called in a static way, on the class name.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A student adds this method to BankAccount. Why does it not compile, and what are two ways to fix it?</p>
+              <div class="ex"><pre class="code"><code>public static void printBalance() {
+    System.out.println(balance);
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>A static method has no object, so Java cannot know <em>whose</em> balance: <em>non-static variable balance cannot be referenced from a static context</em>. Fix 1: remove <code class="inl">static</code>, so it is called as <code class="inl">acc1.printBalance()</code> and prints acc1's balance. Fix 2 would be to make <code class="inl">balance</code> static, which compiles but is wrong: every account would share one balance. Fix 1 is the right one.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public class Clicker {
+    private static int total;
+    private int mine;
+
+    public void click() {
+        total++;
+        mine++;
+    }
+
+    public void print() {
+        System.out.println(mine + " " + total);
+    }
+}
+
+// in main:
+Clicker p = new Clicker();
+Clicker q = new Clicker();
+p.click();
+p.click();
+q.click();
+p.print();
+q.print();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>2 3
+1 3</pre></div></div>
+                  <p><code class="inl">mine</code> is per object: p was clicked twice, q once. <code class="inl">total</code> is shared: three clicks altogether, and both objects see 3.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A <code class="inl">Student</code> class has these fields. Which of them should be static?</p>
+              <div class="ex"><pre class="code"><code>name, birthYear, schoolName, numberOfStudents, average</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">schoolName · numberOfStudents</span></p>
+                  <p>Every student in this program is at the same school, and the number of students is a fact about all of them together. Name, birth year and average are different for each student.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why is <code class="inl">Math.pow</code> static, while <code class="inl">length()</code> is not? Why must <code class="inl">main</code> be static?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The answer of <code class="inl">pow</code> depends only on its two arguments, so it needs no object; <code class="inl">length()</code> gives a different answer for every String, so it must be asked of one. <code class="inl">main</code> runs first, before any object exists, so Java can only start the program with a method that needs no object.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 30 · BANKACCOUNT ============ -->
+      <section class="lesson" id="bank">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 30 · Lesson29.java + BankAccount.java</span>
+          <h2 class="lesson-title">BankAccount, Round 2</h2>
+        </div>
+
+        <p>Last week's <code class="inl">BankAccount</code> got more than a counter. The bank now takes a 5% fee on every move of money, and two customers can merge their accounts into one. Both features need static, and the second one is our first method that <em>returns an object</em>.</p>
+
+        <h3 id="bank-fee">A fee on every move</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · fee</span></div>
+          <pre class="code"><code>private void fee(double amount) {
+    double f = amount * 0.05;
+    totalFees += f;
+    balance -= f;
+}</code></pre>
+        </div>
+
+        <p>Three lines, two kinds of field. <code class="inl">balance -= f</code> takes the fee from <em>this</em> account; <code class="inl">totalFees += f</code> adds it to the bank's <em>one</em> shared total. An instance method using both an instance field and a static field: allowed, as the table above says.</p>
+
+        <p><code class="inl">fee</code> is <code class="inl">private</code>, a helper like <code class="inl">simplify</code> or <code class="inl">generatePassword</code>. It is called at the end of <code class="inl">deposit</code>, <code class="inl">withdrawal</code> and <code class="inl">transfer</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · deposit now</span></div>
+          <pre class="code"><code>public void deposit(double amount)
+{
+    if (amount &gt; 0) {
+        balance += amount;
+        fee(amount);
+        System.out.println("Current balance: " + balance);
+    }
+    else {
+        System.out.println("Amount must be positive!");
+    }
+}</code></pre>
+        </div>
+
+        <p>The fee is taken <em>before</em> the balance is printed, so depositing 100 into an empty account prints <code class="inl">Current balance: 95.0</code>. In <code class="inl">transfer</code>, both sides pay:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · inside transfer</span></div>
+          <pre class="code"><code>balance -= amount;
+other.balance += amount;
+fee(amount);
+other.fee(amount);</code></pre>
+        </div>
+
+        <p><code class="inl">fee(amount)</code> with nothing in front means <code class="inl">this.fee(amount)</code>: the sender pays. <code class="inl">other.fee(amount)</code> makes the receiver pay too. A private method called on a <em>different</em> object: allowed, because the line is inside BankAccount, the same rule as <code class="inl">other.balance</code>.</p>
+
+        <p>In class we also tried to call <code class="inl">fee</code> from <code class="inl">Lesson29.java</code>, a hundred times, to see how rich the bank could get. That code is still there, commented out:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · commented out</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; 100; i++) {
+    acc2.fee(999999);
+}</code></pre>
+          <div class="out"><span class="out-label">Compiler</span><pre><em>error: fee(double) has private access in BankAccount
+    acc2.fee(999999);
+        ^</em></pre></div>
+        </div>
+
+        <p>And that is the whole point of <code class="inl">private</code>. If <code class="inl">fee</code> were public, any code anywhere could charge any customer any amount, with no deposit and no withdrawal. Private means a fee can only happen as part of a real money move.</p>
+
+        <h3 id="bank-merge">merge: a method that returns an object</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>BankAccount.java · merge and deleteAccount</span></div>
+          <pre class="code"><code>public BankAccount merge(BankAccount other)
+{
+    String newName = firstName + "&amp;" + other.firstName + "'s account";
+    double newBalance = balance + other.balance;
+    deleteAccount();
+    other.deleteAccount();
+
+    return new BankAccount(newName, newBalance);
+}
+
+private void deleteAccount() {
+    balance = 0;
+    firstName = "Deleted";
+    lastName = "account";
+    customersCount--;
+}</code></pre>
+        </div>
+
+        <p>Read the header first: <code class="inl">public BankAccount merge(BankAccount other)</code>. The return type is <code class="inl">BankAccount</code>. Until now our methods returned an <code class="inl">int</code>, a <code class="inl">double</code>, a <code class="inl">boolean</code> or a <code class="inl">String</code>. A method can just as well return an object of a class we wrote ourselves, and here it returns a brand-new account.</p>
+
+        <ol class="plain">
+          <li><strong>The new name</strong> is built from both first names: <code class="inl">"Selin" + "&amp;" + "Ceyda" + "'s account"</code> → <code class="inl">"Selin&amp;Ceyda's account"</code>.</li>
+          <li><strong>The new balance</strong> is the two balances added.</li>
+          <li><strong>Both old accounts are emptied</strong> by the private helper <code class="inl">deleteAccount()</code>: balance 0, name “Deleted account”, and the customer count goes down by one. Once for <code class="inl">this</code>, once for <code class="inl">other</code>.</li>
+          <li><strong>A new account is made</strong> with <code class="inl">new BankAccount(newName, newBalance)</code>, inside the class's own method. Its constructor runs as always: it splits the name, checks the balance, makes a password, and adds 1 to the count.</li>
+        </ol>
+
+        <p>The constructor splits the new name at its first space. <code class="inl">"Selin&amp;Ceyda's account"</code> has one space, before <code class="inl">account</code>:</p>
+
+        <div class="strip-wrap" data-word="Selin&amp;Ceyda's account" data-marks="13" data-mlen="1"><span class="strip-cap">indexOf(" ") → 13 · firstName "Selin&amp;Ceyda's" · lastName "account"</span></div>
+
+        <p><code class="inl">print()</code> glues them back with a space, so the customer's name shows as <code class="inl">Selin&amp;Ceyda's account</code>. And the count: two deleted (−2), one new (+1). Three customers become two.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>When two people open a joint account, a real bank does almost exactly this: the old accounts are closed (not erased from the records, just marked closed), the money moves to a new account with a new number, and the new account's card comes with a new PIN. That is <code class="inl">deleteAccount()</code>, <code class="inl">newBalance</code>, and the constructor's <code class="inl">generatePassword()</code>.</p>
+        </div>
+
+        <h3 id="bank-run">Running Lesson29</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson29.java · main, active lines</span></div>
+          <pre class="code"><code>BankAccount.printBankName();
+BankAccount.printCount();
+
+BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+BankAccount.printCount();
+
+acc1.print();
+BankAccount acc2 = new BankAccount("Ceyda Yazıcı");
+BankAccount.printCount();
+
+acc2.print();
+acc2.resetPassword("1237");
+acc2.deposit(100);
+acc2.deposit(800);
+acc1.resetPassword("1905");
+
+acc2.withdrawal(1500);
+
+acc1.print();
+acc2.print();
+
+acc1.transfer(acc2, 200, "1905");
+acc1.print();
+acc2.print();
+
+BankAccount acc3 = new BankAccount("Selin Kavas", 5000);
+BankAccount.printCount();
+BankAccount.printTotalFees();
+
+BankAccount acc4 = acc1.merge(acc2);
+
+acc4.print();
+
+BankAccount.printCount();
+
+acc1.print();
+acc2.print();</code></pre>
+          <div class="out"><span class="out-label">Console · one run; the random passwords will differ</span><pre>Garanti
+0
+1
+**************
+Customer's name: Selin Kavas
+Customer's password: 3136
+Customer's balance: $5000.0
+**************
+2
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 7497
+Customer's balance: $0.0
+**************
+Current balance: 95.0
+Current balance: 855.0
+Invalid amount!
+**************
+Customer's name: Selin Kavas
+Customer's password: 1905
+Customer's balance: $5000.0
+**************
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 1237
+Customer's balance: $855.0
+**************
+**************
+Customer's name: Selin Kavas
+Customer's password: 1905
+Customer's balance: $4790.0
+**************
+**************
+Customer's name: Ceyda Yazıcı
+Customer's password: 1237
+Customer's balance: $1045.0
+**************
+3
+65.0
+**************
+Customer's name: Selin&amp;Ceyda's account
+Customer's password: 4119
+Customer's balance: $5835.0
+**************
+2
+**************
+Customer's name: Deleted account
+Customer's password: 1905
+Customer's balance: $0.0
+**************
+**************
+Customer's name: Deleted account
+Customer's password: 1237
+Customer's balance: $0.0
+**************</pre></div>
+        </div>
+
+        <p>Follow the money and the two static numbers:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Line</th><th>Selin</th><th>Ceyda</th><th class="mono">customersCount</th><th class="mono">totalFees</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">before any account</td><td></td><td></td><td class="mono">0</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">acc1 = new …(…, 5000)</td><td class="mono">5000</td><td></td><td class="mono">1</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">acc2 = new …(…)</td><td class="mono">5000</td><td class="mono">0</td><td class="mono">2</td><td class="mono">0.0</td></tr>
+              <tr><td class="mono">acc2.deposit(100)</td><td class="mono">5000</td><td class="mono">100 − 5 = 95</td><td class="mono">2</td><td class="mono">5.0</td></tr>
+              <tr><td class="mono">acc2.deposit(800)</td><td class="mono">5000</td><td class="mono">895 − 40 = 855</td><td class="mono">2</td><td class="mono">45.0</td></tr>
+              <tr><td class="mono">acc2.withdrawal(1500)</td><td class="mono">5000</td><td class="mono">855 · refused, no fee</td><td class="mono">2</td><td class="mono">45.0</td></tr>
+              <tr><td class="mono">acc1.transfer(acc2, 200, …)</td><td class="mono">4800 − 10 = 4790</td><td class="mono">1055 − 10 = 1045</td><td class="mono">2</td><td class="mono">65.0</td></tr>
+              <tr><td class="mono">acc3 = new …</td><td class="mono">4790</td><td class="mono">1045</td><td class="mono">3</td><td class="mono">65.0</td></tr>
+              <tr><td class="mono">acc4 = acc1.merge(acc2)</td><td class="mono">0 · Deleted</td><td class="mono">0 · Deleted</td><td class="mono">3 − 2 + 1 = 2</td><td class="mono">65.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul class="plain">
+          <li>The 200 transfer needs no password (it is not over 1000), and <em>both</em> sides pay 10.</li>
+          <li><code class="inl">acc4</code> gets 4790 + 1045 = 5835. The merge itself charges no fee.</li>
+          <li>The last two prints are the interesting ones. <code class="inl">acc1</code> and <code class="inl">acc2</code> <strong>still exist</strong>. Their objects were not destroyed, only emptied and renamed. The variables still lead to them. Hold on to that thought for <a href="#ref">the next part</a>.</li>
+        </ul>
+
+        <h3 id="bank-lab">The bank lab</h3>
+
+        <p>Open accounts, move money, and watch the amber box: one copy, changed by every object. The fee and the messages work exactly as in the file.</p>
+
+        <div class="lab" data-mode="bank">
+          <div class="lab-head"><b>Bank lab · static fields</b><span>Amber: the class's one copy. White: one per account. Green: just changed.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label for="lab30b-n">full name<input id="lab30b-n" data-f="name" value="Ali Can" maxlength="30" autocomplete="off" spellcheck="false"></label>
+              <label for="lab30b-b">balance (may be empty)<input id="lab30b-b" data-f="bal" value="1000" maxlength="10" autocomplete="off" spellcheck="false"></label>
+              <button type="button" class="lab-btn" data-act="open">new BankAccount</button>
+            </div>
+            <div class="lab-form">
+              <label for="lab30b-a">account
+                <select id="lab30b-a" data-f="acc"></select>
+              </label>
+              <label for="lab30b-m">amount<input id="lab30b-m" data-f="amt" value="100" maxlength="10" autocomplete="off" spellcheck="false"></label>
+              <button type="button" class="lab-btn" data-act="deposit">deposit</button>
+              <button type="button" class="lab-btn" data-act="withdrawal">withdrawal</button>
+            </div>
+            <div class="lab-form">
+              <button type="button" class="lab-btn ghost" data-act="count">BankAccount.printCount()</button>
+              <button type="button" class="lab-btn ghost" data-act="fees">BankAccount.printTotalFees()</button>
+              <button type="button" class="lab-btn warn" data-act="reset">start over</button>
+            </div>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+            <p class="lab-note">Try a name with no space, like <code class="inl">Can</code>: “Invalid name”, and the count still goes up. Withdraw a whole balance and look at what the fee does. Leave the balance empty to use the one-argument constructor.</p>
+          </div>
+        </div>
+
+        <h3 id="bank-holes">Holes in the bank</h3>
+
+        <p>Every one of these compiles, runs and gives no error. Last week's holes (the negative transfer, the <code class="inl">null null</code> name) are all still there; these are the new ones.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A withdrawal can leave a negative balance.</strong> <code class="inl">withdrawal</code> checks <code class="inl">amount &lt;= balance</code>, then takes the money, then takes the fee on top:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount ali = new BankAccount("Ali Can", 100);
+ali.withdrawal(100);</code></pre>
+            <div class="out"><span class="out-label">Console</span><pre>Current balance: -5.0</pre></div>
+          </div>
+          <p>The check was done before the fee existed. A fix: check that the money <em>and</em> the fee are there, <code class="inl">amount + amount * 0.05 &lt;= balance</code>.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A refused name is still a customer.</strong> <code class="inl">new BankAccount("Can", 100)</code> prints “Invalid name”, but the constructor carries on to <code class="inl">customersCount++</code>. A constructor cannot refuse to make the object (Lesson 9), so the account exists, with <code class="inl">null null</code> as its name, and the bank counts it.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>Merging an account with itself doubles the money.</strong> Nothing stops <code class="inl">other</code> from being the same account as <code class="inl">this</code>:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount a = new BankAccount("Selin Kavas", 1000);
+BankAccount.printCount();
+BankAccount b = a.merge(a);
+b.print();
+BankAccount.printCount();</code></pre>
+            <div class="out"><span class="out-label">Console · without the password line</span><pre>1
+**************
+Customer's name: Selin&amp;Selin's account
+Customer's balance: $2000.0
+**************
+0</pre></div>
+          </div>
+          <p><code class="inl">balance + other.balance</code> is 1000 + 1000, because both names lead to the same account. 1000 became 2000. And the count: one account deleted <em>twice</em> (−2), one made (+1). The bank says it has 0 customers while <code class="inl">b</code> holds 2000. Why both names lead to the same account is exactly what <a href="#ref">References</a> is about.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A deleted account is not gone.</strong> Merge the same two accounts a second time and they are deleted again, and the count drops again:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount x = new BankAccount("Selin Kavas", 1000);
+BankAccount y = new BankAccount("Ceyda Yazıcı", 500);
+BankAccount.printCount();
+BankAccount m1 = x.merge(y);
+BankAccount.printCount();
+BankAccount m2 = x.merge(y);
+BankAccount.printCount();
+x.deposit(100);</code></pre>
+            <div class="out"><span class="out-label">Console</span><pre>2
+1
+0
+Current balance: 95.0</pre></div>
+          </div>
+          <p><code class="inl">m1</code> exists, the count says 0, <code class="inl">m2</code> is a useless “Deleted&amp;Deleted's account” with 0.0, and the “deleted” <code class="inl">x</code> still accepts a deposit. <code class="inl">deleteAccount</code> only changes some fields; nothing remembers that the account is closed. One <code class="inl">boolean</code> field, <code class="inl">closed</code>, checked at the start of every method, would close all of these holes.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An instance method can update a static field: <code class="inl">fee</code> changes this account's balance and the bank's one total. A private helper cannot be called from outside, which is what keeps fees honest. A method can return an object of our own class, made with <code class="inl">new</code> inside the class. Static counters are only right if <em>every</em> path that adds or removes an object keeps them right.</p>
+        </div>
+
+        <div class="practice" id="p30b">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on BankAccount</h3>
+          <p class="practice-lede">Use BankAccount.java exactly as it is in the file. Each question is a fresh program, and password lines are left out of the answers.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>BankAccount x = new BankAccount("Ali Can", 1000);
+x.deposit(200);
+x.withdrawal(100);
+BankAccount.printTotalFees();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Current balance: 1190.0
+Current balance: 1085.0
+15.0</pre></div></div>
+                  <p>1000 + 200 = 1200, fee 10 → 1190. 1190 − 100 = 1090, fee 5 → 1085. The bank earned 10 + 5 = 15.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After these lines, what are the two balances, and what does <code class="inl">printTotalFees()</code> print?</p>
+              <div class="ex"><pre class="code"><code>BankAccount s = new BankAccount("Selin Kavas", 2000);
+BankAccount y = new BankAccount("Ceyda Yazıcı", 0);
+s.transfer(y, 500, "x");
+BankAccount.printTotalFees();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>50.0</pre></div></div>
+                  <p><span class="outline">Selin 1475.0 · Ceyda 475.0</span></p>
+                  <p>500 is not over 1000, so the wrong password does not matter. Selin: 2000 − 500 − 25. Ceyda: 0 + 500 − 25. Both pay 25, so the bank earns 50.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Continuing question 2: <code class="inl">BankAccount m = s.merge(y);</code>. What is <code class="inl">m</code>'s name and balance, and what does <code class="inl">BankAccount.printCount()</code> print now?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">Selin&amp;Ceyda's account · 1950.0 · 1</span></p>
+                  <p>1475 + 475 = 1950. The count was 2; two deletes and one new account make it 1.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why does <code class="inl">acc2.fee(999999);</code> not compile in Lesson29.java, and why is that a good thing?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">fee</code> is private, so only code inside BankAccount may call it (<em>fee(double) has private access in BankAccount</em>). If it were public, anyone could take money from any account without a deposit, a withdrawal or a transfer.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Rewrite the first line of <code class="inl">withdrawal</code> so that a balance can never go below 0 because of the fee.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>if (amount &gt; 0 &amp;&amp; amount + amount * 0.05 &lt;= balance) {</code></pre></div>
+                  <p>Now 100 from a balance of 100 is refused (105 is needed), and 100 from 105 is allowed and leaves exactly 0.0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p><code class="inl">deleteAccount</code> is private. Why is that the right choice? What could go wrong if <code class="inl">Lesson29.java</code> could call <code class="inl">acc1.deleteAccount()</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Any code could empty an account and set its balance to 0: the money would simply vanish, not move anywhere. And every call lowers <code class="inl">customersCount</code>, so calling it twice on one account would make the count wrong. Inside the class it is only used by <code class="inl">merge</code>, right after the balance has been saved in <code class="inl">newBalance</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 30 · REFERENCES ============ -->
+      <section class="lesson" id="ref">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 30 · Lesson30.java + Height.java</span>
+          <h2 class="lesson-title">References</h2>
+        </div>
+
+        <p>Here is the main part of <code class="inl">Lesson30.java</code>. Before reading on, try to predict all eleven lines it prints. Most people get the fourth one wrong.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson30.java · main</span></div>
+          <pre class="code"><code>Height a = new Height(3,9);
+
+Height b = new Height(5,3);
+a.printHeight();
+b.printHeight();
+
+a = b;
+
+a.printHeight();
+b.printHeight();
+
+b.add(2);
+
+a.printHeight();
+b.printHeight();
+
+a.add(3);
+
+a.printHeight();
+b.printHeight();
+
+Height c = a;
+
+b.add(3);
+
+a.printHeight();
+b.printHeight();
+c.printHeight();
+
+a = new Height();
+int x = 8;
+int y = 4;
+
+x = y;
+
+y = 9;</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3 ft. 9 inc.
+5 ft. 3 inc.
+5 ft. 3 inc.
+5 ft. 3 inc.
+5 ft. 5 inc.
+5 ft. 5 inc.
+5 ft. 8 inc.
+5 ft. 8 inc.
+5 ft. 11 inc.
+5 ft. 11 inc.
+5 ft. 11 inc.</pre></div>
+        </div>
+
+        <p>After <code class="inl">a = b</code>, every change to one of them shows up in the other. <code class="inl">b.add(2)</code> changes <code class="inl">a</code>. <code class="inl">a.add(3)</code> changes <code class="inl">b</code>. And <code class="inl">c</code>, which nobody ever added anything to, prints 5 ft 11 at the end. To understand why, we need to know what is really inside a variable like <code class="inl">a</code>.</p>
+
+        <h3 id="ref-two">Two kinds of variables</h3>
+
+        <p>The last four lines of the file are the comparison. With <code class="inl">int</code>s, nothing surprising happens:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson30.java · the last lines, with a print added</span></div>
+          <pre class="code"><code>int x = 8;
+int y = 4;
+
+x = y;
+
+y = 9;
+System.out.println(x + " " + y);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 9</pre></div>
+        </div>
+
+        <p><code class="inl">x = y</code> copies the <em>number</em> 4 into <code class="inl">x</code>. After that, <code class="inl">x</code> and <code class="inl">y</code> have nothing to do with each other. Changing <code class="inl">y</code> to 9 does not touch <code class="inl">x</code>. That is how variables have behaved since Lesson 1.</p>
+
+        <p>Java has two kinds of variables, and they behave differently:</p>
+
+        <ul class="plain">
+          <li><strong>Primitive variables</strong>: <code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code>. The value itself is <em>inside</em> the variable. The box called <code class="inl">x</code> holds the number 4.</li>
+          <li><strong>Reference variables</strong>: every variable whose type is a class: <code class="inl">Height</code>, <code class="inl">BankAccount</code>, <code class="inl">Student</code>, <code class="inl">String</code>. The object is <em>not</em> inside the variable. The variable holds a <strong>reference</strong>: the information needed to find the object.</li>
+        </ul>
+
+        <div class="mem" role="img" aria-label="Primitive variables x and y hold the numbers 4 and 9 directly. The reference variable a holds an arrow to a Height object with feet 3 and inches 9.">
+          <div>
+            <p class="mem-lbl">variables</p>
+            <div class="vars">
+              <div class="var prim"><b>int x</b><span class="to">4</span></div>
+              <div class="var prim"><b>int y</b><span class="to">9</span></div>
+              <div class="var"><b>Height a</b><span class="to">→ #1</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="mem-lbl">objects</p>
+            <div class="heap">
+              <div class="obj">
+                <div class="obj-h"><b>#1</b><span>Height</span></div>
+                <div class="f"><span class="k">feet</span><span class="v">3</span></div>
+                <div class="f"><span class="k">inches</span><span class="v">9</span></div>
+                <div class="who">arrows from: a</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">The numbers sit inside x and y. The Height sits somewhere else; a only holds the arrow to it. “#1” is just our label for the object. Java's own labels are memory addresses.</p>
+
+        <h3 id="ref-what">What a reference is</h3>
+
+        <p>When Java runs <code class="inl">new Height(3, 9)</code>, it makes the object in a part of memory set aside for objects, and gives back <strong>where</strong> it put it. Only that “where” is stored in <code class="inl">a</code>. Think of it as an address, or simply as an arrow pointing at the object.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A house does not fit on a piece of paper, but its address does. If you write your address on a note and give a copy of the note to a friend, you have not built a second house. You now have two notes, and both lead to the same front door. If your friend goes there and paints the door red, you will find a red door too. The house is the object; each note is a reference.</p>
+        </div>
+
+        <p>Why does Java work this way? Because objects can be big. A <code class="inl">BankAccount</code> has four fields, a real one might have fifty, and an object can contain other objects. Copying all of that every time you write <code class="inl">=</code> or call a method would be slow, and usually you do not even want a copy. An arrow is always small, however big the object is.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A variable of a class type holds a <strong>reference</strong> to an object, never the object itself. <code class="inl">new</code> makes the object and gives back its reference.</p>
+        </div>
+
+        <h3 id="ref-assign">a = b</h3>
+
+        <p>Now the line that surprises everyone. <code class="inl">=</code> always copies <em>what is in the variable</em>. For <code class="inl">x = y</code> that was a number. For <code class="inl">a = b</code> it is <strong>the arrow</strong>:</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 680 230" role="img" aria-label="Before a = b: a points to Height #1 (3 ft 9), b points to Height #2 (5 ft 3). After: both a and b point to #2, and #1 has no arrow left.">
+            <defs>
+              <marker id="ar10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+            <text class="fig-lbl" x="20" y="22">before</text>
+            <rect class="fig-box" x="20" y="50" width="80" height="36" rx="6"/>
+            <text class="fig-m" x="60" y="73" text-anchor="middle">a</text>
+            <rect class="fig-box" x="20" y="130" width="80" height="36" rx="6"/>
+            <text class="fig-m" x="60" y="153" text-anchor="middle">b</text>
+            <rect class="fig-box" x="170" y="42" width="120" height="52" rx="6"/>
+            <text class="fig-lbl" x="182" y="60">#1</text>
+            <text class="fig-m" x="230" y="80" text-anchor="middle">3 ft 9</text>
+            <rect class="fig-box" x="170" y="122" width="120" height="52" rx="6"/>
+            <text class="fig-lbl" x="182" y="140">#2</text>
+            <text class="fig-m" x="230" y="160" text-anchor="middle">5 ft 3</text>
+            <line x1="100" y1="68" x2="168" y2="68" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar10)"/>
+            <line x1="100" y1="148" x2="168" y2="148" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar10)"/>
+
+            <line x1="330" y1="20" x2="330" y2="210" stroke="currentColor" stroke-width="1" opacity=".25"/>
+
+            <text class="fig-lbl" x="360" y="22">after a = b;</text>
+            <rect class="fig-hit" x="360" y="50" width="80" height="36" rx="6"/>
+            <text class="fig-m" x="400" y="73" text-anchor="middle">a</text>
+            <rect class="fig-box" x="360" y="130" width="80" height="36" rx="6"/>
+            <text class="fig-m" x="400" y="153" text-anchor="middle">b</text>
+            <rect class="fig-miss" x="520" y="42" width="120" height="52" rx="6"/>
+            <text class="fig-lbl" x="532" y="60">#1</text>
+            <text class="fig-skip" x="580" y="80" text-anchor="middle">3 ft 9</text>
+            <text class="fig-lbl" x="520" y="112">no arrow left</text>
+            <rect class="fig-box" x="520" y="122" width="120" height="52" rx="6"/>
+            <text class="fig-lbl" x="532" y="140">#2</text>
+            <text class="fig-m" x="580" y="160" text-anchor="middle">5 ft 3</text>
+            <path d="M 440 68 C 480 68, 480 136, 518 140" fill="none" stroke="var(--moss)" stroke-width="1.6" marker-end="url(#ar10)" style="color:var(--moss)"/>
+            <line x1="440" y1="152" x2="518" y2="152" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar10)"/>
+            <text class="fig-lbl" x="360" y="200">no Height was copied: only a's arrow moved</text>
+          </svg>
+          <figcaption>Two variables, one object. The 3 ft 9 object is still in memory, but nothing leads to it any more.</figcaption>
+        </figure>
+
+        <p>After <code class="inl">a = b</code> there are still two objects in memory, but only one of them can be reached, and it can be reached by two names. That is why the fourth printed line is 5 ft 3 and not 3 ft 9: <code class="inl">a.printHeight()</code> follows a's arrow, and a's arrow now leads to #2.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">a = b</code> does <strong>not</strong> mean “make a into a copy of b”. It means “make a point where b points”. After it, there is no separate Height for <code class="inl">a</code> any more.</p>
+        </div>
+
+        <h3 id="ref-alias">One object, two names</h3>
+
+        <p>Now the rest of the file is easy to read. Every method call follows the arrow to the object and changes <em>the object</em>, not the variable:</p>
+
+        <ul class="plain">
+          <li><code class="inl">b.add(2)</code>: follow b's arrow to #2, add 2 inches. #2 is now 5 ft 5. <code class="inl">a</code> leads to the same #2, so it prints 5 ft 5 too.</li>
+          <li><code class="inl">a.add(3)</code>: follow a's arrow, which is also #2. Now 5 ft 8, whichever name you print it with.</li>
+          <li><code class="inl">Height c = a;</code> copies the arrow again. No <code class="inl">new</code>, so no new object: three names for #2.</li>
+          <li><code class="inl">b.add(3)</code>: #2 becomes 5 ft 11, and all three names print 5 ft 11.</li>
+        </ul>
+
+        <p>When two or more variables refer to the same object, they are called <strong>aliases</strong>. The word means “another name”, like a nickname: Mehmet and “Memo” are two names for one person, and if Memo breaks his arm, Mehmet has a broken arm too.</p>
+
+        <div class="mem" role="img" aria-label="After Height c = a and b.add(3): variables a, b and c all point to Height #2 with feet 5 and inches 11. Height #1 has no arrows.">
+          <div>
+            <p class="mem-lbl">variables</p>
+            <div class="vars">
+              <div class="var"><b>Height a</b><span class="to">→ #2</span></div>
+              <div class="var"><b>Height b</b><span class="to">→ #2</span></div>
+              <div class="var moved"><b>Height c</b><span class="to">→ #2</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="mem-lbl">objects</p>
+            <div class="heap">
+              <div class="obj gone">
+                <div class="obj-h"><b>#1</b><span>Height</span></div>
+                <div class="f"><span class="k">feet</span><span class="v">3</span></div>
+                <div class="f"><span class="k">inches</span><span class="v">9</span></div>
+                <div class="who">no arrows · garbage</div>
+              </div>
+              <div class="obj">
+                <div class="obj-h"><b>#2</b><span>Height</span></div>
+                <div class="f new"><span class="k">feet</span><span class="v">5</span></div>
+                <div class="f new"><span class="k">inches</span><span class="v">11</span></div>
+                <div class="who">arrows from: a, b, c</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">Three variables, one Height. A change “through” any of them is a change to #2.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">=</code> copies what is in the variable. For a primitive that is the value, so the two variables stay independent. For an object that is the reference, so both variables now lead to the same object, and a change through one is seen through the other.</p>
+        </div>
+
+        <h3 id="ref-new">Pointing somewhere else</h3>
+
+        <p>Near the end of the file: <code class="inl">a = new Height();</code>. This time there <em>is</em> a <code class="inl">new</code>, so there is a new object, 99 ft 11 from the no-argument constructor, and <code class="inl">a</code>'s arrow moves to it. Only <code class="inl">a</code>'s:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>After the file's a = new Height(), with prints added</span></div>
+          <pre class="code"><code>a = new Height();
+a.printHeight();
+b.printHeight();
+c.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>99 ft. 11 inc.
+5 ft. 11 inc.
+5 ft. 11 inc.</pre></div>
+        </div>
+
+        <p>Giving <code class="inl">a</code> a new arrow does not change the object it used to point at, and does not move <code class="inl">b</code> or <code class="inl">c</code>. There are two different things you can do with a reference variable, and they must not be mixed up:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Code</th><th>What changes</th><th>Do the other names see it?</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">a.add(3);</td><td>the <strong>object</strong> a points to</td><td>yes, every alias sees it</td></tr>
+              <tr><td class="mono">a = new Height();</td><td>the <strong>arrow</strong> in a</td><td>no, only a points somewhere else</td></tr>
+              <tr><td class="mono">a = b;</td><td>the <strong>arrow</strong> in a</td><td>no, b is not changed at all</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="ref-lab">The reference lab</h3>
+
+        <p>Step through <code class="inl">Lesson30.main</code> one line at a time. The left column is the variables; the right column is the objects, each with the list of arrows that lead to it.</p>
+
+        <div class="lab" data-mode="refs">
+          <div class="lab-head"><b>Reference lab · Lesson30.main</b><span>Green: just changed. Dashed: no arrows left.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <button type="button" class="lab-btn ghost" data-act="prev">← Back</button>
+              <button type="button" class="lab-btn" data-act="next">Next line →</button>
+              <button type="button" class="lab-btn warn" data-act="reset">start over</button>
+              <span class="lab-step"></span>
+            </div>
+            <p class="lab-why"></p>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <h3 id="ref-gc">Lost objects</h3>
+
+        <p>What happened to the 3 ft 9 Height after <code class="inl">a = b</code>? It is still in memory, but no variable leads to it, and nothing can ever lead to it again: you cannot write an arrow to an object you cannot reach. For the program it is gone. Such an object is called <strong>garbage</strong>.</p>
+
+        <p>Java cleans up by itself. Every now and then, a part of Java called the <strong>garbage collector</strong> looks for objects that nothing points at and gives their memory back, so it can be used for new objects. You never have to do it yourself, and you cannot tell exactly when it happens.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Automatic garbage collection was invented around 1959 by John McCarthy for his language Lisp. For decades, many popular languages, C and C++ among them, left the job to the programmer: you had to free every object yourself, and forgetting it, or doing it twice, was one of the most common bugs there was. One of Java's selling points in 1995 was that it did the cleaning for you.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>An object with no arrows is lost <em>for good</em>. If you still need the 3 ft 9 Height, keep a variable pointing at it <em>before</em> you write <code class="inl">a = b</code>. Afterwards it is too late.</p>
+        </div>
+
+        <h3 id="ref-null">null: an arrow to nothing</h3>
+
+        <p>In Lesson 7 we met <code class="inl">null</code> as “no String at all”. Now we can say it more exactly: <code class="inl">null</code> is a reference that <strong>points at nothing</strong>. Any reference variable can hold it, not just Strings. Following an arrow that goes nowhere is the crash we already know:</p>
+
+        <div class="ex">
+          <pre class="code"><code>Height h = null;
+h.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot invoke "Height.printHeight()" because "h" is null</em></pre></div>
+        </div>
+
+        <div class="mem" role="img" aria-label="The variable h holds null: no arrow, no object.">
+          <div>
+            <p class="mem-lbl">variables</p>
+            <div class="vars">
+              <div class="var"><b>Height h</b><span class="to nul">null</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="mem-lbl">objects</p>
+            <div class="heap"><div class="lab-step">(none: there is nothing to follow)</div></div>
+          </div>
+        </div>
+
+        <p>A String field that has been given nothing is <code class="inl">null</code> (Lesson 8): the variable has a place for an arrow, but no arrow in it. The same is true for any field of a class type.</p>
+
+        <p><strong>What is safe, and what crashes.</strong> <code class="inl">null</code> itself is not an error. You can store it, copy it, print it and compare it. The crash comes only when Java has to <em>follow</em> the arrow: to call a method or to read a field.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Things you can do with null</span></div>
+          <pre class="code"><code>Height h = null;
+System.out.println(h);
+System.out.println(h == null);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>null
+true</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>With <code class="inl">h = null</code></th><th>Example</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>store or copy it</td><td class="mono">Height g = h;</td><td class="tv">fine, g is null too</td></tr>
+              <tr><td>print it</td><td class="mono">System.out.println(h);</td><td class="tv">prints null</td></tr>
+              <tr><td>compare it with ==</td><td class="mono">h == null</td><td class="tv">true</td></tr>
+              <tr><td>call a method on it</td><td class="mono">h.printHeight();</td><td><span class="err">NullPointerException</span></td></tr>
+              <tr><td>read a field through it</td><td class="mono">other.balance</td><td><span class="err">NullPointerException</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>Setting a variable to null removes one arrow.</strong> It does not destroy the object. If another variable still points at it, the object is fine:</p>
+
+        <div class="ex">
+          <pre class="code"><code>Height a = new Height(5, 3);
+Height b = a;
+a = null;
+b.printHeight();
+System.out.println(a == null);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 3 inc.
+true</pre></div>
+        </div>
+
+        <p>Only <code class="inl">a</code>'s arrow is gone. If <code class="inl">a</code> had been the last arrow to that Height, the object would now be garbage, exactly like the 3 ft 9 after <code class="inl">a = b</code>.</p>
+
+        <p><strong>Check before you follow.</strong> When a reference might be <code class="inl">null</code>, ask first, with <code class="inl">!=</code> or <code class="inl">==</code>, the rule from Lesson 7:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A method that checks first</span></div>
+          <pre class="code"><code>public static void printSafe(Height h) {
+    if (h != null) {
+        h.printHeight();
+    }
+    else {
+        System.out.println("no height");
+    }
+}
+
+// in main, right after the lines above:
+printSafe(b);
+printSafe(a);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 3 inc.
+no height</pre></div>
+        </div>
+
+        <p>A method never knows what it will be given. Any parameter of a class type can arrive as <code class="inl">null</code>, and our BankAccount does not check:</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><strong>A transfer to <code class="inl">null</code> loses the money.</strong> <code class="inl">transfer</code> takes the money from this account first, and only then follows <code class="inl">other</code>:</p>
+          <div class="ex">
+            <pre class="code"><code>BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+BankAccount acc2 = null;
+acc1.transfer(acc2, 100, "x");</code></pre>
+            <div class="out"><span class="out-label">Console</span><pre><em>Exception in thread "main" java.lang.NullPointerException: Cannot read field "balance" because "other" is null</em></pre></div>
+          </div>
+          <p><code class="inl">balance -= amount;</code> has already run when <code class="inl">other.balance += amount;</code> crashes. Had the program caught the crash and kept going, Selin's balance would show 4900.0: 100 taken, and nobody received it. <code class="inl">merge(null)</code> crashes too, but on its first line (<code class="inl">other.firstName</code>), before anything is deleted. The fix is a check at the very top of <code class="inl">transfer</code>:</p>
+          <div class="ex">
+            <pre class="code"><code>if (other == null) {
+    System.out.println("No such account!");
+}
+else {
+    // the old body of transfer
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Tony Hoare, who added null references to the language ALGOL W in 1965, later called them his “billion-dollar mistake”, because of all the crashes and bugs they have caused since. NullPointerException is still the most common crash in Java programs. Checking for null where a reference might be missing is one of the most useful habits you can build.</p>
+        </div>
+
+        <h3 id="ref-param">Objects go into methods by reference</h3>
+
+        <p>In Lesson 5 we saw that a parameter is a <em>copy</em>: a method that changes its <code class="inl">int</code> parameter does not change the caller's variable. That is still true for objects, but now we know what is copied: <strong>the arrow</strong>. The method gets its own copy of the arrow, and it leads to the caller's object.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Three methods, three results</span></div>
+          <pre class="code"><code>public static void growInt(int n) {
+    n += 12;
+}
+public static void grow(Height h) {
+    h.add(12);
+}
+public static void replace(Height h) {
+    h = new Height();
+    h.printHeight();
+}
+
+// in main:
+int n = 5;
+growInt(n);
+System.out.println(n);
+
+Height k = new Height(5, 3);
+grow(k);
+k.printHeight();
+
+replace(k);
+k.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+6 ft. 3 inc.
+99 ft. 11 inc.
+6 ft. 3 inc.</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">growInt</code> changes its own copy of the number. The caller's <code class="inl">n</code> stays 5. Lesson 5's rule.</li>
+          <li><code class="inl">grow</code> follows its copy of the arrow to <em>the caller's</em> Height and changes it. When the method ends, its copy of the arrow is gone, but the change stays in the object.</li>
+          <li><code class="inl">replace</code> gives its <em>own</em> copy of the arrow a new target. Inside the method, <code class="inl">h</code> is 99 ft 11. The caller's <code class="inl">k</code> was never touched, and still leads to 6 ft 3.</li>
+        </ul>
+
+        <p>That is the same table as before: changing the object is seen by everyone; changing the arrow is not. And it is what <code class="inl">transfer</code> and <code class="inl">merge</code> have done all along. In <code class="inl">acc1.transfer(acc2, 200, "1905")</code>, the parameter <code class="inl">other</code> is a copy of the arrow in <code class="inl">acc2</code>. So <code class="inl">other.balance += amount</code> changes Ceyda's real account, and <code class="inl">acc2.print()</code> shows the money afterwards. If Java copied the whole account into <code class="inl">other</code>, the money would go into a copy and disappear when the method ended.</p>
+
+        <p>It also explains the self-merge hole above. In <code class="inl">a.merge(a)</code>, <code class="inl">this</code> and <code class="inl">other</code> are two arrows to the same account: aliases. So <code class="inl">balance + other.balance</code> is the same balance twice.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A method gets a copy of whatever the argument holds. For a primitive, a copy of the value: the caller's variable cannot change. For an object, a copy of the reference: the method <strong>can change the caller's object</strong>, but it cannot make the caller's variable point somewhere else.</p>
+        </div>
+
+        <h3 id="ref-copy">Making a real copy</h3>
+
+        <p>So what if you really want a second, separate Height with the same value? Then you must make a second object, with <code class="inl">new</code>, and give it the same values:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>An alias and a copy</span></div>
+          <pre class="code"><code>Height orig = new Height(5, 3);
+Height alias = orig;
+Height copy = new Height(orig.getFeet(), orig.getInches());
+
+copy.add(5);
+alias.add(1);
+
+orig.printHeight();
+alias.printHeight();
+copy.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 4 inc.
+5 ft. 4 inc.
+5 ft. 8 inc.</pre></div>
+        </div>
+
+        <p>The 1 inch added through <code class="inl">alias</code> shows up in <code class="inl">orig</code>: same object. The 5 inches added to <code class="inl">copy</code> do not: different object. The rule of thumb is simple: <strong>no <code class="inl">new</code>, no new object</strong>.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Sharing a Google Docs <em>link</em> with a classmate is giving them a reference: whatever they type, you see. Downloading the file and e-mailing it is making a copy: they can change it all they like, and your document stays as it was. Both are useful. The bugs come from thinking you did one when you did the other.</p>
+        </div>
+
+        <h3 id="ref-eq">Why == failed for Strings</h3>
+
+        <p>In Lesson 6 we made a rule, <em>never <code class="inl">==</code> for Strings</em>, and explained it as “== asks whether it is the same String in memory”. Now that sentence has a precise meaning. On two reference variables, <code class="inl">==</code> compares the <strong>arrows</strong>, not the objects: it asks whether both point at the <em>same object</em>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>== on objects</span></div>
+          <pre class="code"><code>Height p = new Height(5, 3);
+Height q = new Height(5, 3);
+Height r = p;
+
+System.out.println(p == q);
+System.out.println(p == r);
+System.out.println(p.getFeet() == q.getFeet() &amp;&amp; p.getInches() == q.getInches());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>false
+true
+true</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">p == q</code> is <code class="inl">false</code>: two <code class="inl">new</code>s, two objects, two different arrows. That they hold the same height does not matter to <code class="inl">==</code>.</li>
+          <li><code class="inl">p == r</code> is <code class="inl">true</code>: aliases, the same arrow.</li>
+          <li>To ask “same height?”, compare the <em>values</em>, here with the getters. For Strings, <code class="inl">equals</code> does exactly that: it compares the letters.</li>
+        </ul>
+
+        <p>That is the whole story of Lesson 6's examples. <code class="inl">substring</code> and <code class="inl">+</code> build a <em>new</em> String object, so <code class="inl">part == "comp"</code> compares two different arrows and says <code class="inl">false</code>, even though the letters are the same.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>On objects, <code class="inl">==</code> asks “<em>the same object?</em>”, not “<em>the same value?</em>”. For Strings, use <code class="inl">equals</code>. The one thing a reference is compared to with <code class="inl">==</code> is <code class="inl">null</code>: “<em>does this arrow point anywhere?</em>”.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A class-type variable holds a reference. <code class="inl">=</code> copies the reference, so two names can lead to one object. Changing the object is seen through every name; giving a variable a new arrow is not. An object nobody points at is garbage. <code class="inl">null</code> is an arrow to nothing: it can be printed and compared, but not followed. Methods get a copy of the arrow, so they can change the caller's object. <code class="inl">==</code> compares arrows.</p>
+        </div>
+
+        <div class="practice" id="p30c">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on references</h3>
+          <p class="practice-lede">Use Height.java exactly as it is in the file. Draw the arrows before you answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height p = new Height(4, 0);
+Height q = p;
+q.add(14);
+p.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 2 inc.</pre></div></div>
+                  <p><code class="inl">q</code> is an alias of <code class="inl">p</code>. 14 inches are added to the one object: 4 ft 14 → 5 ft 2.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int m = 10;
+int n = m;
+n += 5;
+System.out.println(m + " " + n);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>10 15</pre></div></div>
+                  <p>Primitives: <code class="inl">n = m</code> copies the number 10. After that they are independent.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(5, 0);
+Height b = new Height(5, 0);
+a.add(6);
+b.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 0 inc.</pre></div></div>
+                  <p>Two <code class="inl">new</code>s, two objects. They happen to start with the same value, but they are not aliases.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(2, 0);
+Height b = a;
+a = new Height(3, 0);
+b.add(1);
+a.printHeight();
+b.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>3 ft. 0 inc.
+2 ft. 1 inc.</pre></div></div>
+                  <p>After line 2, both lead to the 2 ft object. Line 3 moves only <code class="inl">a</code>'s arrow to a new object. <code class="inl">b</code> still leads to the old one, and that is the one that gets the extra inch.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>How many Height objects does <code class="inl">Lesson30.main</code> make in total, and how many of them are garbage at the end?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3 objects · 1 garbage</span></p>
+                  <p>There are three <code class="inl">new</code>s: 3 ft 9, 5 ft 3 and 99 ft 11. <code class="inl">Height c = a;</code> makes none. The 3 ft 9 lost its only arrow at <code class="inl">a = b</code>. At the end, <code class="inl">b</code> and <code class="inl">c</code> lead to 5 ft 11 and <code class="inl">a</code> leads to 99 ft 11.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void shrink(Height h) {
+    h = new Height(1, 0);
+}
+public static void stretch(Height h) {
+    h.add(12);
+}
+
+// in main:
+Height k = new Height(5, 6);
+shrink(k);
+stretch(k);
+k.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6 ft. 6 inc.</pre></div></div>
+                  <p><code class="inl">shrink</code> only points its own copy of the arrow at a new object, so <code class="inl">k</code> is unchanged. <code class="inl">stretch</code> follows the arrow to <code class="inl">k</code>'s object and adds a foot.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ IN REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">Shared Boxes and Arrows Everywhere</h2>
+        </div>
+
+        <p>Static and references are not exam tricks. Every real program is full of both, and once you know them you start seeing them in the apps you use every day.</p>
+
+        <h3>Static: one value for everyone</h3>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Where</th><th>One per object (instance)</th><th>One for the whole class (static)</th></tr></thead>
+            <tbody>
+              <tr><td>An online shop</td><td>each order's items and address</td><td>the next order number, the VAT rate</td></tr>
+              <tr><td>A game</td><td>each player's score and lives</td><td>the high score, the number of players online</td></tr>
+              <tr><td>A school system</td><td>each student's name and grades</td><td>the school's name, the passing grade</td></tr>
+              <tr><td>A bank</td><td>each account's balance</td><td>the bank's name, the fee rate, the total fees</td></tr>
+              <tr><td>An exchange office</td><td>each customer's amount</td><td>today's dollar rate: change it once, every sale uses it</td></tr>
+              <tr><td>Java itself</td><td><code class="inl">"abc".length()</code></td><td><code class="inl">Math.sqrt</code>, <code class="inl">Math.PI</code>, <code class="inl">Integer.MAX_VALUE</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Notice two different uses. Some static fields are <strong>shared settings</strong>: a VAT rate or a dollar rate that every object must use, and that should be changed in one place, not in a thousand objects. Others are <strong>shared counters</strong>: a next order number or a player count that keeps track of all the objects together. And static methods like <code class="inl">Math.sqrt</code> are <strong>tools</strong>: they need nothing but their arguments.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>The number on your receipt at a café, “Order 247”, comes from a static counter. Every order object takes the current number and adds one to it. If each order had its own counter, every receipt would say “Order 1”, exactly like our first <code class="inl">Account1</code> try.</p>
+        </div>
+
+        <h3>References: many names, one thing</h3>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Situation</th><th>Reference (alias)</th><th>Copy (new object)</th></tr></thead>
+            <tbody>
+              <tr><td>A shopping cart on a family account</td><td>you and your sister add to the same cart</td><td>each of you has a separate cart</td></tr>
+              <tr><td>A document</td><td>a shared link: every edit is seen by all</td><td>a downloaded file: edit it alone</td></tr>
+              <tr><td>A TV</td><td>two remotes, one TV: either one changes the channel</td><td>a second TV</td></tr>
+              <tr><td>A contact in your phone</td><td>“Mom” and “Ayşe Hanım” saved as one contact: change the number once</td><td>two separate contacts: update one, the other is out of date</td></tr>
+              <tr><td>A bank transfer</td><td><code class="inl">transfer(other, …)</code> changes the real account</td><td>a copy would receive money that disappears</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Most of the time, sharing is what you want: a transfer must reach the real account, and a shared cart must really be shared. The famous reference bugs come from the opposite case: a programmer wants a separate copy, writes <code class="inl">a = b</code>, and then is surprised when a change “to the copy” also changes the original.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A classic real bug: a calendar app copies last week's meeting to make this week's, then moves this week's meeting to Thursday, and last week's meeting moves to Thursday too. The “copy” was an alias. The fix is always the same: <code class="inl">new</code>, then copy the values.</p>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop</span>
+          <h2 class="lesson-title">Five Classes, Static and Shared</h2>
+        </div>
+
+        <p>Short classes, each showing one thing about static or references. Every output below was run.</p>
+
+        <h3 id="shop-cup">CupcakeMachine, static</h3>
+
+        <p>Back to the warm-up class. Two machines in one shop, the file exactly as it is:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>orderNum as an instance variable (the file)</span></div>
+          <pre class="code"><code>CupcakeMachine m1 = new CupcakeMachine(10, 1.5);
+CupcakeMachine m2 = new CupcakeMachine(20, 2.0);
+System.out.println(m1.takeOrder(3));
+System.out.println(m2.takeOrder(2));
+System.out.println(m1.takeOrder(4));
+System.out.println(m1.takeOrder(5));
+System.out.println(m2.takeOrder(1));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Order number 1, cost $4.5
+Order number 1, cost $4.0
+Order number 2, cost $6.0
+Order cannot be filled
+Order number 2, cost $2.0</pre></div>
+        </div>
+
+        <p>Two customers both hold an “Order number 1”. At a counter where both machines' orders are collected, that is a problem. Change one line, and nothing else:</p>
+
+        <div class="ex">
+          <pre class="code"><code>private static int orderNum;</code></pre>
+          <div class="out"><span class="out-label">Console · the same main</span><pre>Order number 1, cost $4.5
+Order number 2, cost $4.0
+Order number 3, cost $6.0
+Order cannot be filled
+Order number 4, cost $2.0</pre></div>
+        </div>
+
+        <p>One counter for the whole shop, so every order number is unique. <code class="inl">numCakes</code> and <code class="inl">price</code> must stay instance variables: each machine has its own cakes and its own price. Which is right? It depends on what the number is for. A machine that counts its own sales wants the first version; a shop that hands out receipts wants the second. That is the “static or not?” question in one example.</p>
+
+        <h3 id="shop-ticket">Ticket · a static counter gives every object an ID</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ticket.java</span></div>
+          <pre class="code"><code>public class Ticket {
+    private static int nextId = 1001;
+    private int id;
+    private String movie;
+
+    public Ticket(String movie) {
+        this.movie = movie;
+        id = nextId;
+        nextId++;
+    }
+
+    public void print() {
+        System.out.println("#" + id + " " + movie);
+    }
+
+    public static int sold() {
+        return nextId - 1001;
+    }
+}
+
+// in main:
+System.out.println(Ticket.sold());
+Ticket t1 = new Ticket("Dune");
+Ticket t2 = new Ticket("Up");
+Ticket t3 = new Ticket("Dune");
+t1.print();
+t2.print();
+t3.print();
+System.out.println(Ticket.sold());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0
+#1001 Dune
+#1002 Up
+#1003 Dune
+3</pre></div>
+        </div>
+
+        <p>This is the most common use of static in real programs. The <em>static</em> <code class="inl">nextId</code> is the shared counter; the <em>instance</em> <code class="inl">id</code> is each ticket's own number, copied from the counter at birth. Afterwards the counter moves on, but each ticket keeps the number it was given. Two Dune tickets, two different IDs. Student numbers, order numbers and account numbers are all made this way.</p>
+
+        <h3 id="shop-conv">Converter · a class that is only a toolbox</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Converter.java</span></div>
+          <pre class="code"><code>public class Converter {
+    public static double cToF(double c) {
+        return c * 9 / 5 + 32;
+    }
+    public static double kmToMiles(double km) {
+        return km * 0.621371;
+    }
+    public static int minutesToSeconds(int m) {
+        return m * 60;
+    }
+}
+
+// in main:
+System.out.println(Converter.cToF(100));
+System.out.println(Converter.cToF(-40));
+System.out.println(Converter.cToF(36.6));
+System.out.println(Converter.kmToMiles(42.195));
+System.out.println(Converter.minutesToSeconds(90));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>212.0
+-40.0
+97.88000000000001
+26.218749345
+5400</pre></div>
+        </div>
+
+        <p>No fields, no constructor, nothing to remember: every answer depends only on the argument. That is exactly what <code class="inl">Math</code> is, and why every method here is static. Nobody needs to write <code class="inl">new Converter()</code>; you just call <code class="inl">Converter.cToF(…)</code>, like <code class="inl">Math.sqrt(…)</code>. (−40 is the one temperature that is the same in both scales. And 36.6 is Lesson 1's floating-point surprise again.)</p>
+
+        <h3 id="shop-player">Player · a record that belongs to nobody</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Player.java</span></div>
+          <pre class="code"><code>public class Player {
+    private static int record = 0;
+    private static String recordHolder = "nobody";
+    private String name;
+    private int best;
+
+    public Player(String name) {
+        this.name = name;
+    }
+
+    public void addScore(int score) {
+        if (score &gt; best) {
+            best = score;
+        }
+        if (score &gt; record) {
+            record = score;
+            recordHolder = name;
+            System.out.println("New record: " + name + " " + score);
+        }
+    }
+
+    public void print() {
+        System.out.println(name + " best " + best + " | record " + record + " by " + recordHolder);
+    }
+
+    public static void printRecord() {
+        System.out.println("Record: " + record + " (" + recordHolder + ")");
+    }
+}
+
+// in main:
+Player.printRecord();
+Player p1 = new Player("Ece");
+Player p2 = new Player("Can");
+p1.addScore(120);
+p2.addScore(90);
+p2.addScore(150);
+p1.addScore(140);
+p1.print();
+p2.print();
+Player.printRecord();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Record: 0 (nobody)
+New record: Ece 120
+New record: Can 150
+Ece best 140 | record 150 by Can
+Can best 150 | record 150 by Can
+Record: 150 (Can)</pre></div>
+        </div>
+
+        <p>Two max-so-far accumulators from Lesson 3 side by side: <code class="inl">best</code> is each player's own (instance), <code class="inl">record</code> is the game's (static). Ece's 140 beats her own 120, so her <code class="inl">best</code> changes, but it does not beat the record, so the static fields stay with Can. <code class="inl">addScore</code> is an instance method that updates both kinds: allowed. <code class="inl">printRecord</code> uses only static fields, so it can be static.</p>
+
+        <h3 id="shop-swap">The swap that doesn't swap</h3>
+
+        <p>A classic AP question. This method is supposed to swap two Heights:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two ways to "swap"</span></div>
+          <pre class="code"><code>public static void swap(Height p, Height q) {
+    Height t = p;
+    p = q;
+    q = t;
+}
+
+public static void swapValues(Height p, Height q) {
+    int f = p.getFeet();
+    int i = p.getInches();
+    p.setFeet(q.getFeet());
+    p.setInches(q.getInches());
+    q.setFeet(f);
+    q.setInches(i);
+}
+
+// in main:
+Height a = new Height(5, 3);
+Height b = new Height(6, 1);
+swap(a, b);
+a.printHeight();
+b.printHeight();
+swapValues(a, b);
+a.printHeight();
+b.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 3 inc.
+6 ft. 1 inc.
+6 ft. 1 inc.
+5 ft. 3 inc.</pre></div>
+        </div>
+
+        <p><code class="inl">swap</code> does nothing the caller can see. <code class="inl">p</code> and <code class="inl">q</code> are the method's own copies of the arrows. Swapping them swaps which object each <em>copy</em> points at, and then the method ends and the copies are thrown away. <code class="inl">a</code> and <code class="inl">b</code> were never touched. <code class="inl">swapValues</code> works because it follows the arrows and changes the <em>objects</em>. The same rule as <code class="inl">replace</code> and <code class="inl">grow</code>.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A static counter plus an instance ID gives every object a unique number. A class with only static methods is a toolbox, like Math. Static and instance fields can sit side by side, like a personal best and a game record. A method can change the objects it is given, but not the caller's variables.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+
+          <ol class="qs">
+            <li>
+              <p>With CupcakeMachine exactly as in the file, what is printed?</p>
+              <div class="ex"><pre class="code"><code>CupcakeMachine m = new CupcakeMachine(5, 2.0);
+System.out.println(m.takeOrder(2));
+System.out.println(m.takeOrder(4));
+System.out.println(m.takeOrder(3));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Order number 1, cost $4.0
+Order cannot be filled
+Order number 2, cost $6.0</pre></div></div>
+                  <p>5 cakes; 2 sold, 3 left. 4 is too many: refused, and no order number is used. 3 is exactly what is left.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>With <code class="inl">orderNum</code> made static, what is printed?</p>
+              <div class="ex"><pre class="code"><code>CupcakeMachine x = new CupcakeMachine(10, 1.0);
+CupcakeMachine y = new CupcakeMachine(10, 1.0);
+x.takeOrder(1);
+y.takeOrder(1);
+System.out.println(x.takeOrder(1));
+System.out.println(y.takeOrder(20));
+System.out.println(y.takeOrder(1));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Order number 3, cost $1.0
+Order cannot be filled
+Order number 4, cost $1.0</pre></div></div>
+                  <p>The first two orders (whose Strings are not printed) used numbers 1 and 2 of the one shared counter. The refused order uses no number.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After the Ticket main above, what do <code class="inl">new Ticket("Up").print();</code> and then <code class="inl">System.out.println(Ticket.sold());</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>#1004 Up
+4</pre></div></div>
+                  <p>The shared counter was at 1004 after three tickets. The new ticket takes it, and the counter moves to 1005; 1005 − 1001 = 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">System.out.println(Converter.cToF(37));</code> print? 37 is an <code class="inl">int</code>; does that matter?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>98.6</pre></div></div>
+                  <p>The parameter is a <code class="inl">double</code>, so the 37 arrives as 37.0 and the whole calculation is done in <code class="inl">double</code>. (With an <code class="inl">int</code> parameter, <code class="inl">37 * 9 / 5 + 32</code> would be 98.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In Player, why can't <code class="inl">best</code> be static? And why couldn't <code class="inl">printRecord</code> print <code class="inl">name</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>A static <code class="inl">best</code> would be one number for everyone, the same as <code class="inl">record</code>: Ece's personal best would be Can's too. <code class="inl">printRecord</code> is static, so it has no player in front of the dot: <em>whose</em> name? That is why the record holder's name is kept in its own static field, <code class="inl">recordHolder</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Explain in one or two sentences why <code class="inl">swap(a, b)</code> leaves <code class="inl">a</code> and <code class="inl">b</code> unchanged, while <code class="inl">swapValues(a, b)</code> does not.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">swap</code> only swaps its own copies of the two arrows, which disappear when it returns. <code class="inl">swapValues</code> follows the arrows to the caller's two objects and changes the values inside them, and those objects are what <code class="inl">a</code> and <code class="inl">b</code> lead to.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>static field</strong></td><td>class variable</td><td>a field with one copy for the whole class, shared by every object</td><td class="mono">customersCount, totalFees</td></tr>
+              <tr><td><strong>instance variable</strong></td><td>field</td><td>a field each object has its own copy of</td><td class="mono">balance, firstName</td></tr>
+              <tr><td><strong>static method</strong></td><td>class method</td><td>a method called on the class name; it has no <code class="inl">this</code></td><td class="mono">BankAccount.printCount()</td></tr>
+              <tr><td><strong>instance method</strong></td><td></td><td>a method called on an object</td><td class="mono">acc1.print()</td></tr>
+              <tr><td><strong>static context</strong></td><td></td><td>code inside a static method, where there is no object</td><td>the error messages</td></tr>
+              <tr><td><strong>primitive variable</strong></td><td></td><td>holds the value itself</td><td class="mono">int x, int y</td></tr>
+              <tr><td><strong>reference</strong></td><td>address, arrow</td><td>what a class-type variable holds: the way to find the object</td><td class="mono">Height a</td></tr>
+              <tr><td><strong>alias</strong></td><td></td><td>two or more variables that refer to the same object</td><td class="mono">a, b, c after c = a</td></tr>
+              <tr><td><strong>garbage</strong></td><td></td><td>an object no reference leads to any more</td><td>the 3 ft 9 Height</td></tr>
+              <tr><td><strong>garbage collector</strong></td><td></td><td>the part of Java that frees the memory of garbage</td><td></td></tr>
+              <tr><td><strong>null</strong></td><td></td><td>a reference that points at nothing</td><td class="mono">Height h = null;</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Fifteen traps to remember</h2>
+        <p>Five will not compile, two crash, and the rest run and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">balance in a static method</td><td>the balance</td><td><span class="err">will not compile</span></td><td>whose balance? no object</td></tr>
+              <tr><td class="mono">this.x in a static method</td><td>the field</td><td><span class="err">will not compile</span></td><td>a static method has no this</td></tr>
+              <tr><td class="mono">BankAccount.print();</td><td>an account printed</td><td><span class="err">will not compile</span></td><td>an instance method needs an object</td></tr>
+              <tr><td class="mono">isPrime without static, called from main</td><td>true</td><td><span class="err">will not compile</span></td><td>main is static, it has no object</td></tr>
+              <tr><td class="mono">acc2.fee(999999); outside</td><td>a fee</td><td><span class="err">will not compile</span></td><td>fee is private</td></tr>
+              <tr><td class="mono">Height h = null; h.printHeight();</td><td>something</td><td><span class="err">NullPointerException</span></td><td>an arrow to nothing</td></tr>
+              <tr><td class="mono">acc1.transfer(null, 100, "x")</td><td>refused</td><td><span class="err">NullPointerException</span>, 100 already taken</td><td>check other == null first</td></tr>
+              <tr><td class="mono">an ordinary field as a counter</td><td>1, 2, 3</td><td class="mono"><span class="fv">1, 1, 1</span></td><td>each object has its own: make it static</td></tr>
+              <tr><td class="mono">static balance</td><td>one balance each</td><td><span class="fv">one balance for all</span></td><td>static means one copy</td></tr>
+              <tr><td class="mono">s1.city = "Ankara";</td><td>only s1 changes</td><td><span class="fv">s2 changes too</span></td><td>a static field, written on an object</td></tr>
+              <tr><td class="mono">a = b; then b.add(2);</td><td>a unchanged</td><td><span class="fv">a changes too</span></td><td>a and b are aliases</td></tr>
+              <tr><td class="mono">a = new Height();</td><td>b and c change</td><td><span class="fv">only a moves</span></td><td>a new arrow, not a changed object</td></tr>
+              <tr><td class="mono">swap(a, b)</td><td>swapped</td><td><span class="fv">unchanged</span></td><td>the method swapped its own copies of the arrows</td></tr>
+              <tr><td class="mono">new Height(5,3) == new Height(5,3)</td><td class="mono">true</td><td class="mono"><span class="fv">false</span></td><td>== compares arrows, not values</td></tr>
+              <tr><td class="mono">acc.withdrawal(acc's whole balance)</td><td class="mono">0.0</td><td class="mono"><span class="fv">-5.0 for 100</span></td><td>the fee is taken after the check</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 10, part 30: static and references. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson9.html">← Lesson 9</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

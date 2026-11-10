@@ -2,6 +2,9 @@ package Grup1;
 
 public class BankAccount {
 
+	private static String bankName = "Garanti" ;
+	private static int customersCount = 0 ;
+	private static double totalFees = 0;
 	private String firstName; 
 	private String lastName; 
 	
@@ -26,6 +29,7 @@ public class BankAccount {
 			this.balance = balance; 	
 		}
 		password = generatePassword();
+		customersCount++;
 	
 	}
 	public BankAccount(String fullName)
@@ -42,7 +46,7 @@ public class BankAccount {
 		}
 	//	balance = 0 ; (optional)
 		password = generatePassword();
-
+		customersCount++;
 	}
 	
 	
@@ -69,6 +73,7 @@ public class BankAccount {
 	{
 		if(amount > 0) {
 			balance += amount;
+			fee(amount);
 			System.out.println("Current balance: " + balance);
 		}
 		else {
@@ -79,6 +84,7 @@ public class BankAccount {
 	{
 		if(amount > 0 && amount <= balance) {
 			balance -= amount;
+			fee(amount);
 			System.out.println("Current balance: " + balance);
 		}
 		else {
@@ -93,6 +99,8 @@ public class BankAccount {
 				if(amount > 1000 && this.password.equals(password)) {
 					balance -= amount ;
 					other.balance += amount;
+					fee(amount);
+					other.fee(amount);
 				}
 				if(amount > 1000 &&  !this.password.equals(password))
 				{
@@ -101,6 +109,8 @@ public class BankAccount {
 				if(amount <= 1000) {
 					balance -= amount ;
 					other.balance += amount;
+					fee(amount);
+					other.fee(amount);
 				}
 				
 			} else {
@@ -158,6 +168,43 @@ public class BankAccount {
 
 	}
 	
+	private void fee(double amount) {
+		double f = amount * 0.05 ;
+		totalFees += f;
+		balance -= f ;
+	}
 	
+	
+	public BankAccount merge(BankAccount other)
+	{
+		String newName = firstName + "&" + other.firstName + "'s account";
+		double newBalance = balance + other.balance ;
+		deleteAccount();
+		other.deleteAccount();
+		
+		return new BankAccount(newName, newBalance);
+	}
+	
+	private void deleteAccount() {
+		balance = 0 ;
+		firstName = "Deleted";
+		lastName = "account";
+		customersCount--;
+	}
+	
+	public static void printBankName() {
+		System.out.println(bankName);
+	}
+	public static void printTotalFees() {
+		System.out.println(totalFees);
+	}
+	public static void printCount() {
+	//	System.out.println(this.customersCount); Cannot use this in a static context
+		System.out.println(customersCount);
+	}
+	
+//	public static void someFunction() { // Cannot make a static reference to the non-static field balance
+//		System.out.println(balance);
+//	}
 	
 }

@@ -14,11 +14,27 @@ public class Lesson29 {
 //		
 //		h4.printHeight();
 
-		BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
 		
+		// Math.random  Math.pow(2,3)
+		
+//		System.out.println(BankAccount.bankName); // The field BankAccount.bankName is not visible
+		
+		BankAccount.printBankName();
+	//	BankAccount.someFunction();
+		BankAccount.printCount();
+		
+		
+		
+		BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+		BankAccount.printCount();
+
+	//	System.out.println(acc1.bankName); // The static field BankAccount.bankName should be accessed in a static way
+		// The field BankAccount.bankName is not visible
+
 		acc1.print();
 		BankAccount acc2 = new BankAccount("Ceyda Yazıcı");
-		
+		BankAccount.printCount();
+
 		acc2.print();
 		acc2.resetPassword("1237");
 		acc2.deposit(100);
@@ -30,10 +46,33 @@ public class Lesson29 {
 		acc1.print();
 		acc2.print();
 		
-		 acc1.transfer(acc2,15000,"1905");
+		 acc1.transfer(acc2,200,"1905");
 		 acc1.print();
 		 acc2.print();
 		 
+		BankAccount acc3 = new BankAccount("Selin Kavas", 5000);
+		BankAccount.printCount();
+		BankAccount.printTotalFees();
+		
+		
+/*		for(int i=0; i <100 ; i++) {
+			acc2.fee(999999);
+		}
+		 
+		BankAccount.printTotalFees();
+		acc2.print();
+		
+*/		
+		
+		
+		BankAccount acc4 =  acc1.merge(acc2);
+		
+		acc4.print();
+		
+		BankAccount.printCount();
+		
+		acc1.print();
+		acc2.print();
 	}
 
 }
