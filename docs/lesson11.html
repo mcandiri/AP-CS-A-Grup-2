@@ -1,0 +1,2085 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 11: passed by value. What a method gets when you call it, why an int parameter can never change the caller's variable, why an object parameter can change the caller's object but not the caller's variable, Strings in methods, printing an object, and a checklist for the question the AP exam asks again and again: after this call, what changed?">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 11 · Passed by Value — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 11</p>
+    <h1>Passed by Value</h1>
+    <p class="deck">You call a method and hand it a variable. When the method is finished, is your variable still the same? For an <code class="inl">int</code> the answer is always yes. For a <code class="inl">Height</code> the answer is “it depends”, and it depends on one thing only: did the method <em>change the object</em>, or did it only <em>move its own arrow</em>? This is one of the most asked questions on the AP exam, so this lesson takes it slowly, one picture at a time, and ends with a checklist you can use on any question.</p>
+    <ul class="facts">
+      <li>1 file</li>
+      <li>Java</li>
+      <li>36 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#pv">31 · Passed by value</a></li>
+        <li><a class="sub" href="#pv-run">Running Lesson31</a></li>
+        <li><a class="sub" href="#pv-call">What happens at a call</a></li>
+        <li><a class="sub" href="#pv-int">increment(int): a copy of the number</a></li>
+        <li><a class="sub" href="#pv-over">Two methods called increment</a></li>
+        <li><a class="sub" href="#pv-obj">increment(Height): a copy of the arrow</a></li>
+        <li><a class="sub" href="#pv-name">What is copied: the reference</a></li>
+        <li><a class="sub" href="#pv-new">increment2: the new arrow</a></li>
+        <li><a class="sub" href="#pv-fix">Making increment2 work</a></li>
+        <li><a class="sub" href="#pv-print">Printing an object</a></li>
+        <li><a class="sub" href="#pv-lab">The call lab</a></li>
+        <li><a class="sub" href="#p31a">Practice</a></li>
+        <li><a href="#ch">31 · Did it change?</a></li>
+        <li><a class="sub" href="#ch-table">Four kinds of argument</a></li>
+        <li><a class="sub" href="#ch-str">Strings behave like ints</a></li>
+        <li><a class="sub" href="#ch-order">The order of the lines</a></li>
+        <li><a class="sub" href="#ch-get">What a getter gives you</a></li>
+        <li><a class="sub" href="#ch-ret">Returned values must be caught</a></li>
+        <li><a class="sub" href="#ch-this">Which objects can a method change?</a></li>
+        <li><a class="sub" href="#ch-two">Two names for one parameter</a></li>
+        <li><a class="sub" href="#ch-static">Static doesn't decide</a></li>
+        <li><a class="sub" href="#ch-flow">The checklist</a></li>
+        <li><a class="sub" href="#p31b">Practice</a></li>
+        <li><a href="#cls">31 · Classes from real life</a></li>
+        <li><a class="sub" href="#cls-phone">Phone</a></li>
+        <li><a class="sub" href="#cls-book">Book</a></li>
+        <li><a class="sub" href="#cls-team">Team</a></li>
+        <li><a class="sub" href="#cls-order">Order</a></li>
+        <li><a class="sub" href="#cls-post">Post</a></li>
+        <li><a class="sub" href="#cls-contact">Contact</a></li>
+        <li><a class="sub" href="#pcls">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a href="#shop">Workshop · after the call</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
+        <li><a href="#ap">AP-style questions</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 31 · PASSED BY VALUE ============ -->
+      <section class="lesson" id="pv">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 31 · Lesson31.java + Height.java</span>
+          <h2 class="lesson-title">Passed by Value</h2>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li>What Java does, step by step, when you call a method with an argument.</li>
+            <li>Why <code class="inl">increment(number)</code> cannot change <code class="inl">number</code>, and why <code class="inl">increment(h)</code> <em>can</em> change <code class="inl">h</code>'s object.</li>
+            <li>Why <code class="inl">increment2(h)</code> changes nothing, even though it makes a taller Height.</li>
+            <li>What <code class="inl">System.out.println(h)</code> prints, and what that strange <code class="inl">@66d3c617</code> is.</li>
+            <li>A checklist for “after this call, what changed?”: ints, Strings, objects, getters, return values, <code class="inl">this</code>, and static methods.</li>
+            <li>Six classes from real life (Phone, Book, Team, Order, Post, Contact), each showing the rule from a different side.</li>
+          </ul>
+        </div>
+
+        <p>In Lesson 5 we learned that a parameter is a copy. In Lesson 10 we learned that a variable like <code class="inl">Height h</code> does not hold a Height, only an arrow to one. Put those two facts together and you get the whole of this lesson. It sounds small, but it is the reason behind a large share of the “what is printed?” questions on the exam, and most mistakes come from knowing the two facts separately but not together.</p>
+
+        <h3 id="pv-run">Running Lesson31</h3>
+
+        <p>Here is the file from class. There are three methods, and two of them have the same name. Try to predict the output before you look at the console.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson31.java</span></div>
+          <pre class="code"><code>public class Lesson31 {
+
+    /*
+     *      Passed by value
+     *      number = a ;
+     *      number++;
+     *      a???
+     */
+    public static void increment(int number) {
+        number++; // number = number + 1
+        System.out.println("In method: " + number);
+    }
+    /**
+     *      Passed by reference
+     *      ht = h ;
+     *      ht.add(1)
+     */
+    public static void increment(Height ht) {
+        ht.add(1);
+    }
+
+    /*
+     *      passed by value
+     */
+    public static void increment2(Height ht) {
+        int ft = ht.getFeet();
+        int inc = ht.getInches();
+
+        ht = new Height(ft, inc+1);
+    }
+
+    public static void main(String[] args) {
+
+        // PASSED BY VALUE
+        int number = 9;
+        System.out.println("Before method: " + number);
+
+        increment(number);
+
+        System.out.println("After method: " + number);
+
+        int x = 5;
+        int y = 3;
+
+        x = y;
+
+        y++;
+
+        increment(5);
+
+        Height h = new Height(4,2);
+
+        increment(h);
+
+        h.printHeight();
+
+        increment2(h);
+        h.printHeight();
+
+        System.out.println(h);
+
+        Height h1 = h;
+
+        System.out.println(h1 == h);
+    }
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Before method: 9
+In method: 10
+After method: 9
+In method: 6
+4 ft. 3 inc.
+4 ft. 3 inc.
+Grup1.Height@66d3c617
+true</pre></div>
+        </div>
+
+        <p>Three lines need explaining. <em>After method: 9</em>, although the method printed 10. The second <em>4 ft. 3 inc.</em>, although <code class="inl">increment2</code> made a Height of 4 ft 4. And <em>Grup1.Height@66d3c617</em>, which is not a height at all. Let us take them one at a time.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The number after the <code class="inl">@</code> will probably be different on your computer, and it may change from one run to the next. Everything else on this page prints exactly what you see.</p>
+        </div>
+
+        <h3 id="pv-call">What happens at a call</h3>
+
+        <p>When Java reaches the line <code class="inl">increment(number);</code>, four things happen, always in this order:</p>
+
+        <ol class="plain">
+          <li><strong>The argument is worked out.</strong> <code class="inl">number</code> is 9, so the value going in is 9. (If you write <code class="inl">increment(2 + 3)</code>, the value is 5. If you write <code class="inl">increment(5)</code>, it is 5.)</li>
+          <li><strong>The method gets fresh variables of its own.</strong> Every parameter is a brand-new variable that exists only while the method runs. Java sets aside a little area of memory for the call, called a <strong>frame</strong>, and puts the parameters there.</li>
+          <li><strong>The value is copied into the parameter.</strong> This is exactly the line from the comment in the file: <code class="inl">number = a;</code>. It is an ordinary <code class="inl">=</code>, the same <code class="inl">=</code> as in <code class="inl">x = y</code>.</li>
+          <li><strong>The body runs. When it ends, the frame is thrown away</strong>, with all the parameters and local variables in it. Java goes back to the line after the call.</li>
+        </ol>
+
+        <figure class="fig">
+          <svg viewBox="0 0 680 220" role="img" aria-label="The main frame holds number = 9. At the call, the value 9 is copied into a new frame for increment, whose own number becomes 10. When increment ends its frame disappears and main's number is still 9.">
+            <defs>
+              <marker id="ar11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+            <text class="fig-lbl" x="20" y="24">1 · before the call</text>
+            <rect class="fig-box" x="20" y="40" width="170" height="110" rx="8"/>
+            <text class="fig-lbl" x="34" y="60">frame of main</text>
+            <rect class="fig-box" x="34" y="72" width="142" height="34" rx="5"/>
+            <text class="fig-m" x="46" y="94">number</text>
+            <text class="fig-m" x="162" y="94" text-anchor="end">9</text>
+
+            <text class="fig-lbl" x="250" y="24">2 · during increment(number)</text>
+            <rect class="fig-box" x="250" y="40" width="170" height="74" rx="8"/>
+            <text class="fig-lbl" x="264" y="58">frame of main</text>
+            <rect class="fig-box" x="264" y="66" width="142" height="34" rx="5"/>
+            <text class="fig-m" x="276" y="88">number</text>
+            <text class="fig-m" x="392" y="88" text-anchor="end">9</text>
+            <rect class="fig-hit" x="250" y="126" width="170" height="74" rx="8"/>
+            <text class="fig-lbl" x="264" y="144">frame of increment</text>
+            <rect class="fig-box" x="264" y="152" width="142" height="34" rx="5"/>
+            <text class="fig-m" x="276" y="174">number</text>
+            <text class="fig-m" x="392" y="174" text-anchor="end">9 → 10</text>
+            <path d="M 420 84 C 446 84, 446 168, 422 168" fill="none" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11)"/>
+            <text class="fig-lbl" x="450" y="130">copy of 9</text>
+
+            <text class="fig-lbl" x="500" y="24">3 · after the call</text>
+            <rect class="fig-box" x="500" y="40" width="170" height="74" rx="8"/>
+            <text class="fig-lbl" x="514" y="58">frame of main</text>
+            <rect class="fig-box" x="514" y="66" width="142" height="34" rx="5"/>
+            <text class="fig-m" x="526" y="88">number</text>
+            <text class="fig-m" x="642" y="88" text-anchor="end">9</text>
+            <rect class="fig-miss" x="500" y="126" width="170" height="74" rx="8"/>
+            <text class="fig-skip" x="585" y="168" text-anchor="middle">frame gone</text>
+          </svg>
+          <figcaption>Two variables called <code class="inl">number</code>, in two different frames. The method changed its own, and its own was thrown away.</figcaption>
+        </figure>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>At every call, Java <strong>copies the value of each argument into a new parameter variable</strong>. This is called <strong>passing by value</strong>, and it is the only way Java ever passes anything. What changes from type to type is only <em>what the value is</em>: a number for an <code class="inl">int</code>, an arrow for an object.</p>
+        </div>
+
+        <h3 id="pv-int">increment(int): a copy of the number</h3>
+
+        <p>Now the first three lines of output are easy:</p>
+
+        <ul class="plain">
+          <li><code class="inl">Before method: 9</code>. Nothing has happened yet.</li>
+          <li><code class="inl">In method: 10</code>. The method's own <code class="inl">number</code> started as a copy of 9, and <code class="inl">number++</code> made <em>it</em> 10.</li>
+          <li><code class="inl">After method: 9</code>. The frame with the 10 in it is gone. <code class="inl">main</code>'s <code class="inl">number</code> was never touched.</li>
+        </ul>
+
+        <p>It does not help that both variables are called <code class="inl">number</code>. A parameter's name is just the name <em>inside the method</em>. It is the same scope rule from Lessons 3 and 5: a variable lives in its own block, and two blocks can each have a variable with the same name without knowing about each other. The comment in the file uses <code class="inl">a</code> for the caller's variable on purpose, to make that clear: <code class="inl">number = a;</code> then <code class="inl">number++;</code>, so what happens to <code class="inl">a</code>? Nothing.</p>
+
+        <p>The next lines in <code class="inl">main</code> are the same idea without a method:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson31.java · the middle of main, with a print added</span></div>
+          <pre class="code"><code>int x = 5;
+int y = 3;
+
+x = y;
+
+y++;
+System.out.println(x + " " + y);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>3 4</pre></div>
+        </div>
+
+        <p><code class="inl">x = y</code> copies 3 into <code class="inl">x</code>, and then the two have nothing to do with each other: <code class="inl">y++</code> does not reach <code class="inl">x</code>. A call does exactly this, with the parameter on the left and the argument on the right.</p>
+
+        <p>And then the strongest proof of all, <code class="inl">increment(5);</code>, which prints <code class="inl">In method: 6</code>. If the method could change the caller's variable, what would it change here? The number 5 itself? There is no variable to change. The method receives a value, not a variable, so passing a literal works exactly like passing a variable.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Printing inside the method is what fools people. <em>In method: 10</em> is true; it is just about a different variable. When a question asks what is printed <em>after</em> the call, look at the caller's variable, not the method's.</p>
+        </div>
+
+        <h3 id="pv-over">Two methods called increment</h3>
+
+        <p>Lesson31 has <code class="inl">increment(int number)</code> and <code class="inl">increment(Height ht)</code>. Two methods with the same name in one class: that is allowed, as long as their parameter lists are different. It is the same thing we did with Height's three constructors in Lesson 9. It is called <strong>overloading</strong>.</p>
+
+        <p>Java chooses which one to run by looking at the arguments:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Call</th><th>Argument type</th><th>Runs</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">increment(number)</td><td class="mono">int</td><td class="mono">increment(int number)</td></tr>
+              <tr><td class="mono">increment(5)</td><td class="mono">int</td><td class="mono">increment(int number)</td></tr>
+              <tr><td class="mono">increment(h)</td><td class="mono">Height</td><td class="mono">increment(Height ht)</td></tr>
+              <tr><td class="mono">increment("hi")</td><td class="mono">String</td><td><span class="err">will not compile</span>: no increment takes a String</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The return type and the parameter <em>names</em> do not count. Two methods <code class="inl">increment(int number)</code> and <code class="inl">increment(int n)</code> in the same class would be the same method twice, and would not compile.</p>
+
+        <h3 id="pv-obj">increment(Height): a copy of the arrow</h3>
+
+        <p>Now the same rule with a Height. <code class="inl">h</code> holds an arrow to a Height object, so the value that is copied is <strong>the arrow</strong>. This is the comment in the file again: <code class="inl">ht = h;</code>. After that line, <code class="inl">ht</code> and <code class="inl">h</code> are aliases, two arrows to the same object, exactly like <code class="inl">a = b</code> in Lesson 10.</p>
+
+        <div class="mem" role="img" aria-label="During increment(h): main's h and increment's ht both point at Height #1, which changes from 4 ft 2 to 4 ft 3.">
+          <div>
+            <div class="frame main">
+              <p class="frame-h">frame of main</p>
+              <div class="vars">
+                <div class="var"><b>Height h</b><span class="to">→ #1</span></div>
+              </div>
+            </div>
+            <div class="frame">
+              <p class="frame-h">frame of increment</p>
+              <div class="vars">
+                <div class="var moved"><b>Height ht</b><span class="to">→ #1</span></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="mem-lbl">objects</p>
+            <div class="heap">
+              <div class="obj">
+                <div class="obj-h"><b>#1</b><span>Height</span></div>
+                <div class="f new"><span class="k">feet</span><span class="v">4</span></div>
+                <div class="f new"><span class="k">inches</span><span class="v">2 → 3</span></div>
+                <div class="who">arrows from: h, ht</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">Two arrows, two frames, one object. <code class="inl">ht.add(1)</code> follows the arrow and changes #1.</p>
+
+        <p><code class="inl">ht.add(1)</code> follows <code class="inl">ht</code>'s arrow to the object and adds an inch <em>to the object</em>. When the method ends, <code class="inl">ht</code> is thrown away, but the object is not in the frame. It is out among the objects, and <code class="inl">h</code> still leads to it. So <code class="inl">h.printHeight()</code> prints <code class="inl">4 ft. 3 inc.</code>: the change stayed.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>When an object is passed to a method, the parameter gets <strong>a copy of the reference</strong>, never a copy of the object. Through that copy the method can reach the caller's object and change it, and the change is still there after the method ends.</p>
+        </div>
+
+        <h3 id="pv-name">What is copied for an object: the reference</h3>
+
+        <p>Above <code class="inl">increment(Height ht)</code> we wrote <em>Passed by reference</em>, and that is the name many people use for this case: the method can reach the caller's object. You will hear it a lot. But look at what Java really did: it <em>copied</em> something, exactly as with the <code class="inl">int</code>. Only this time the thing in the variable, and so the thing copied, was <strong>a reference</strong>. The object itself was not copied, not even partly.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>The call</th><th>What is in the caller's variable</th><th>What is copied into the parameter</th><th>Is the object copied?</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">increment(number)</td><td>the number 9</td><td>the number 9</td><td>there is no object</td></tr>
+              <tr><td class="mono">increment(h)</td><td>a reference to Height #1</td><td><strong>the reference</strong> to Height #1</td><td><strong>no</strong>: one Height, two references</td></tr>
+              <tr><td class="mono">shout(word)</td><td>a reference to the String "Hello"</td><td><strong>the reference</strong> to "Hello"</td><td><strong>no</strong></td></tr>
+              <tr><td class="mono">acc1.transfer(acc2, …)</td><td>a reference to Ceyda's account</td><td><strong>the reference</strong>, into <code class="inl">other</code></td><td><strong>no</strong>: that is why the money arrives</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Java always passes by value. For a primitive, the value copied is the number. <strong>For an object, the value copied is the reference</strong>: the parameter becomes one more arrow to the very same object. This is the sentence the AP exam is built on.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A hotel gives you a key card for room 304. If you ask for a second card for your friend, the hotel does not build a second room 304: it makes a second <em>card</em> for the same room. That card is a copied reference. Your friend can go in and move the furniture (change the object). But if reception re-codes your friend's card for room 512, your card still opens 304 (reassigning the parameter).</p>
+        </div>
+
+        <p>Why does the difference matter? Because if the method really had <em>the caller's variable</em>, it could also make that variable point somewhere else. It cannot. That is exactly what <code class="inl">increment2</code> shows.</p>
+
+        <h3 id="pv-new">increment2: the new arrow</h3>
+
+        <p><code class="inl">increment2</code> looks like it does the same job in a different way: read the feet and inches, make a Height one inch taller, and put it in <code class="inl">ht</code>. Let us add one print inside it and watch:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>increment2 with a print added</span></div>
+          <pre class="code"><code>public static void increment2(Height ht) {
+    int ft = ht.getFeet();
+    int inc = ht.getInches();
+
+    ht = new Height(ft, inc+1);
+    ht.printHeight();
+}
+
+// in main, h is 4 ft. 3 inc. here
+increment2(h);
+h.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 ft. 4 inc.
+4 ft. 3 inc.</pre></div>
+        </div>
+
+        <p>The taller Height was made. Inside the method, <code class="inl">ht</code> really leads to 4 ft 4. But look at what the line <code class="inl">ht = new Height(ft, inc+1);</code> does: it puts a <em>new arrow</em> into <code class="inl">ht</code>. And <code class="inl">ht</code> is the method's own variable. The caller's <code class="inl">h</code> is in a different frame, and nobody wrote anything into it.</p>
+
+        <div class="mem" role="img" aria-label="Just before increment2 ends: main's h still points at #1 (4 ft 3). increment2's ht now points at a new object #2 (4 ft 4). When the method ends, #2 has no arrows left.">
+          <div>
+            <div class="frame main">
+              <p class="frame-h">frame of main</p>
+              <div class="vars">
+                <div class="var"><b>Height h</b><span class="to">→ #1</span></div>
+              </div>
+            </div>
+            <div class="frame">
+              <p class="frame-h">frame of increment2</p>
+              <div class="vars">
+                <div class="var prim"><b>int ft</b><span class="to">4</span></div>
+                <div class="var prim"><b>int inc</b><span class="to">3</span></div>
+                <div class="var moved"><b>Height ht</b><span class="to">→ #2</span></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="mem-lbl">objects</p>
+            <div class="heap">
+              <div class="obj">
+                <div class="obj-h"><b>#1</b><span>Height</span></div>
+                <div class="f"><span class="k">feet</span><span class="v">4</span></div>
+                <div class="f"><span class="k">inches</span><span class="v">3</span></div>
+                <div class="who">arrows from: h</div>
+              </div>
+              <div class="obj">
+                <div class="obj-h"><b>#2</b><span>Height</span></div>
+                <div class="f new"><span class="k">feet</span><span class="v">4</span></div>
+                <div class="f new"><span class="k">inches</span><span class="v">4</span></div>
+                <div class="who">arrows from: ht</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="fig-cap">The last moment of increment2. One step later the frame is gone, ht with it, and #2 is garbage: a 4 ft 4 Height that nobody can ever reach.</p>
+
+        <p>So <code class="inl">increment2</code> did a lot of work for nothing. It read the values, built a new object, pointed its own arrow at it, and then threw the arrow away. #1, the object <code class="inl">h</code> leads to, was only read, never changed. That is why the comment above it in the file says <em>passed by value</em> again.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Assigning to a parameter (<code class="inl">ht = …</code>) changes only the method's own copy. A method can change the caller's <em>object</em>, but it can never change what the caller's <em>variable</em> points at.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>In a question, the line to look for is <code class="inl">parameter = new …</code> or <code class="inl">parameter = something else</code>. From that line on, everything the method does through that parameter happens to a <em>different</em> object, and the caller never sees it.</p>
+        </div>
+
+        <h3 id="pv-fix">Making increment2 work</h3>
+
+        <p>There are two honest ways to get a taller <code class="inl">h</code> out of a method.</p>
+
+        <p><strong>1 · Change the object.</strong> Follow the arrow and use a method that changes the fields. That is <code class="inl">increment(Height ht)</code> with its <code class="inl">ht.add(1)</code>. It works because <code class="inl">add</code> changes the object itself.</p>
+
+        <p><strong>2 · Return the new object, and let the caller catch it.</strong> The method cannot move the caller's arrow, but the caller can, with its own <code class="inl">=</code>. This is what <code class="inl">merge</code> did in Lesson 10.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Return the new Height</span></div>
+          <pre class="code"><code>public static Height increment3(Height ht) {
+    return new Height(ht.getFeet(), ht.getInches() + 1);
+}
+
+// in main, h is 4 ft. 3 inc. here
+increment3(h);
+h.printHeight();
+
+h = increment3(h);
+h.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 ft. 3 inc.
+4 ft. 4 inc.</pre></div>
+        </div>
+
+        <p>The first call builds a 4 ft 4 and hands its arrow back, but nobody catches it: it is garbage at once. The second call is caught by <code class="inl">h = </code>, so now <code class="inl">h</code> points at the new object. Notice the difference from way 1: here the old 4 ft 3 object was never changed; <code class="inl">h</code> simply points at a different one. If another variable was an alias of the old object, it would still see 4 ft 3.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>A method gets copies. A copy of a number cannot reach anything. A copy of an arrow can reach the caller's object, so changes made <em>through</em> it stay. Pointing the copy at something new (<code class="inl">ht = new …</code>) is invisible to the caller. To give the caller a new object, return it and let the caller assign it.</p>
+        </div>
+
+        <h3 id="pv-print">Printing an object</h3>
+
+        <p>The last two lines of <code class="inl">main</code> print the variable itself, and compare two variables:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Printing a reference</span></div>
+          <pre class="code"><code>Height p = new Height(4,3);
+Height p1 = p;
+System.out.println(p);
+System.out.println(p1);
+System.out.println(new Height(4,3));
+System.out.println(p == p1);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Grup1.Height@66d3c617
+Grup1.Height@66d3c617
+Grup1.Height@63947c6b
+true</pre></div>
+        </div>
+
+        <p><code class="inl">System.out.println</code> knows how to print numbers and Strings. A Height is neither, and Java does not know that we would like to see “4 ft. 3 inc.”. Only <code class="inl">printHeight</code> knows that. So Java prints the only thing it knows about any object:</p>
+
+        <div class="anat" role="img" aria-label="Grup1.Height@66d3c617 is made of the package Grup1, the class name Height, an @ sign, and a hexadecimal number.">
+          <div class="pc"><code>Grup1.</code><small>the package</small></div>
+          <div class="pc key"><code>Height</code><small>the class of the object</small></div>
+          <div class="pc"><code>@</code><small>“at”</small></div>
+          <div class="pc"><code>66d3c617</code><small>a number Java uses to tell objects apart, written in hexadecimal</small></div>
+        </div>
+
+        <p>That number is not the height and not anything we stored. It is Java's own label for the object, a bit like our “#1” and “#2”. What matters to us is what the three lines show: <code class="inl">p</code> and <code class="inl">p1</code> print the <em>same</em> label, because they lead to the same object. The second <code class="inl">new Height(4,3)</code> prints a different label: same height, different object. And <code class="inl">p == p1</code> is <code class="inl">true</code> for the same reason: <code class="inl">==</code> compares arrows (Lesson 10).</p>
+
+        <p>The line <code class="inl">System.out.println(acc2);</code> added to <code class="inl">Lesson29.java</code> does the same with an account. It prints something like <code class="inl">Grup1.BankAccount@4e25154f</code>: the name, the balance and the password are not shown. To see them you call <code class="inl">acc2.print()</code>.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>If you see <code class="inl">ClassName@</code> and some letters and digits in your console, you printed the reference, not the object's values. It is not an error and nothing crashed. Call the class's own print method or a getter instead.</p>
+        </div>
+
+        <h3 id="pv-lab">The call lab</h3>
+
+        <p>Pick a call and step through it one line at a time. The left column shows the frames: <code class="inl">main</code>'s at the top, the method's under it while it runs. The right column shows the objects and which arrows lead to each one.</p>
+
+        <div class="lab" data-mode="calls">
+          <div class="lab-head"><b>Call lab · what a method gets</b><span>Green: just changed. Dashed: gone.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label>Call
+                <select data-f="scen">
+                  <option value="int">increment(number)</option>
+                  <option value="obj">increment(h)</option>
+                  <option value="new">increment2(h)</option>
+                  <option value="mix">change(h)</option>
+                  <option value="str">shout(word)</option>
+                </select>
+              </label>
+              <button type="button" class="lab-btn ghost" data-act="prev">← Back</button>
+              <button type="button" class="lab-btn" data-act="next">Next line →</button>
+              <button type="button" class="lab-btn warn" data-act="reset">start over</button>
+              <span class="lab-step"></span>
+            </div>
+            <p class="lab-why"></p>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="practice" id="p31a">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Lesson31</h3>
+          <p class="practice-lede">Use Lesson31's three methods and Height.java exactly as they are. Draw the frames before you answer.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int a = 20;
+increment(a);
+increment(a);
+System.out.println(a);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>In method: 21
+In method: 21
+20</pre></div></div>
+                  <p>Each call gets a fresh copy of 20. The second call does not know about the first, and <code class="inl">a</code> is never touched.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(5, 10);
+increment(h);
+increment(h);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6 ft. 0 inc.</pre></div></div>
+                  <p>Both calls reach the same object. 5 ft 10 → 5 ft 11 → 5 ft 12, which <code class="inl">simplify</code> turns into 6 ft 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(5, 10);
+increment2(h);
+increment2(h);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 10 inc.</pre></div></div>
+                  <p>Each call makes a new 5 ft 11, points its own <code class="inl">ht</code> at it, and throws it away. Two garbage objects, and <code class="inl">h</code>'s object is unchanged.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which method runs for each call: <code class="inl">increment(3 * 4)</code>, <code class="inl">increment(new Height())</code>, <code class="inl">increment(2.5)</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">increment(3 * 4)</code> runs <code class="inl">increment(int)</code> and prints <code class="inl">In method: 13</code>. <code class="inl">increment(new Height())</code> runs <code class="inl">increment(Height)</code>: it adds an inch to a 99 ft 11 that nobody else points at. <code class="inl">increment(2.5)</code> <span class="err">will not compile</span>: a <code class="inl">double</code> does not fit into an <code class="inl">int</code> parameter, and there is no <code class="inl">increment(double)</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(3, 0);
+Height b = a;
+increment(b);
+increment2(a);
+System.out.println(a == b);
+a.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>true
+3 ft. 1 inc.</pre></div></div>
+                  <p><code class="inl">a</code> and <code class="inl">b</code> are aliases. <code class="inl">increment(b)</code> changes the one object, so <code class="inl">a</code> sees 3 ft 1. <code class="inl">increment2(a)</code> changes nothing, and it cannot move <code class="inl">a</code>'s arrow, so <code class="inl">a == b</code> is still <code class="inl">true</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A classmate says: “<code class="inl">increment2</code> doesn't work because <code class="inl">ft</code> and <code class="inl">inc</code> are local variables.” Is that the reason? Explain in one sentence.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>No. <code class="inl">ft</code> and <code class="inl">inc</code> hold the right numbers and the new Height is built correctly; the problem is that the new object's arrow goes into <code class="inl">ht</code>, the method's own copy, which the caller never sees and which is thrown away when the method ends.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 31 · DID IT CHANGE? ============ -->
+      <section class="lesson" id="ch">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 31 · the checklist</span>
+          <h2 class="lesson-title">After the Call, What Changed?</h2>
+        </div>
+
+        <p>On the exam, the question almost never says “passed by value”. It shows you a class, a method and a few lines of <code class="inl">main</code>, and asks what is printed. Behind it there is always the same question: <em>did this call change the thing I am printing?</em> This part goes through every case you will meet, one by one, and ends with a checklist that answers it.</p>
+
+        <h3 id="ch-table">Four kinds of argument</h3>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>You pass</th><th>The parameter gets</th><th>Can the caller see a change?</th></tr></thead>
+            <tbody>
+              <tr><td><code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code></td><td>a copy of the number</td><td><strong>No.</strong> Never, whatever the method does.</td></tr>
+              <tr><td><code class="inl">String</code></td><td>a copy of the arrow to the String</td><td><strong>No.</strong> No String method can change a String, so the only thing the method can do is point its copy at a new String.</td></tr>
+              <tr><td>an object, and the method changes it through the arrow (<code class="inl">ht.add(1)</code>, <code class="inl">ht.setFeet(5)</code>, <code class="inl">other.balance += …</code>)</td><td>a copy of the arrow</td><td><strong>Yes.</strong> The object changed, and every name for it sees the change.</td></tr>
+              <tr><td>an object, and the method gives the parameter a new arrow (<code class="inl">ht = new Height(…)</code>)</td><td>a copy of the arrow</td><td><strong>No</strong>, not for anything done after that line. The caller's variable still leads to the old object.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The rest of this part is the details: the cases that look like one row of this table but are really another.</p>
+
+        <h3 id="ch-str">Strings behave like ints</h3>
+
+        <p>A String is an object, so a String parameter gets a copy of an arrow, like a Height. Then why is it in the “No” row? Because of something we saw in Lesson 6: <strong>a String never changes</strong>. There is no <code class="inl">add</code>, no setter, no method that changes the letters of a String. Every String method that seems to change it, like <code class="inl">substring</code>, or <code class="inl">+</code>, builds a <em>new</em> String. So the only thing a method can do with its String parameter is the <code class="inl">increment2</code> move: point its own copy at a new String.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A String parameter</span></div>
+          <pre class="code"><code>public static void shout(String s) {
+    s = s + "!";
+    System.out.println("In method: " + s);
+}
+
+// in main:
+String word = "Hello";
+shout(word);
+System.out.println(word);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>In method: Hello!
+Hello</pre></div>
+        </div>
+
+        <p><code class="inl">s + "!"</code> builds a new String, <code class="inl">"Hello!"</code>, and <code class="inl">s = </code> points the method's copy at it. <code class="inl">word</code> still leads to <code class="inl">"Hello"</code>. Exactly <code class="inl">increment2</code>, with Strings. (The call lab above has this one too: choose <em>shout(word)</em>.)</p>
+
+        <p>The same thing without a method is one of the most common String mistakes:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Calling substring without catching it</span></div>
+          <pre class="code"><code>String city = "Istanbul";
+city.substring(0, 3);
+System.out.println(city);
+
+city = city.substring(0, 3);
+System.out.println(city);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Istanbul
+Ist</pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A method can never change the caller's String. If a method is meant to give back a changed String, it must <strong>return</strong> it, and the caller must catch it: <code class="inl">word = makeLouder(word);</code>.</p>
+        </div>
+
+        <h3 id="ch-order">The order of the lines</h3>
+
+        <p>Inside one method, a parameter can be used to change the caller's object and <em>then</em> be pointed somewhere else. Everything before the new arrow counts; everything after it does not. Read these two methods slowly. They have the same three lines in a different order.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Same lines, different order</span></div>
+          <pre class="code"><code>public static void change(Height ht) {
+    ht.add(1);
+    ht = new Height(1, 0);
+    ht.add(5);
+}
+public static void change2(Height ht) {
+    ht = new Height(1, 0);
+    ht.add(1);
+    ht.add(5);
+}
+
+// in main:
+Height h = new Height(4, 3);
+change(h);
+h.printHeight();
+change2(h);
+h.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 ft. 4 inc.
+4 ft. 4 inc.</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">change</code>: the first <code class="inl">add(1)</code> happens while <code class="inl">ht</code> still leads to <code class="inl">h</code>'s object, so 4 ft 3 becomes 4 ft 4. Then <code class="inl">ht</code> moves to a new 1 ft 0, and the <code class="inl">add(5)</code> goes into that new object, which becomes garbage.</li>
+          <li><code class="inl">change2</code>: the very first line moves <code class="inl">ht</code>. Both <code class="inl">add</code>s go into the new object. <code class="inl">h</code>'s object is not touched at all.</li>
+        </ul>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>When you trace a method, draw a line under <code class="inl">parameter = …</code>. Above the line, changes through the parameter reach the caller's object. Below it, they do not.</p>
+        </div>
+
+        <h3 id="ch-get">What a getter gives you</h3>
+
+        <p><code class="inl">increment2</code> starts with <code class="inl">int ft = ht.getFeet();</code>. What does <code class="inl">ft</code> hold? A <em>copy</em> of the number. A getter returns a value, and returning works just like passing: the value is copied. So <code class="inl">ft</code> is an ordinary <code class="inl">int</code> with no connection to the object.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A copy out of an object</span></div>
+          <pre class="code"><code>Height g = new Height(5, 10);
+int f = g.getFeet();
+f++;
+g.printHeight();
+System.out.println(f);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 10 inc.
+6</pre></div>
+        </div>
+
+        <p>Changing <code class="inl">f</code> changes <code class="inl">f</code>. To change the object you must go back through the object: <code class="inl">g.setFeet(f);</code> or <code class="inl">g.add(12);</code>. This is the reason getters and setters are separate methods: a getter only lets you <em>look</em>.</p>
+
+        <h3 id="ch-ret">Returned values must be caught</h3>
+
+        <p>A method that <em>returns</em> a value does not change anything by returning it. If you call it and do nothing with the result, the result is lost, like the first <code class="inl">increment3(h)</code> and the first <code class="inl">city.substring(0, 3)</code> above. The same happens with <code class="inl">Math</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Math.abs without catching it</span></div>
+          <pre class="code"><code>int x = -7;
+Math.abs(x);
+System.out.println(x);
+x = Math.abs(x);
+System.out.println(x);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-7
+7</pre></div>
+        </div>
+
+        <p><code class="inl">Math.abs</code> got a copy of −7. It could not change <code class="inl">x</code> even if it wanted to. It returns 7, and only the second line catches it.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Java lets you call a method and ignore what it returns: <code class="inl">Math.abs(x);</code> and <code class="inl">city.substring(0, 3);</code> compile without a warning. But a bare calculation is not a statement at all: <code class="inl">x + 1;</code> or <code class="inl">h.getFeet() + 1;</code> <span class="err">will not compile</span> (<em>not a statement</em>).</p>
+        </div>
+
+        <h3 id="ch-this">Which objects can a method change?</h3>
+
+        <p>So far all our methods were <code class="inl">static</code>, with the object as a parameter. But most methods we write in a class are instance methods: <code class="inl">h.add(1)</code>, <code class="inl">acc1.transfer(acc2, 200, "1905")</code>. There is a hidden extra arrow in those: <code class="inl">this</code>, the object before the dot. When you call <code class="inl">h.add(1)</code>, <code class="inl">this</code> inside <code class="inl">add</code> is a copy of <code class="inl">h</code>'s arrow. Everything in this lesson applies to it too.</p>
+
+        <p>So an instance method can change, at most:</p>
+
+        <ol class="plain">
+          <li><strong>this</strong>: the object before the dot, through its fields (<code class="inl">inches += inc</code> is <code class="inl">this.inches += inc</code>).</li>
+          <li><strong>any object passed as a parameter</strong>, through that parameter's arrow (<code class="inl">other.balance += amount</code>).</li>
+          <li><strong>static fields</strong> of the class (<code class="inl">customersCount--</code>, <code class="inl">totalFees += f</code>).</li>
+        </ol>
+
+        <p>It can never change the caller's primitive variables, the caller's Strings, or what any of the caller's variables point at. Here is that list for every method we have written:</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Method</th><th>Changes this?</th><th>Changes the parameter's object?</th><th>Changes static fields?</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">h.getFeet(), h.getInches()</td><td>no</td><td>no parameter</td><td>no</td></tr>
+              <tr><td class="mono">h.printHeight()</td><td>no</td><td>no parameter</td><td>no</td></tr>
+              <tr><td class="mono">h.setFeet(f), h.setInches(i)</td><td><strong>yes</strong>, if the value passes the check</td><td><code class="inl">int</code>: cannot</td><td>no</td></tr>
+              <tr><td class="mono">h.add(inc)</td><td><strong>yes</strong></td><td><code class="inl">int</code>: cannot</td><td>no</td></tr>
+              <tr><td class="mono">a.addHeight(b)</td><td><strong>yes</strong></td><td>no: <code class="inl">other</code> is only read</td><td>no</td></tr>
+              <tr><td class="mono">acc.deposit(x), acc.withdrawal(x)</td><td><strong>yes</strong> (balance and fee)</td><td><code class="inl">double</code>: cannot</td><td><strong>yes</strong>: totalFees</td></tr>
+              <tr><td class="mono">acc1.transfer(acc2, x, pw)</td><td><strong>yes</strong></td><td><strong>yes</strong>: acc2's balance</td><td><strong>yes</strong>: totalFees</td></tr>
+              <tr><td class="mono">acc1.merge(acc2)</td><td><strong>yes</strong>: deleted</td><td><strong>yes</strong>: deleted</td><td><strong>yes</strong>: customersCount</td></tr>
+              <tr><td class="mono">acc.resetPassword(p)</td><td><strong>yes</strong>, if valid</td><td>String: cannot</td><td>no</td></tr>
+              <tr><td class="mono">acc.print()</td><td>no</td><td>no parameter</td><td>no</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Methods like <code class="inl">getFeet</code> and <code class="inl">print</code> that only look are called <strong>accessors</strong>. Methods like <code class="inl">add</code> and <code class="inl">setFeet</code> that change the object are called <strong>mutators</strong> (Lesson 8). On an exam, the first thing to ask about each method call is which of the two it is.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>addHeight changes this, not other</span></div>
+          <pre class="code"><code>Height a = new Height(5, 3);
+Height b = new Height(1, 10);
+a.addHeight(b);
+a.printHeight();
+b.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>7 ft. 1 inc.
+1 ft. 10 inc.</pre></div>
+        </div>
+
+        <p>Inside <code class="inl">addHeight</code>, <code class="inl">other</code> leads to <code class="inl">b</code>'s object, so the method <em>could</em> change it. It does not, because it only reads <code class="inl">other.feet</code> and <code class="inl">other.inches</code>. Compare <code class="inl">transfer</code>, which writes <code class="inl">other.balance += amount</code>: there the parameter's object really does change. To know, you must read the body.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">private</code> does not protect the parameter's object from the class's own methods. <code class="inl">transfer</code> writes <code class="inl">other.balance</code> although <code class="inl">balance</code> is private: private means “only code inside BankAccount”, and <code class="inl">transfer</code> is inside BankAccount. It does not mean “only this object”.</p>
+        </div>
+
+        <h3 id="ch-two">Two names for one parameter</h3>
+
+        <p>What if the caller passes the <em>same</em> object twice, or passes an object to its own method? Then two arrows inside the method lead to one object, and every change through one is seen through the other. Lesson 10 met this with <code class="inl">a.merge(a)</code>. With Height:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A Height added to itself</span></div>
+          <pre class="code"><code>Height s = new Height(5, 3);
+s.addHeight(s);
+s.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>10 ft. 6 inc.</pre></div>
+        </div>
+
+        <p><code class="inl">this</code> and <code class="inl">other</code> are both copies of <code class="inl">s</code>'s arrow. <code class="inl">this.feet += other.feet</code> is 5 + 5 = 10. Then <code class="inl">inches += other.inches</code>: <code class="inl">other.inches</code> is <code class="inl">this.inches</code>, still 3, so 3 + 3 = 6. The height is doubled. The danger is when a line reads a field that an earlier line has <em>already changed</em> through the other name: then it reads the new value, not the old one. With an alias you cannot think of <code class="inl">this</code> and <code class="inl">other</code> as two separate objects; trace them as one.</p>
+
+        <h3 id="ch-static">Static doesn't decide</h3>
+
+        <p>Notice that Lesson31's three methods are all <code class="inl">static</code>, and one of them changes an object anyway. Being static only means there is no <code class="inl">this</code>. It does not protect objects passed in. And an instance method is not more “powerful” with its parameters than a static one. What decides whether something changes is always the same: <em>does the code follow an arrow to an object and change a field there?</em></p>
+
+        <h3 id="ch-flow">The checklist</h3>
+
+        <figure class="fig">
+          <svg viewBox="0 0 680 330" role="img" aria-label="Checklist. Is the caller's thing a primitive or a String? Yes: it did not change. No, it is another object: did the method change that object through an arrow, by calling a mutator or writing a field, before that arrow was pointed somewhere else? Yes: the object changed, seen through every name. No: nothing the caller can see changed. In every case, the caller's variable still points at the same object.">
+            <defs>
+              <marker id="ar11b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+            </defs>
+            <rect class="fig-box" x="190" y="14" width="300" height="40" rx="8"/>
+            <text class="fig-m" x="340" y="39" text-anchor="middle">after the call: did my X change?</text>
+            <line x1="340" y1="54" x2="340" y2="78" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11b)"/>
+
+            <rect class="fig-box" x="150" y="80" width="380" height="48" rx="8"/>
+            <text class="fig-m" x="340" y="100" text-anchor="middle">is X an int, double, boolean</text>
+            <text class="fig-m" x="340" y="118" text-anchor="middle">or a String?</text>
+            <line x1="150" y1="104" x2="92" y2="104" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="92" y1="104" x2="92" y2="178" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11b)"/>
+            <text class="fig-lbl" x="100" y="96">yes</text>
+            <rect class="fig-miss" x="12" y="180" width="160" height="58" rx="8"/>
+            <text class="fig-m" x="92" y="204" text-anchor="middle">NO.</text>
+            <text class="fig-lbl" x="92" y="224" text-anchor="middle">the method had a copy</text>
+
+            <line x1="340" y1="128" x2="340" y2="156" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11b)"/>
+            <text class="fig-lbl" x="348" y="148">no: another object</text>
+            <rect class="fig-box" x="200" y="158" width="280" height="80" rx="8"/>
+            <text class="fig-m" x="340" y="180" text-anchor="middle">did the method change it</text>
+            <text class="fig-m" x="340" y="198" text-anchor="middle">through an arrow (mutator,</text>
+            <text class="fig-m" x="340" y="216" text-anchor="middle">field) BEFORE param = …?</text>
+
+            <line x1="480" y1="198" x2="560" y2="198" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="560" y1="198" x2="560" y2="254" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11b)"/>
+            <text class="fig-lbl" x="490" y="190">yes</text>
+            <rect class="fig-hit" x="490" y="256" width="178" height="58" rx="8"/>
+            <text class="fig-m" x="579" y="280" text-anchor="middle">YES.</text>
+            <text class="fig-lbl" x="579" y="300" text-anchor="middle">every name for it sees it</text>
+
+            <line x1="340" y1="238" x2="340" y2="254" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar11b)"/>
+            <text class="fig-lbl" x="348" y="250">no</text>
+            <rect class="fig-miss" x="250" y="256" width="180" height="58" rx="8"/>
+            <text class="fig-m" x="340" y="280" text-anchor="middle">NO.</text>
+            <text class="fig-lbl" x="340" y="300" text-anchor="middle">it only moved its own arrow</text>
+          </svg>
+          <figcaption>And in every case: the caller's variable still points at the same object it pointed at before the call. Only <code class="inl">x = method(…)</code> in the caller can move it.</figcaption>
+        </figure>
+
+        <p>In words, for each variable the question asks about:</p>
+
+        <ol class="plain">
+          <li><strong>Find its type.</strong> <code class="inl">int</code>, <code class="inl">double</code>, <code class="inl">boolean</code> or <code class="inl">String</code>: the call did not change it. Stop.</li>
+          <li><strong>It is another object.</strong> Draw the arrows: the caller's variable, the parameter, and <code class="inl">this</code> if there is a dot.</li>
+          <li><strong>Walk through the method line by line.</strong> Every time a line calls a mutator or writes a field through an arrow, change the object it leads to.</li>
+          <li><strong>When a parameter is assigned</strong> (<code class="inl">p = …</code>), move <em>only that parameter's</em> arrow.</li>
+          <li><strong>At the end, erase the method's frame.</strong> Read the answer by following the caller's arrows, which have not moved.</li>
+          <li><strong>Was something returned?</strong> It counts only if the caller caught it with <code class="inl">=</code>.</li>
+        </ol>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Primitives and Strings: never changed by a call. Objects: changed only through an arrow, before any new arrow. Getters give copies. Returned values must be caught. An instance method can change <code class="inl">this</code>, the objects it is given, and static fields, nothing else. <code class="inl">private</code> and <code class="inl">static</code> do not change any of this.</p>
+        </div>
+
+        <div class="practice" id="p31b">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Eight questions: did it change?</h3>
+          <p class="practice-lede">Height and BankAccount are exactly as in the files.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void twice(double d) {
+    d = d * 2;
+}
+
+// in main:
+double price = 12.5;
+twice(price);
+System.out.println(price);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>12.5</pre></div></div>
+                  <p>A <code class="inl">double</code> is a primitive. The method doubled its own copy.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void cut(String s) {
+    s = s.substring(2);
+}
+
+// in main:
+String code = "TR-34";
+cut(code);
+System.out.println(code);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>TR-34</pre></div></div>
+                  <p><code class="inl">substring</code> made a new String <code class="inl">"-34"</code>, and only the method's copy <code class="inl">s</code> was pointed at it.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Rewrite <code class="inl">cut</code> so that the caller can get <code class="inl">"-34"</code>, and show the line in <code class="inl">main</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public static String cut(String s) {
+    return s.substring(2);
+}
+
+// in main:
+code = cut(code);</code></pre></div>
+                  <p>The method returns the new String and the caller catches it with <code class="inl">=</code>. That is the only way.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void fix(Height ht) {
+    ht.setInches(11);
+    ht = new Height();
+    ht.setFeet(1);
+}
+
+// in main:
+Height h = new Height(6, 2);
+fix(h);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6 ft. 11 inc.</pre></div></div>
+                  <p><code class="inl">setInches(11)</code> happens through the caller's arrow. Then <code class="inl">ht</code> moves to a new 99 ft 11, and <code class="inl">setFeet(1)</code> changes that one.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(2, 6);
+int i = h.getInches();
+i = i + 12;
+h.setInches(i);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>3 ft. 6 inc.</pre></div></div>
+                  <p><code class="inl">i</code> is a copy (6), and changing it to 18 does nothing to <code class="inl">h</code>. But then <code class="inl">setInches(18)</code> goes back through the object: inches becomes 18, and <code class="inl">simplify</code> turns 2 ft 18 into 3 ft 6.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After these lines, which of <code class="inl">p</code> and <code class="inl">q</code> has changed?</p>
+              <div class="ex"><pre class="code"><code>Height p = new Height(4, 0);
+Height q = new Height(1, 1);
+q.addHeight(p);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">only q</span></p>
+                  <p><code class="inl">q</code> is <code class="inl">this</code>: it becomes 5 ft 1. <code class="inl">p</code> is <code class="inl">other</code>, which <code class="inl">addHeight</code> only reads, so <code class="inl">p</code> stays 4 ft 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int n = -3;
+Math.abs(n);
+n = n * 2;
+Math.abs(n);
+System.out.println(n);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>-6</pre></div></div>
+                  <p>Neither <code class="inl">Math.abs</code> is caught. Only <code class="inl">n = n * 2</code> changes <code class="inl">n</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A method has the header <code class="inl">public static void update(int score, String name, Height h)</code>. Which of the caller's three arguments could possibly look different after the call?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">only the Height's object</span></p>
+                  <p>The <code class="inl">int</code> is a copy of a number and the String can never change. The Height's object can change, if the method calls a mutator on <code class="inl">h</code> before pointing <code class="inl">h</code> anywhere else. Even then, the caller's Height variable still points at the same object.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 31 · CLASSES FROM REAL LIFE ============ -->
+      <section class="lesson" id="cls">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 31 · beyond the file</span>
+          <h2 class="lesson-title">Classes from Real Life</h2>
+        </div>
+
+        <p>Height and BankAccount are not the only classes in the world. The same rule works for every class anyone ever writes: <em>a number goes in as a copy of the number, an object goes in as a copy of its reference</em>. Here are six small classes modelled on things you use every day. Each one shows the rule from a different side, and each comes with the mistake people really make with it.</p>
+
+        <div class="note note--sum">
+          <span class="tag">How to read this part</span>
+          <p>For every example, before you look at the console, ask three questions: <em>Which arguments are numbers or Strings?</em> (they cannot change) <em>Which are objects?</em> (their references are copied) <em>Does the method change the object through the reference, or point the parameter somewhere else?</em></p>
+        </div>
+
+        <h3 id="cls-phone">Phone · charging the real phone, or a number on paper</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Phone.java</span></div>
+          <pre class="code"><code>public class Phone {
+    private String owner;
+    private int battery;
+
+    public Phone(String owner, int battery) {
+        this.owner = owner;
+        this.battery = battery;
+    }
+    public int getBattery() {
+        return battery;
+    }
+    public void charge(int percent) {
+        battery += percent;
+        if (battery > 100) {
+            battery = 100;
+        }
+    }
+    public void print() {
+        System.out.println(owner + ": %" + battery);
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Plugging in: the phone, or a copy of its number</span></div>
+          <pre class="code"><code>public static void plugIn(Phone p, int minutes) {
+    p.charge(minutes / 2);
+}
+public static void plugInCopy(int battery, int minutes) {
+    battery += minutes / 2;
+}
+
+// in main:
+Phone ece = new Phone("Ece", 40);
+plugIn(ece, 30);
+ece.print();
+
+int b = ece.getBattery();
+plugInCopy(b, 60);
+System.out.println(b);
+
+plugIn(ece, 200);
+ece.print();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ece: %55
+55
+Ece: %100</pre></div>
+        </div>
+
+        <p><code class="inl">plugIn</code> gets a copy of the reference to Ece's phone and calls <code class="inl">charge</code> through it: the real phone goes from 40 to 55. <code class="inl">plugInCopy</code> gets a copy of the <em>number</em> 55. It adds 30 to its own copy, and neither <code class="inl">b</code> nor the phone notices. The last call shows that the check inside <code class="inl">charge</code> still protects the object: a method from outside can only change a Phone the way Phone allows.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Plugging the phone into a charger is <code class="inl">plugIn</code>: the charger is connected to the real battery. Writing “55%” on a sticky note and then writing “85%” over it is <code class="inl">plugInCopy</code>: the note changed, the phone did not.</p>
+        </div>
+
+        <h3 id="cls-book">Book · a library loan, and a replacement that doesn't count</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Book.java</span></div>
+          <pre class="code"><code>public class Book {
+    private String title;
+    private boolean borrowed;
+
+    public Book(String title) {
+        this.title = title;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+    public void setBorrowed(boolean borrowed) {
+        this.borrowed = borrowed;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lending a book</span></div>
+          <pre class="code"><code>public static void lend(Book b) {
+    if (!b.isBorrowed()) {
+        b.setBorrowed(true);
+        System.out.println(b.getTitle() + " lent");
+    }
+    else {
+        System.out.println(b.getTitle() + " is already out");
+    }
+}
+public static void replaceLost(Book b) {
+    b = new Book(b.getTitle());
+}
+
+// in main:
+Book k = new Book("Kürk Mantolu Madonna");
+lend(k);
+lend(k);
+replaceLost(k);
+System.out.println(k.isBorrowed());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Kürk Mantolu Madonna lent
+Kürk Mantolu Madonna is already out
+true</pre></div>
+        </div>
+
+        <p>The first <code class="inl">lend</code> changes the book through the copied reference, so the second <code class="inl">lend</code>, which gets another copy of the same reference, sees <code class="inl">borrowed == true</code>. Two calls, one book: the information is kept <em>in the object</em>, not in the method. <code class="inl">replaceLost</code> is <code class="inl">increment2</code> again: it builds a fresh, not-borrowed copy of the book, but only its own parameter points at it. The library's <code class="inl">k</code> still leads to the borrowed one.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>The library's computer has one record per book. When the librarian scans it out, every other computer in the library sees “borrowed” at once: they all look at the same record. If a librarian types a new record on a piece of paper at her desk, the computer's record does not change.</p>
+        </div>
+
+        <h3 id="cls-team">Team · one match changes two objects</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Team.java</span></div>
+          <pre class="code"><code>public class Team {
+    private String name;
+    private int points;
+    private int goals;
+
+    public Team(String name) {
+        this.name = name;
+    }
+    public void addResult(int scored, int conceded) {
+        goals += scored;
+        if (scored > conceded) {
+            points += 3;
+        }
+        else if (scored == conceded) {
+            points += 1;
+        }
+    }
+    public void print() {
+        System.out.println(name + " " + points + " pts, " + goals + " goals");
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Playing matches</span></div>
+          <pre class="code"><code>public static void playMatch(Team home, Team away, int hg, int ag) {
+    home.addResult(hg, ag);
+    away.addResult(ag, hg);
+    hg = 0;
+    ag = 0;
+}
+
+// in main:
+Team a = new Team("Kartallar");
+Team b = new Team("Aslanlar");
+int hg = 2;
+int ag = 1;
+playMatch(a, b, hg, ag);
+playMatch(b, a, 1, 1);
+a.print();
+b.print();
+System.out.println(hg + "-" + ag);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Kartallar 4 pts, 3 goals
+Aslanlar 1 pts, 2 goals
+2-1</pre></div>
+        </div>
+
+        <p>One method, two object parameters, two ints. Both teams change, because <code class="inl">home</code> and <code class="inl">away</code> are copied references to the real teams. A win (3) and a draw (1) for Kartallar, a loss and a draw for Aslanlar. The method's <code class="inl">hg = 0; ag = 0;</code> “resets the scoreboard” only inside the method: the caller's 2-1 is untouched. Notice also that the second call passes the teams the other way round: <code class="inl">home</code> is just a name inside the method, and this time it leads to Aslanlar.</p>
+
+        <h3 id="cls-order">Order · three ways to give a discount</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Order.java</span></div>
+          <pre class="code"><code>public class Order {
+    private double total;
+
+    public Order(double total) {
+        this.total = total;
+    }
+    public double getTotal() {
+        return total;
+    }
+    public void setTotal(double total) {
+        if (total >= 0) {
+            this.total = total;
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>A 25% discount, three ways</span></div>
+          <pre class="code"><code>public static void discount(Order o, int percent) {
+    o.setTotal(o.getTotal() * (100 - percent) / 100.0);
+}
+public static void discountWrong(double total, int percent) {
+    total = total * (100 - percent) / 100.0;
+}
+public static double discounted(double total, int percent) {
+    return total * (100 - percent) / 100.0;
+}
+
+// in main:
+Order o = new Order(400);
+discount(o, 25);
+System.out.println(o.getTotal());
+
+double cart = 400;
+discountWrong(cart, 25);
+System.out.println(cart);
+cart = discounted(cart, 25);
+System.out.println(cart);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>300.0
+400.0
+300.0</pre></div>
+        </div>
+
+        <p>This is the whole lesson in three methods:</p>
+        <ul class="plain">
+          <li><code class="inl">discount</code> works by <strong>changing the object</strong>: it reads the total through the reference and writes it back with the setter.</li>
+          <li><code class="inl">discountWrong</code> fails: a <code class="inl">double</code> goes in as a copy.</li>
+          <li><code class="inl">discounted</code> works by <strong>returning</strong> the new value, but only because the caller catches it with <code class="inl">cart = </code>.</li>
+        </ul>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A discount code in an online shop is applied to <em>your cart</em>, the object stored on the shop's server. That is why it is still there when you open the app on your phone later. A price you work out on a calculator is a copy of the number: the shop never sees it.</p>
+        </div>
+
+        <h3 id="cls-post">Post · likes, aliases and a static counter</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Post.java</span></div>
+          <pre class="code"><code>public class Post {
+    private static int allLikes = 0;
+    private String text;
+    private int likes;
+
+    public Post(String text) {
+        this.text = text;
+    }
+    public void like() {
+        likes++;
+        allLikes++;
+    }
+    public int getLikes() {
+        return likes;
+    }
+    public static int getAllLikes() {
+        return allLikes;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Sharing posts</span></div>
+          <pre class="code"><code>public static void share(Post p, int times) {
+    for (int i = 0; i &lt; times; i++) {
+        p.like();
+    }
+}
+
+// in main:
+Post p1 = new Post("Sunset");
+Post p2 = p1;
+Post p3 = new Post("Cat");
+share(p1, 3);
+p2.like();
+share(p3, 2);
+System.out.println(p1.getLikes() + " " + p3.getLikes() + " " + Post.getAllLikes());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 2 6</pre></div>
+        </div>
+
+        <p>Three kinds of “who changes” in one example. <code class="inl">share(p1, 3)</code> adds 3 likes to the Sunset post through a copied reference. <code class="inl">p2</code> is an alias of <code class="inl">p1</code>, so <code class="inl">p2.like()</code> is the Sunset post's 4th like. And every <code class="inl">like()</code>, on any post, also changes the one static <code class="inl">allLikes</code> (Lesson 10): 3 + 1 + 2 = 6.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>When a friend sends you a link to a post and you like it, you are not liking a copy: the link is a reference to the one post on the server, and its owner sees your like. A screenshot of the post is a copy: you can draw hearts on it all day and the like count will not move.</p>
+        </div>
+
+        <h3 id="cls-contact">Contact · a String inside an object</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Contact.java</span></div>
+          <pre class="code"><code>public class Contact {
+    private String name;
+    private String phone;
+
+    public Contact(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Adding a label to a contact</span></div>
+          <pre class="code"><code>public static void addLabel(Contact c, String label) {
+    label = " (" + label + ")";
+    c.setName(c.getName() + label);
+}
+public static void addLabelWrong(String name, String label) {
+    name = name + " (" + label + ")";
+}
+
+// in main:
+Contact c = new Contact("Ayşe", "0555 123 45 67");
+String lbl = "work";
+addLabel(c, lbl);
+System.out.println(c.getName());
+System.out.println(lbl);
+
+String n = c.getName();
+addLabelWrong(n, "mom");
+System.out.println(c.getName());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ayşe (work)
+work
+Ayşe (work)</pre></div>
+        </div>
+
+        <p>A String can never be changed, but the <em>field</em> of an object can be pointed at a new String. <code class="inl">addLabel</code> builds a new String and gives it to the contact through <code class="inl">setName</code>, so the contact really is renamed. Its own <code class="inl">label = …</code> line changes only its copy of the reference: <code class="inl">lbl</code> is still <code class="inl">"work"</code>. <code class="inl">addLabelWrong</code> gets only a String, a reference to <code class="inl">"Ayşe (work)"</code>, and can do nothing to the contact at all: it does not even know that a contact exists.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>To change a String that belongs to an object, the method needs <strong>the object</strong>, not the String. Pass <code class="inl">c</code>, not <code class="inl">c.getName()</code>.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Phone, Book, Team, Order, Post, Contact: six classes, one rule. Each object parameter is a copied reference to the real object, so mutators called through it stick. Each number or String parameter is a copy that cannot reach anything. A parameter pointed at a new object (<code class="inl">replaceLost</code>) is invisible to the caller. And a value that should come back must be returned and caught (<code class="inl">discounted</code>).</p>
+        </div>
+
+        <div class="practice" id="pcls">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the real-life classes</h3>
+          <p class="practice-lede">Each question starts a new program. The classes and methods are exactly as above.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Phone q = new Phone("Can", 90);
+Phone q2 = q;
+plugIn(q2, 10);
+plugIn(q, 40);
+q.print();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Can: %100</pre></div></div>
+                  <p>One phone, two names. 90 + 5 = 95, then 95 + 20 = 115, which <code class="inl">charge</code> cuts to 100.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void returnBook(Book b) {
+    b.setBorrowed(false);
+    b = new Book("Yeni");
+    b.setBorrowed(true);
+}
+
+// in main:
+Book bk = new Book("Saatleri Ayarlama Enstitüsü");
+lend(bk);
+returnBook(bk);
+System.out.println(bk.isBorrowed());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Saatleri Ayarlama Enstitüsü lent
+false</pre></div></div>
+                  <p>The first line of <code class="inl">returnBook</code> goes through the copied reference: the real book is returned. After <code class="inl">b = new Book("Yeni")</code>, the <code class="inl">setBorrowed(true)</code> goes into the new book.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A team plays against itself by mistake: <code class="inl">Team x = new Team("Kartallar"); playMatch(x, x, 3, 3); x.print();</code>. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Kartallar 2 pts, 6 goals</pre></div></div>
+                  <p><code class="inl">home</code> and <code class="inl">away</code> are two copies of the same reference, so both <code class="inl">addResult(3, 3)</code> calls go into one team: two draws, 3 + 3 goals.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void swapOrders(Order a, Order b) {
+    Order t = a;
+    a = b;
+    b = t;
+}
+public static void swapTotals(Order a, Order b) {
+    double t = a.getTotal();
+    a.setTotal(b.getTotal());
+    b.setTotal(t);
+}
+
+// in main:
+Order oa = new Order(100);
+Order ob = new Order(250);
+swapOrders(oa, ob);
+System.out.println(oa.getTotal() + " " + ob.getTotal());
+swapTotals(oa, ob);
+System.out.println(oa.getTotal() + " " + ob.getTotal());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>100.0 250.0
+250.0 100.0</pre></div></div>
+                  <p><code class="inl">swapOrders</code> swaps only its own copies of the two references. <code class="inl">swapTotals</code> goes through the references and swaps what is inside the objects. (Lesson 10's swap, with orders.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Order od = new Order(80);
+discount(od, 50);
+discount(od, 50);
+System.out.println(od.getTotal());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>20.0</pre></div></div>
+                  <p>Both discounts reach the same order: 80 → 40 → 20. Two 50% discounts are not a 100% discount.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Post s1 = new Post("A");
+Post s2 = new Post("B");
+share(s1, 2);
+s2 = s1;
+share(s2, 2);
+System.out.println(s1.getLikes() + " " + s2.getLikes() + " " + Post.getAllLikes());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>4 4 4</pre></div></div>
+                  <p>After <code class="inl">s2 = s1</code>, both lead to post A (post B is garbage, with 0 likes). The second <code class="inl">share</code> also goes into A. Four likes in total.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ IN REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">Copies, Keys and Addresses</h2>
+        </div>
+
+        <p>Passing by value is not a Java oddity. Every time you hand information to someone, you either give them a copy of a value or a way to reach the real thing, and everyday life is full of both.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Situation</th><th>Like an <code class="inl">int</code> parameter</th><th>Like an object parameter</th></tr></thead>
+            <tbody>
+              <tr><td>Your exam result</td><td>you tell a friend “I got 85”: if they write 100 on their note, your grade is still 85</td><td>you give them your e-Okul password: now they can change what is really there</td></tr>
+              <tr><td>A locker</td><td>you describe what is inside</td><td>you give a copy of the key: they can rearrange your locker. If they throw the key away and get a key to another locker, yours is untouched</td></tr>
+              <tr><td>A recipe</td><td>you photocopy it: notes on the copy stay on the copy</td><td>you share the cookbook's page link in a shared folder: an edit is seen by everyone</td></tr>
+              <tr><td>A bank</td><td>you tell the cashier your balance</td><td>you give the cashier your card: they can withdraw from the real account</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>The locker row is <code class="inl">increment2</code> exactly. Your friend has a copy of the key (a copy of the arrow). Rearranging your locker through it is <code class="inl">ht.add(1)</code>: you will see it. Getting a <em>new</em> key to a <em>new</em> locker and putting things in there is <code class="inl">ht = new Height(…)</code>: you will never know about it, and you still have your own key to your own locker.</p>
+        </div>
+
+        <h3>In the apps you use</h3>
+
+        <p>Apps are written in languages like Java, and the same choice is made inside them thousands of times a second: send a copy of a value, or send a reference to the real object?</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>App</th><th>A copy (a value)</th><th>A reference (the same object)</th></tr></thead>
+            <tbody>
+              <tr><td>WhatsApp</td><td>a forwarded message: the forward is its own copy, and deleting the original does not delete it</td><td>a group: when the admin changes the group photo, every member sees the new one</td></tr>
+              <tr><td>Google Maps</td><td>a screenshot of where you were</td><td>live location sharing: your friend's map follows the real you</td></tr>
+              <tr><td>Spotify</td><td>a playlist you copied into your own library</td><td>a shared playlist: a song added by a friend appears for you</td></tr>
+              <tr><td>Google Docs</td><td>a downloaded .docx sent by e-mail</td><td>a shared link: every edit is in the one document</td></tr>
+              <tr><td>A food delivery app</td><td>the price shown in a notification</td><td>your order: the restaurant marks it “on the way” and your screen changes</td></tr>
+              <tr><td>A game</td><td>a save file copied to a USB stick</td><td>a cloud save: progress on the console shows up on the phone</td></tr>
+              <tr><td>e-Okul</td><td>a grade a teacher reads out in class</td><td>the grade record: when the teacher corrects it, parents see the new grade</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Notice the pattern in the right-hand column: everything there needs <em>one</em> real thing that several people reach. A group, a document, an order. Programmers model those as objects and pass references to them. The left-hand column is things that are fine to copy because nobody needs to see your changes: a price, a screenshot, a number. Programmers pass those as values.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A garage remote is a reference to the garage door. Giving your neighbour a second remote (copying the reference) lets them open <em>your</em> door. If they re-pair their remote with their own garage (reassigning the parameter), your door is not affected and your own remote still works. What they can never do with their remote is change which door <em>your</em> remote opens.</p>
+        </div>
+
+        <p>The same idea protects real programs. When a banking app passes your balance as a number to a method that works out interest, that method cannot accidentally change your balance, because it only has a copy. When it passes your <em>account object</em> to a method, that method can change the account, and programmers know to read such a method carefully. That is why methods that only look (accessors) and methods that change (mutators) are kept apart and named clearly: <code class="inl">getBalance</code> promises to look, <code class="inl">withdraw</code> warns you that it changes.</p>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Early languages chose differently. FORTRAN, from the 1950s, usually passed the caller's variables themselves, so a subroutine could change them; there are famous stories of programs where a subroutine changed what was passed in as a constant like 1, and from then on “1” meant something else. ALGOL 60 (1960) let the programmer choose for each parameter: a copy of the value (<em>call by value</em>) or something closer to the caller's own expression (<em>call by name</em>). C passes everything by value. Java, designed in the 1990s, chose the simplest rule of all: <strong>always by value</strong>, with references as the values for objects. One rule, no exceptions.</p>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · beyond the file</span>
+          <h2 class="lesson-title">After the Call</h2>
+        </div>
+
+        <p>Six small programs in the style of exam questions. The first ones use a tiny class that is not in our files, so that nothing distracts from the arrows:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Wallet.java</span></div>
+          <pre class="code"><code>public class Wallet {
+    private int money;
+
+    public Wallet(int money) {
+        this.money = money;
+    }
+    public int getMoney() {
+        return money;
+    }
+    public void add(int amount) {
+        money += amount;
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>1 · A number and an object in one call.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>mystery</span></div>
+          <pre class="code"><code>public static void mystery(int n, Wallet w) {
+    n += 10;
+    w.add(n);
+    w = new Wallet(0);
+    w.add(100);
+}
+
+// in main:
+int n = 5;
+Wallet w = new Wallet(20);
+mystery(n, w);
+System.out.println(n + " " + w.getMoney());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 35</pre></div>
+        </div>
+
+        <p>Inside, <code class="inl">n</code> becomes 15, and 15 is added to the caller's wallet: 35. Then <code class="inl">w</code> moves to a new wallet, which gets the 100. Outside: <code class="inl">n</code> is still 5, and the caller's wallet has 35. The 100 is in a garbage wallet.</p>
+
+        <p><strong>2 · The same object twice.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>move</span></div>
+          <pre class="code"><code>public static void move(Wallet from, Wallet to, int amount) {
+    from.add(-amount);
+    to.add(amount);
+}
+
+// in main:
+Wallet a = new Wallet(50);
+Wallet b = new Wallet(10);
+move(a, b, 20);
+System.out.println(a.getMoney() + " " + b.getMoney());
+move(a, a, 20);
+System.out.println(a.getMoney());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>30 30
+30</pre></div>
+        </div>
+
+        <p>In the second call <code class="inl">from</code> and <code class="inl">to</code> are two copies of <code class="inl">a</code>'s arrow. 20 goes out and the same 20 comes back in.</p>
+
+        <p><strong>3 · A method that returns a new object.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>richer</span></div>
+          <pre class="code"><code>public static Wallet richer(Wallet w) {
+    Wallet r = new Wallet(w.getMoney() + 100);
+    return r;
+}
+
+// in main:
+Wallet a = new Wallet(5);
+Wallet b = richer(a);
+richer(b);
+System.out.println(a.getMoney() + " " + b.getMoney());</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 105</pre></div>
+        </div>
+
+        <p><code class="inl">richer</code> only reads <code class="inl">w</code>, so <code class="inl">a</code> stays 5. The first result is caught in <code class="inl">b</code>: 105. The second, a 205 wallet, is not caught.</p>
+
+        <p><strong>4 · BankAccount and a double.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>payRent, with BankAccount from the file</span></div>
+          <pre class="code"><code>public static void payRent(BankAccount acc, double rent) {
+    acc.withdrawal(rent);
+    rent = 0;
+}
+
+// in main:
+BankAccount acc1 = new BankAccount("Selin Kavas", 5000);
+double rent = 1000;
+payRent(acc1, rent);
+System.out.println(rent);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Current balance: 3950.0
+1000.0</pre></div>
+        </div>
+
+        <p><code class="inl">acc.withdrawal(rent)</code> is a mutator called through the caller's arrow: Selin's real account loses 1000 and the 5% fee. <code class="inl">rent = 0</code> changes only the method's copy of the number.</p>
+
+        <p><strong>5 · A loop inside the method.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>grow</span></div>
+          <pre class="code"><code>public static void grow(Height h, int times) {
+    for (int i = 0; i &lt; times; i++) {
+        h.add(times);
+    }
+    times = 0;
+}
+
+// in main:
+Height h = new Height(5, 0);
+int t = 3;
+grow(h, t);
+h.printHeight();
+System.out.println(t);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 9 inc.
+3</pre></div>
+        </div>
+
+        <p>Three times <code class="inl">add(3)</code>: 9 inches, into the caller's object. <code class="inl">t</code> stays 3.</p>
+
+        <p><strong>6 · Aliases and Lesson31's methods.</strong></p>
+
+        <div class="ex">
+          <div class="ex-head"><span>with increment and increment2 from Lesson31 (and the print inside increment2)</span></div>
+          <pre class="code"><code>Height a = new Height(5, 0);
+Height b = a;
+increment2(b);
+increment(b);
+a.printHeight();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 ft. 1 inc.
+5 ft. 1 inc.</pre></div>
+        </div>
+
+        <p>The two lines are the same, but they come from different places. The first is printed <em>inside</em> <code class="inl">increment2</code>, about its garbage object. The second is <code class="inl">a</code>, which changed through its alias <code class="inl">b</code> in <code class="inl">increment(b)</code>.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Trace numbers and objects separately. Watch for the line that moves a parameter. When two parameters can be the same object, check that case. A returned object is only kept if it is caught. And a line printed inside a method is not the caller's variable.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the workshop</h3>
+
+          <ol class="qs">
+            <li>
+              <p>In example 1, what would be printed if the two middle lines of <code class="inl">mystery</code> were swapped, so that <code class="inl">w = new Wallet(0);</code> came before <code class="inl">w.add(n);</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 20</pre></div></div>
+                  <p>Now <code class="inl">w</code> moves before anything is added, so both <code class="inl">add</code>s go into the new wallet.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Wallet a = new Wallet(40);
+Wallet b = a;
+move(a, b, 15);
+System.out.println(a.getMoney() + " " + b.getMoney());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>40 40</pre></div></div>
+                  <p><code class="inl">a</code> and <code class="inl">b</code> are aliases, so this is <code class="inl">move(a, a, 15)</code> in disguise: −15 and +15 on one wallet.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Wallet a = new Wallet(1);
+a = richer(a);
+a = richer(a);
+System.out.println(a.getMoney());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>201</pre></div></div>
+                  <p>Both results are caught. Three Wallet objects were made (1, 101, 201); the first two are garbage at the end.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In example 4, how much is in Selin's account after <code class="inl">payRent</code>, and what does the method's <code class="inl">rent = 0;</code> change?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">3950.0 · nothing outside</span></p>
+                  <p>5000 − 1000 − 50 (the 5% fee) = 3950. <code class="inl">rent = 0</code> only sets the method's own copy; the caller's <code class="inl">rent</code> still prints 1000.0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(5, 0);
+int t = 2;
+grow(h, t);
+grow(h, t);
+h.printHeight();</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>5 ft. 8 inc.</pre></div></div>
+                  <p>Each call adds 2 twice: 4 inches. <code class="inl">times = 0</code> does not reach <code class="inl">t</code>, so the second call also gets 2. 5 ft 8.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write a <code class="inl">static</code> method <code class="inl">emptyInto(Wallet from, Wallet to)</code> that moves all of <code class="inl">from</code>'s money into <code class="inl">to</code>, using only the methods Wallet has.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public static void emptyInto(Wallet from, Wallet to) {
+    int m = from.getMoney();
+    from.add(-m);
+    to.add(m);
+}</code></pre></div>
+                  <p>The getter gives a copy of the amount; the two <code class="inl">add</code>s change both objects through their arrows. Writing <code class="inl">from = new Wallet(0);</code> instead of <code class="inl">from.add(-m)</code> would leave the caller's wallet full.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ AP-STYLE ============ -->
+      <section class="lesson" id="ap">
+        <div class="lesson-head">
+          <span class="lesson-no">AP-style · multiple choice</span>
+          <h2 class="lesson-title">Ten Exam Questions</h2>
+        </div>
+
+        <p>The AP exam asks this topic as multiple choice. Choose one answer for each, then open it. Height, BankAccount, Wallet and Lesson31's methods are as above.</p>
+
+        <div class="practice">
+          <ol class="qs">
+            <li>
+              <p>Which statement best describes what happens when a Height variable is passed to a method?</p>
+              <ul class="plain">
+                <li>(A) A copy of the Height object is made, and the method works on the copy.</li>
+                <li>(B) The method receives a copy of the reference, so it can change the original object.</li>
+                <li>(C) The method receives the caller's variable, so it can make it point at another object.</li>
+                <li>(D) Nothing is passed; the method uses the caller's variable by name.</li>
+                <li>(E) The object is passed by value, so the method cannot change it.</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>No object is copied (A, E), and the caller's variable is not handed over (C): only its arrow is copied.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int k = 7;
+increment(k);
+increment(k + 1);
+System.out.println(k);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">In method: 8</code> / <code class="inl">In method: 9</code> / <code class="inl">7</code></li>
+                <li>(B) <code class="inl">In method: 8</code> / <code class="inl">In method: 9</code> / <code class="inl">9</code></li>
+                <li>(C) <code class="inl">In method: 8</code> / <code class="inl">In method: 10</code> / <code class="inl">7</code></li>
+                <li>(D) <code class="inl">In method: 8</code> / <code class="inl">In method: 8</code> / <code class="inl">7</code></li>
+                <li>(E) <code class="inl">7</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(A)</span></p>
+                  <p>The second call gets the value <code class="inl">k + 1</code> = 8 and prints 9. <code class="inl">k</code> itself stays 7.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height h = new Height(5, 11);
+increment(h);
+increment2(h);
+h.printHeight();</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">5 ft. 11 inc.</code></li>
+                <li>(B) <code class="inl">5 ft. 12 inc.</code></li>
+                <li>(C) <code class="inl">6 ft. 0 inc.</code></li>
+                <li>(D) <code class="inl">6 ft. 1 inc.</code></li>
+                <li>(E) <code class="inl">Grup1.Height@</code> followed by a number</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p><code class="inl">increment</code> adds an inch through the arrow and <code class="inl">simplify</code> makes 6 ft 0. <code class="inl">increment2</code> changes nothing. (Here we use the file's <code class="inl">increment2</code>, without the print.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Consider this method:</p>
+              <div class="ex"><pre class="code"><code>public static void addTitle(String name) {
+    name = "Dr. " + name;
+}</code></pre></div>
+              <p>After <code class="inl">String s = "Ece"; addTitle(s);</code>, what is the value of <code class="inl">s</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">"Ece"</code></li>
+                <li>(B) <code class="inl">"Dr. Ece"</code></li>
+                <li>(C) <code class="inl">"Dr. "</code></li>
+                <li>(D) <code class="inl">null</code></li>
+                <li>(E) The code does not compile.</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(A)</span></p>
+                  <p>A new String is made and only the parameter points at it.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static void reset(Wallet w) {
+    w.add(-w.getMoney());
+    w = new Wallet(50);
+}
+
+// in main:
+Wallet a = new Wallet(30);
+reset(a);
+System.out.println(a.getMoney());</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">30</code></li>
+                <li>(B) <code class="inl">0</code></li>
+                <li>(C) <code class="inl">50</code></li>
+                <li>(D) <code class="inl">-30</code></li>
+                <li>(E) <code class="inl">80</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>The first line empties the caller's wallet through the arrow. The second line only moves the parameter.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(2, 4);
+a.addHeight(a);
+a.addHeight(a);
+a.printHeight();</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">4 ft. 8 inc.</code></li>
+                <li>(B) <code class="inl">6 ft. 12 inc.</code></li>
+                <li>(C) <code class="inl">9 ft. 4 inc.</code></li>
+                <li>(D) <code class="inl">8 ft. 16 inc.</code></li>
+                <li>(E) <code class="inl">6 ft. 0 inc.</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>First call: 4 ft 8. Second call: feet 4 + 4 = 8, inches 8 + 8 = 16, and <code class="inl">simplify</code> turns 8 ft 16 into 9 ft 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these Height methods are accessors?</p>
+              <p class="mono">I. getInches()&nbsp;&nbsp;&nbsp;II. add(int inc)&nbsp;&nbsp;&nbsp;III. printHeight()</p>
+              <ul class="plain">
+                <li>(A) I only</li>
+                <li>(B) II only</li>
+                <li>(C) I and III only</li>
+                <li>(D) II and III only</li>
+                <li>(E) I, II and III</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p><code class="inl">getInches</code> and <code class="inl">printHeight</code> only look at the fields. <code class="inl">add</code> changes them: a mutator.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>After <code class="inl">acc1.transfer(acc2, 200, "1905");</code> succeeds, which of the following have changed?</p>
+              <p class="mono">I. acc1's balance&nbsp;&nbsp;&nbsp;II. acc2's balance&nbsp;&nbsp;&nbsp;III. the variable acc2 (what it points at)</p>
+              <ul class="plain">
+                <li>(A) I only</li>
+                <li>(B) I and II only</li>
+                <li>(C) II and III only</li>
+                <li>(D) I and III only</li>
+                <li>(E) I, II and III</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p><code class="inl">transfer</code> writes both balances, one through <code class="inl">this</code> and one through <code class="inl">other</code>. No method can make the caller's <code class="inl">acc2</code> point somewhere else.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A programmer wants a method that makes the caller's Height <code class="inl">h</code> one foot taller. Which call, with which method, works?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">taller(h);</code> with <code class="inl">void taller(Height x) { x = new Height(x.getFeet() + 1, x.getInches()); }</code></li>
+                <li>(B) <code class="inl">taller(h);</code> with <code class="inl">void taller(Height x) { int f = x.getFeet(); f++; }</code></li>
+                <li>(C) <code class="inl">h = taller(h);</code> with <code class="inl">Height taller(Height x) { return new Height(x.getFeet() + 1, x.getInches()); }</code></li>
+                <li>(D) <code class="inl">taller(h);</code> with <code class="inl">Height taller(Height x) { return new Height(x.getFeet() + 1, x.getInches()); }</code></li>
+                <li>(E) None of the above</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>(A) only moves the parameter. (B) changes a copy of a number. (D) returns the right object, but nobody catches it. (C) returns it and the caller catches it. (A method that calls <code class="inl">x.add(12)</code> would also work.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>public static int bump(Wallet w, int n) {
+    w.add(n);
+    n++;
+    return n;
+}
+
+// in main:
+Wallet w = new Wallet(10);
+int n = 1;
+n = bump(w, n);
+bump(w, n);
+System.out.println(w.getMoney() + " " + n);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">12 2</code></li>
+                <li>(B) <code class="inl">13 2</code></li>
+                <li>(C) <code class="inl">13 3</code></li>
+                <li>(D) <code class="inl">11 1</code></li>
+                <li>(E) <code class="inl">12 3</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>First call: the wallet gets 1 (11), and the returned 2 is caught in <code class="inl">n</code>. Second call: the wallet gets 2 (13), and the returned 3 is not caught, so <code class="inl">n</code> stays 2.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>pass by value</strong></td><td>call by value</td><td>the method gets a copy of the value of each argument; the only way Java passes anything</td><td class="mono">increment(number)</td></tr>
+              <tr><td><strong>“pass by reference”</strong></td><td></td><td>the everyday name for passing an object; what really happens is that <em>the reference is copied</em>, so the method can reach the same object</td><td class="mono">increment(Height ht)</td></tr>
+              <tr><td><strong>parameter</strong></td><td>formal parameter</td><td>the variable in the method header; a new variable for every call</td><td class="mono">number, ht</td></tr>
+              <tr><td><strong>argument</strong></td><td>actual parameter</td><td>the value written in the call</td><td class="mono">number, 5, h</td></tr>
+              <tr><td><strong>frame</strong></td><td>call frame</td><td>the memory for one call: its parameters and local variables, thrown away when it ends</td><td>the drawings</td></tr>
+              <tr><td><strong>overloading</strong></td><td></td><td>several methods with the same name but different parameter lists</td><td class="mono">increment(int), increment(Height)</td></tr>
+              <tr><td><strong>accessor</strong></td><td>getter</td><td>a method that only looks at an object</td><td class="mono">getFeet, printHeight</td></tr>
+              <tr><td><strong>mutator</strong></td><td>setter, modifier</td><td>a method that changes an object</td><td class="mono">add, setInches, deposit</td></tr>
+              <tr><td><strong>immutable</strong></td><td></td><td>can never be changed after it is made</td><td>every String</td></tr>
+              <tr><td><strong>hash code</strong></td><td></td><td>the number after <code class="inl">@</code> when you print a reference</td><td class="mono">Grup1.Height@66d3c617</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Twelve traps to remember</h2>
+        <p>Two will not compile; the rest run and leave something unchanged that you expected to change, or the other way round.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">increment(number); then print number</td><td class="mono">10</td><td class="mono"><span class="fv">9</span></td><td>the method changed its own copy</td></tr>
+              <tr><td class="mono">increment2(h); then print h</td><td>one inch taller</td><td><span class="fv">unchanged</span></td><td>ht = new … moved only the method's arrow</td></tr>
+              <tr><td class="mono">increment(h); then print h</td><td>unchanged</td><td><span class="fv">one inch taller</span></td><td>the method followed the arrow to the caller's object</td></tr>
+              <tr><td class="mono">ht.add(1); ht = new …; ht.add(5);</td><td>+6 or +0</td><td><span class="fv">+1</span></td><td>only the lines before the new arrow count</td></tr>
+              <tr><td class="mono">shout(word);</td><td class="mono">"Hello!"</td><td class="mono"><span class="fv">"Hello"</span></td><td>Strings never change: return it instead</td></tr>
+              <tr><td class="mono">city.substring(0, 3);</td><td class="mono">"Ist"</td><td class="mono"><span class="fv">"Istanbul"</span></td><td>the new String was not caught</td></tr>
+              <tr><td class="mono">Math.abs(x);</td><td>x positive</td><td><span class="fv">x unchanged</span></td><td>catch it: x = Math.abs(x);</td></tr>
+              <tr><td class="mono">int f = h.getFeet(); f++;</td><td>h one foot taller</td><td><span class="fv">h unchanged</span></td><td>a getter gives a copy</td></tr>
+              <tr><td class="mono">increment3(h);</td><td>h taller</td><td><span class="fv">h unchanged</span></td><td>the returned object was not caught</td></tr>
+              <tr><td class="mono">System.out.println(h);</td><td class="mono">4 ft. 3 inc.</td><td class="mono"><span class="fv">Grup1.Height@66d3c617</span></td><td>println prints the reference; use printHeight()</td></tr>
+              <tr><td class="mono">increment(2.5);</td><td>3.5</td><td><span class="err">will not compile</span></td><td>no increment takes a double</td></tr>
+              <tr><td class="mono">h.getFeet() + 1;</td><td>h taller</td><td><span class="err">will not compile</span></td><td>not a statement</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 11, part 31: passed by value. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson10.html">← Lesson 10</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

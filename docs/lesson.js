@@ -724,3 +724,165 @@
     render();
   })(bl[b]);
 })();
+
+/* ---------- Lesson 11: the call lab (frames of main and of the method, step by step) ---------- */
+(function(){
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function H(f, i){ return { type: 'Height', rows: [['feet', String(f)], ['inches', String(i)]] }; }
+  function S(v){ return { type: 'String', rows: [['letters', '"' + v + '"']] }; }
+
+  /* each step: line (index into code), main/meth: [type, name, value or '#id'], objs: {id: obj}, out, note,
+     moved: names just changed, changed: object ids just changed. meth === null: no method running. */
+  var SCEN = {
+    int: {
+      name: 'increment',
+      code: ['public static void increment(int number) {', '    number++;', '    System.out.println("In method: " + number);', '}', '', '// in main:', 'int number = 9;', 'increment(number);', 'System.out.println("After method: " + number);'],
+      steps: [
+        { line: 6, main: [['int', 'number', 9]], meth: null, objs: {}, moved: ['number'], note: 'main has one variable, number, with 9 inside.' },
+        { line: 7, main: [['int', 'number', 9]], meth: [['int', 'number', 9]], objs: {}, moved: ['m:number'], note: 'The call: a new frame for increment, with its own variable number. The value 9 is copied into it (number = a).' },
+        { line: 1, main: [['int', 'number', 9]], meth: [['int', 'number', 10]], objs: {}, moved: ['m:number'], note: "number++ changes the method's own number. main's number is in a different frame." },
+        { line: 2, main: [['int', 'number', 9]], meth: [['int', 'number', 10]], objs: {}, out: ['In method: 10'], note: "The method prints its own number: 10." },
+        { line: 3, main: [['int', 'number', 9]], meth: 'ended', objs: {}, note: 'The method ends. Its frame, with the 10 inside, is thrown away.' },
+        { line: 8, main: [['int', 'number', 9]], meth: null, objs: {}, out: ['After method: 9'], note: "main's number was never touched: 9." }
+      ]
+    },
+    obj: {
+      name: 'increment',
+      code: ['public static void increment(Height ht) {', '    ht.add(1);', '}', '', '// in main:', 'Height h = new Height(4,2);', 'increment(h);', 'h.printHeight();'],
+      steps: [
+        { line: 5, main: [['Height', 'h', 1]], meth: null, objs: { 1: H(4, 2) }, moved: ['h'], note: 'new makes object #1; h holds an arrow to it.' },
+        { line: 6, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1]], objs: { 1: H(4, 2) }, moved: ['m:ht'], note: 'The call copies the value in h, which is an arrow, into ht (ht = h). Two arrows, one object.' },
+        { line: 1, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1]], objs: { 1: H(4, 3) }, changed: [1], note: 'ht.add(1) follows the arrow and changes the object itself.' },
+        { line: 2, main: [['Height', 'h', 1]], meth: 'ended', objs: { 1: H(4, 3) }, note: 'The frame is thrown away, ht with it. The object is not in the frame, so it stays, changed.' },
+        { line: 7, main: [['Height', 'h', 1]], meth: null, objs: { 1: H(4, 3) }, out: ['4 ft. 3 inc.'], note: 'h still leads to #1, which now has 3 inches.' }
+      ]
+    },
+    'new': {
+      name: 'increment2',
+      code: ['public static void increment2(Height ht) {', '    int ft = ht.getFeet();', '    int inc = ht.getInches();', '    ht = new Height(ft, inc+1);', '}', '', '// in main, h is 4 ft. 3 inc. here', 'increment2(h);', 'h.printHeight();'],
+      start: { main: [['Height', 'h', 1]], objs: { 1: H(4, 3) }, note: 'h already leads to a 4 ft 3 Height. Press Next to make the call.' },
+      steps: [
+        { line: 7, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1]], objs: { 1: H(4, 3) }, moved: ['m:ht'], note: 'ht gets a copy of the arrow in h.' },
+        { line: 1, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1], ['int', 'ft', 4]], objs: { 1: H(4, 3) }, moved: ['m:ft'], note: 'The getter gives back a copy of the number 4. ft has no connection to the object.' },
+        { line: 2, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1], ['int', 'ft', 4], ['int', 'inc', 3]], objs: { 1: H(4, 3) }, moved: ['m:inc'], note: 'The same for the inches: a copy of 3.' },
+        { line: 3, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 2], ['int', 'ft', 4], ['int', 'inc', 3]], objs: { 1: H(4, 3), 2: H(4, 4) }, moved: ['m:ht'], changed: [2], note: "A new object #2, 4 ft 4. Its arrow goes into ht, the method's own variable. h is in another frame and still leads to #1." },
+        { line: 4, main: [['Height', 'h', 1]], meth: 'ended', objs: { 1: H(4, 3), 2: H(4, 4) }, note: 'The frame is thrown away. Nothing leads to #2 any more: garbage. #1 was only read.' },
+        { line: 8, main: [['Height', 'h', 1]], meth: null, objs: { 1: H(4, 3), 2: H(4, 4) }, out: ['4 ft. 3 inc.'], note: 'h prints #1, unchanged.' }
+      ]
+    },
+    mix: {
+      name: 'change',
+      code: ['public static void change(Height ht) {', '    ht.add(1);', '    ht = new Height(1, 0);', '    ht.add(5);', '}', '', '// in main:', 'Height h = new Height(4, 3);', 'change(h);', 'h.printHeight();'],
+      steps: [
+        { line: 7, main: [['Height', 'h', 1]], meth: null, objs: { 1: H(4, 3) }, moved: ['h'], note: 'h leads to #1, 4 ft 3.' },
+        { line: 8, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1]], objs: { 1: H(4, 3) }, moved: ['m:ht'], note: 'ht is a copy of the arrow: both lead to #1.' },
+        { line: 1, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 1]], objs: { 1: H(4, 4) }, changed: [1], note: "ht.add(1) happens while ht still leads to h's object. This change counts." },
+        { line: 2, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 2]], objs: { 1: H(4, 4), 2: H(1, 0) }, moved: ['m:ht'], changed: [2], note: 'The line to draw a line under: ht moves to a new object. From here on, nothing reaches #1.' },
+        { line: 3, main: [['Height', 'h', 1]], meth: [['Height', 'ht', 2]], objs: { 1: H(4, 4), 2: H(1, 5) }, changed: [2], note: 'add(5) goes into #2.' },
+        { line: 4, main: [['Height', 'h', 1]], meth: 'ended', objs: { 1: H(4, 4), 2: H(1, 5) }, note: 'Frame gone; #2 is garbage.' },
+        { line: 9, main: [['Height', 'h', 1]], meth: null, objs: { 1: H(4, 4), 2: H(1, 5) }, out: ['4 ft. 4 inc.'], note: 'Only the inch added before the new arrow reached h.' }
+      ]
+    },
+    str: {
+      name: 'shout',
+      code: ['public static void shout(String s) {', '    s = s + "!";', '    System.out.println("In method: " + s);', '}', '', '// in main:', 'String word = "Hello";', 'shout(word);', 'System.out.println(word);'],
+      steps: [
+        { line: 6, main: [['String', 'word', 1]], meth: null, objs: { 1: S('Hello') }, moved: ['word'], note: 'A String is an object too: word holds an arrow to it.' },
+        { line: 7, main: [['String', 'word', 1]], meth: [['String', 's', 1]], objs: { 1: S('Hello') }, moved: ['m:s'], note: 's gets a copy of the arrow.' },
+        { line: 1, main: [['String', 'word', 1]], meth: [['String', 's', 2]], objs: { 1: S('Hello'), 2: S('Hello!') }, moved: ['m:s'], changed: [2], note: 's + "!" cannot change "Hello": Strings never change. It builds a new String, and only s is pointed at it.' },
+        { line: 2, main: [['String', 'word', 1]], meth: [['String', 's', 2]], objs: { 1: S('Hello'), 2: S('Hello!') }, out: ['In method: Hello!'], note: "The method prints its own s." },
+        { line: 3, main: [['String', 'word', 1]], meth: 'ended', objs: { 1: S('Hello'), 2: S('Hello!') }, note: 'Frame gone; "Hello!" is garbage.' },
+        { line: 8, main: [['String', 'word', 1]], meth: null, objs: { 1: S('Hello'), 2: S('Hello!') }, out: ['Hello'], note: 'word still leads to "Hello".' }
+      ]
+    }
+  };
+
+  function card(id, o, cls){
+    var c = el('div', 'obj' + (cls ? ' ' + cls : ''));
+    var h = el('div', 'obj-h'); h.appendChild(el('b', null, '#' + id)); h.appendChild(el('span', null, o.type));
+    c.appendChild(h);
+    o.rows.forEach(function(r){
+      var f = el('div', 'f' + (cls && cls.indexOf('chg') !== -1 ? ' new' : ''));
+      f.appendChild(el('span', 'k', r[0])); f.appendChild(el('span', 'v', r[1]));
+      c.appendChild(f);
+    });
+    return c;
+  }
+
+  var labs = document.querySelectorAll('.lab[data-mode="calls"]');
+  for (var z = 0; z < labs.length; z++) (function(lab){
+    var sel = lab.querySelector('[data-f="scen"]');
+    var view = lab.querySelector('.lab-view');
+    var code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out');
+    var stepLbl = lab.querySelector('.lab-step');
+    var why = lab.querySelector('.lab-why');
+    var n = 0;
+
+    function frame(title, vars, prefix, moved, cls){
+      var f = el('div', 'frame' + (cls ? ' ' + cls : ''));
+      f.appendChild(el('p', 'frame-h', title));
+      var box = el('div', 'vars');
+      vars.forEach(function(v){
+        var prim = v[0] === 'int';
+        var d = el('div', 'var' + (prim ? ' prim' : '') + (moved.indexOf(prefix + v[1]) !== -1 ? ' moved' : ''));
+        d.appendChild(el('b', null, v[0] + ' ' + v[1]));
+        d.appendChild(el('span', 'to', prim ? String(v[2]) : '→ #' + v[2]));
+        box.appendChild(d);
+      });
+      f.appendChild(box);
+      return f;
+    }
+
+    function render(){
+      var sc = SCEN[sel.value];
+      var st = n === 0 ? (sc.start || { main: [], objs: {}, note: 'Press Next to run the first line.' }) : sc.steps[n - 1];
+      var meth = n === 0 ? null : st.meth;
+      var moved = st.moved || [], changed = st.changed || [];
+      view.textContent = '';
+      var mem = el('div', 'mem calls');
+      var left = el('div');
+      left.appendChild(el('p', 'mem-lbl', 'frames'));
+      if (st.main.length) left.appendChild(frame('frame of main', st.main, '', moved, 'main'));
+      else left.appendChild(el('div', 'lab-step', '(nothing yet)'));
+      if (meth === 'ended'){
+        var g = el('div', 'frame ended'); g.appendChild(el('p', 'frame-h', 'frame of ' + sc.name + ' · thrown away')); left.appendChild(g);
+      } else if (meth){
+        left.appendChild(frame('frame of ' + sc.name, meth, 'm:', moved));
+      }
+      var right = el('div'); right.appendChild(el('p', 'mem-lbl', 'objects'));
+      var heap = el('div', 'heap');
+      var ids = Object.keys(st.objs);
+      if (!ids.length) heap.appendChild(el('div', 'lab-step', sel.value === 'int' ? '(no objects: ints live inside the variables)' : '(no objects yet)'));
+      ids.forEach(function(id){
+        var from = [];
+        st.main.forEach(function(v){ if (v[0] !== 'int' && v[2] === +id) from.push(v[1]); });
+        if (meth && meth !== 'ended') meth.forEach(function(v){ if (v[0] !== 'int' && v[2] === +id) from.push(v[1] + ' (in ' + sc.name + ')'); });
+        var cls = (from.length ? '' : 'gone') + (changed.indexOf(+id) !== -1 ? ' chg' : '');
+        var c = card(id, st.objs[id], cls.trim());
+        c.appendChild(el('div', 'who', from.length ? 'arrows from: ' + from.join(', ') : 'no arrows · garbage'));
+        heap.appendChild(c);
+      });
+      right.appendChild(heap);
+      mem.appendChild(left); mem.appendChild(right);
+      view.appendChild(mem);
+      var cur = n === 0 ? -1 : st.line;
+      code.textContent = sc.code.map(function(line, i){ return (i === cur ? '→ ' : '  ') + line; }).join('\n');
+      var o = [];
+      for (var k = 0; k < n; k++) if (sc.steps[k].out) o = o.concat(sc.steps[k].out);
+      out.textContent = o.join('\n');
+      stepLbl.textContent = 'step ' + n + ' of ' + sc.steps.length;
+      why.textContent = st.note;
+    }
+    sel.addEventListener('change', function(){ n = 0; render(); });
+    lab.querySelector('[data-act="next"]').addEventListener('click', function(){ if (n < SCEN[sel.value].steps.length){ n++; render(); } });
+    lab.querySelector('[data-act="prev"]').addEventListener('click', function(){ if (n > 0){ n--; render(); } });
+    lab.querySelector('[data-act="reset"]').addEventListener('click', function(){ n = 0; render(); });
+    render();
+  })(labs[z]);
+})();

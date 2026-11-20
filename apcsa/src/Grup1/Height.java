@@ -82,4 +82,11 @@ public class Height {
 		inches += other.inches;
 		simplify();
 	}
+	// toString --> string representation .... 
+//	public String toString() {
+//		return this.feet + " ft. " + inches + " inc.";
+//	}
+	
+	
+	
 }

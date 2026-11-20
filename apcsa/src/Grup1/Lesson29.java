@@ -33,6 +33,7 @@ public class Lesson29 {
 
 		acc1.print();
 		BankAccount acc2 = new BankAccount("Ceyda Yazıcı");
+		System.out.println(acc2);
 		BankAccount.printCount();
 
 		acc2.print();

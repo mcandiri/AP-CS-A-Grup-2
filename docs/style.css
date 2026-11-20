@@ -905,3 +905,15 @@ ol.plain li{margin-bottom:6px;}
 .lab-step{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.78rem;color:var(--ink-soft);align-self:center;}
 .lab .mem{margin:14px 0 12px;}
 @media (max-width:560px){ .mem{grid-template-columns:1fr;} }
+
+/* ---------- Lesson 11: call frames (main + the running method) and the call lab ---------- */
+.frame{border:1px dashed var(--line);border-radius:6px;padding:8px 10px 10px;margin:0 0 10px;background:transparent;}
+.frame.main{border-style:solid;}
+.frame.ended{opacity:.45;}
+.frame-h{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.72rem;color:var(--ink-soft);
+  margin:0 0 6px;max-width:none;
+}
+.mem .frame .vars{gap:6px;}
+.mem.calls{grid-template-columns:minmax(0,15rem) minmax(0,1fr);}
+@media (max-width:560px){ .mem.calls{grid-template-columns:1fr;} }
