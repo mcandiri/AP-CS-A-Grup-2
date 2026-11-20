@@ -26,7 +26,7 @@
     <ul class="facts">
       <li>1 file</li>
       <li>Java</li>
-      <li>36 questions</li>
+      <li>40 questions</li>
       <li>Every output verified</li>
     </ul>
   </header>
@@ -46,6 +46,7 @@
         <li><a class="sub" href="#pv-new">increment2: the new arrow</a></li>
         <li><a class="sub" href="#pv-fix">Making increment2 work</a></li>
         <li><a class="sub" href="#pv-print">Printing an object</a></li>
+        <li><a class="sub" href="#pv-ts">toString</a></li>
         <li><a class="sub" href="#pv-lab">The call lab</a></li>
         <li><a class="sub" href="#p31a">Practice</a></li>
         <li><a href="#ch">31 · Did it change?</a></li>
@@ -91,7 +92,7 @@
             <li>What Java does, step by step, when you call a method with an argument.</li>
             <li>Why <code class="inl">increment(number)</code> cannot change <code class="inl">number</code>, and why <code class="inl">increment(h)</code> <em>can</em> change <code class="inl">h</code>'s object.</li>
             <li>Why <code class="inl">increment2(h)</code> changes nothing, even though it makes a taller Height.</li>
-            <li>What <code class="inl">System.out.println(h)</code> prints, and what that strange <code class="inl">@66d3c617</code> is.</li>
+            <li>What <code class="inl">System.out.println(h)</code> prints, what that strange <code class="inl">@66d3c617</code> is, and how <code class="inl">toString</code> fixes it.</li>
             <li>A checklist for “after this call, what changed?”: ints, Strings, objects, getters, return values, <code class="inl">this</code>, and static methods.</li>
             <li>Six classes from real life (Phone, Book, Team, Order, Post, Contact), each showing the rule from a different side.</li>
           </ul>
@@ -503,7 +504,116 @@ true</pre></div>
 
         <div class="note note--trap">
           <span class="tag">Watch out</span>
-          <p>If you see <code class="inl">ClassName@</code> and some letters and digits in your console, you printed the reference, not the object's values. It is not an error and nothing crashed. Call the class's own print method or a getter instead.</p>
+          <p>If you see <code class="inl">ClassName@</code> and some letters and digits in your console, you printed the reference, not the object's values. It is not an error and nothing crashed. Call the class's own print method, or give the class a <code class="inl">toString</code> (next section).</p>
+        </div>
+
+        <h3 id="pv-ts">toString: teaching Java to print a Height</h3>
+
+        <p>In <code class="inl">Height.java</code> as it is now, one method is commented out. In class we wrote it to fix exactly this problem:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Height.java · toString</span></div>
+          <pre class="code"><code>// toString --> string representation ....
+public String toString() {
+    return this.feet + " ft. " + inches + " inc.";
+}</code></pre>
+        </div>
+
+        <p><code class="inl">toString</code> is a special name. Whenever Java needs an object <em>as text</em>, it looks for a method with exactly this header, <code class="inl">public String toString()</code>, and calls it by itself. You almost never write <code class="inl">h.toString()</code>: <code class="inl">println</code> and <code class="inl">+</code> with a String do it for you. With the comment marks taken away:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>With toString in Height</span></div>
+          <pre class="code"><code>Height h = new Height(4, 3);
+System.out.println(h);
+System.out.println("Height: " + h);
+String s = h.toString();
+System.out.println(s.length());
+h.add(10);
+System.out.println(h);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4 ft. 3 inc.
+Height: 4 ft. 3 inc.
+12
+5 ft. 1 inc.</pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">println(h)</code> calls <code class="inl">h.toString()</code> and prints the String it returns, instead of <code class="inl">Grup1.Height@…</code>.</li>
+          <li><code class="inl">"Height: " + h</code> is String + object: Java turns the object into text with <code class="inl">toString</code>, then joins.</li>
+          <li>The result is an ordinary String, 12 letters long. We can store it and use String methods on it.</li>
+          <li>It always shows the object <em>as it is now</em>: after <code class="inl">add(10)</code>, 5 ft 1.</li>
+        </ul>
+
+        <p><strong>toString or printHeight?</strong> Both show the height, but in different ways. <code class="inl">printHeight</code> is <code class="inl">void</code>: it prints, and gives nothing back. <code class="inl">toString</code> <strong>returns</strong> a String and prints nothing itself. Returning is more useful: the caller decides what to do with the text: print it, join it to other text, store it, count its letters. It is also an accessor: it only looks at the fields and changes nothing.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>The header must be exactly <code class="inl">public String toString()</code>: public, returns a String, no parameters. It must <strong>return</strong> the text, not print it.</p>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Spell it exactly. A method called <code class="inl">tostring()</code> or <code class="inl">ToString()</code> compiles without a word, but it is just another method: <code class="inl">println</code> does not know it and still prints <code class="inl">ClassName@…</code>. And a <code class="inl">toString</code> that prints instead of returning <span class="err">will not compile</span>: <em>missing return statement</em>.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Every app shows objects as text all the time: a contact as “Ayşe · 0555 …”, an order as “#247 · 3 items · 300 TL”, a match as “Kartallar 2–1 Aslanlar”. Each of those is somebody's <code class="inl">toString</code>: the one place in the class that decides what the object looks like when written down.</p>
+        </div>
+
+        <div class="practice" id="pts">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Four questions on toString</h3>
+          <p class="practice-lede">Height has the toString above.</p>
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>Height a = new Height(5, 0);
+Height b = a;
+b.add(14);
+System.out.println(a);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>6 ft. 2 inc.</pre></div></div>
+                  <p>Aliases (Lesson 10): one object, so <code class="inl">a</code>'s text shows the change made through <code class="inl">b</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>System.out.println(new Height(70));
+System.out.println(new Height());</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>Hi
+5 ft. 10 inc.
+99 ft. 11 inc.</pre></div></div>
+                  <p>The one-int constructor prints <code class="inl">Hi</code> while the object is being made, before <code class="inl">println</code> gets it. 70 inches is 5 ft 10.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why is <code class="inl">toString</code> written with <code class="inl">return</code>, and not with <code class="inl">System.out.println</code> inside it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Because Java calls it when it needs the object <em>as a String</em>, and it expects a String back. It must be <code class="inl">public String toString()</code>, and a String method has to return one: printing instead gives <em>missing return statement</em>. Returning also lets the caller use the text however it wants.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write a <code class="inl">toString</code> for <code class="inl">BankAccount</code> so that <code class="inl">System.out.println(new BankAccount("Selin Kavas", 5000))</code> prints <code class="inl">Selin Kavas: $5000.0</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public String toString() {
+    return firstName + " " + lastName + ": $" + balance;
+}</code></pre></div>
+                  <p>Inside the class it can read the private fields. Nothing is printed by the method itself.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
         </div>
 
         <h3 id="pv-lab">The call lab</h3>
@@ -2045,8 +2155,8 @@ System.out.println(w.getMoney() + " " + n);</code></pre></div>
 
       <!-- ============ RECAP ============ -->
       <section class="recap" id="recap">
-        <h2>Twelve traps to remember</h2>
-        <p>Two will not compile; the rest run and leave something unchanged that you expected to change, or the other way round.</p>
+        <h2>Fourteen traps to remember</h2>
+        <p>Three will not compile; the rest run and leave something unchanged that you expected to change, or the other way round.</p>
 
         <div class="scroll">
           <table>
@@ -2063,7 +2173,9 @@ System.out.println(w.getMoney() + " " + n);</code></pre></div>
               <tr><td class="mono">Math.abs(x);</td><td>x positive</td><td><span class="fv">x unchanged</span></td><td>catch it: x = Math.abs(x);</td></tr>
               <tr><td class="mono">int f = h.getFeet(); f++;</td><td>h one foot taller</td><td><span class="fv">h unchanged</span></td><td>a getter gives a copy</td></tr>
               <tr><td class="mono">increment3(h);</td><td>h taller</td><td><span class="fv">h unchanged</span></td><td>the returned object was not caught</td></tr>
-              <tr><td class="mono">System.out.println(h);</td><td class="mono">4 ft. 3 inc.</td><td class="mono"><span class="fv">Grup1.Height@66d3c617</span></td><td>println prints the reference; use printHeight()</td></tr>
+              <tr><td class="mono">System.out.println(h);</td><td class="mono">4 ft. 3 inc.</td><td class="mono"><span class="fv">Grup1.Height@66d3c617</span></td><td>the class has no toString: write one</td></tr>
+              <tr><td class="mono">public String tostring()</td><td>nice text</td><td class="mono"><span class="fv">Grup1.Height@…</span></td><td>the name must be exactly toString</td></tr>
+              <tr><td class="mono">toString that prints</td><td>text</td><td><span class="err">will not compile</span></td><td>missing return statement</td></tr>
               <tr><td class="mono">increment(2.5);</td><td>3.5</td><td><span class="err">will not compile</span></td><td>no increment takes a double</td></tr>
               <tr><td class="mono">h.getFeet() + 1;</td><td>h taller</td><td><span class="err">will not compile</span></td><td>not a statement</td></tr>
             </tbody>
@@ -2072,7 +2184,7 @@ System.out.println(w.getMoney() + " " + n);</code></pre></div>
       </section>
 
       <footer>
-        AP CS-A · Grup 2 — Lesson 11, part 31: passed by value. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson10.html">← Lesson 10</a>
+        AP CS-A · Grup 2 — Lesson 11, part 31: passed by value. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson10.html">← Lesson 10</a> &nbsp;·&nbsp; <a href="lesson12.html">Lesson 12 →</a>
       </footer>
 
     </main>

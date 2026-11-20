@@ -917,3 +917,11 @@ ol.plain li{margin-bottom:6px;}
 .mem .frame .vars{gap:6px;}
 .mem.calls{grid-template-columns:minmax(0,15rem) minmax(0,1fr);}
 @media (max-width:560px){ .mem.calls{grid-template-columns:1fr;} }
+
+/* ---------- Lesson 12: array strips (wider boxes for numbers and Strings) and the array lab ---------- */
+.strip.arr{--cw:3rem;}
+.strip.arr .cell{font-size:.98rem;}
+.strip.arr.wide{--cw:6.4rem;}
+.strip.arr.wide .cell{font-size:.86rem;}
+.strip .cell.diff.ghost{color:var(--crimson);}
+.lab .strip-wrap{margin:6px 0 14px;}

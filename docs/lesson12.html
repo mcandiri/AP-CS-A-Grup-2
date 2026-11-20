@@ -1,0 +1,1370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 12: arrays. Data collections: creating arrays with a list of values or with new, default values, indexes from 0, reading and writing elements, length, walking through an array with a for loop, sums and counts, going backwards, neighbours, ArrayIndexOutOfBoundsException, and arrays of Strings, doubles and booleans.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 12 · Arrays — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 12</p>
+    <h1>Arrays</h1>
+    <p class="deck">Until now, every variable held one thing: one number, one String, one Height. But a class has 30 exam scores, a week has 7 temperatures, a phone has hundreds of contacts. Writing <code class="inl">score1</code>, <code class="inl">score2</code>, … <code class="inl">score30</code> would be hopeless. An <strong>array</strong> keeps many values of the same type under one name, in numbered boxes, and a <code class="inl">for</code> loop can walk through all of them. This is our first <strong>data collection</strong>.</p>
+    <ul class="facts">
+      <li>2 files</li>
+      <li>Java</li>
+      <li>26 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#ar">32 · Arrays</a></li>
+        <li><a class="sub" href="#ar-why">Why collections?</a></li>
+        <li><a class="sub" href="#ar-what">What an array is</a></li>
+        <li><a class="sub" href="#ar-list">Way 1: a list of values</a></li>
+        <li><a class="sub" href="#ar-new">Way 2: new type[length]</a></li>
+        <li><a class="sub" href="#ar-def">Default values</a></li>
+        <li><a class="sub" href="#ar-read">Reading an element</a></li>
+        <li><a class="sub" href="#ar-write">Writing an element</a></li>
+        <li><a class="sub" href="#ar-len">length</a></li>
+        <li><a class="sub" href="#ar-loop">Printing every element</a></li>
+        <li><a class="sub" href="#p32">Practice</a></li>
+        <li><a href="#tr">33 · Walking through an array</a></li>
+        <li><a class="sub" href="#tr-print">Printing, and [I@…</a></li>
+        <li><a class="sub" href="#tr-sum">Adding them all up</a></li>
+        <li><a class="sub" href="#tr-even">Only some of them</a></li>
+        <li><a class="sub" href="#tr-back">Backwards</a></li>
+        <li><a class="sub" href="#tr-oob">ArrayIndexOutOfBoundsException</a></li>
+        <li><a class="sub" href="#tr-pairs">Neighbours</a></li>
+        <li><a class="sub" href="#tr-ends">First and last</a></li>
+        <li><a class="sub" href="#tr-types">Arrays of other types</a></li>
+        <li><a class="sub" href="#tr-lab">The array lab</a></li>
+        <li><a class="sub" href="#p33">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a href="#shop">Workshop · real data</a></li>
+        <li><a class="sub" href="#shop-temp">A week of temperatures</a></li>
+        <li><a class="sub" href="#shop-score">Exam scores</a></li>
+        <li><a class="sub" href="#shop-city">Finding a city</a></li>
+        <li><a class="sub" href="#shop-steps">Steps and attendance</a></li>
+        <li><a class="sub" href="#shop-price">Rising prices</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
+        <li><a href="#ap">AP-style questions</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 32 · ARRAYS ============ -->
+      <section class="lesson" id="ar">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 32 · Lessoon32.java</span>
+          <h2 class="lesson-title">Arrays</h2>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li><strong>Arrays</strong>: many values of one type under one name, in numbered boxes starting at 0.</li>
+            <li>Two ways to make an array, the default values Java puts in, reading and writing one box, and <code class="inl">length</code>.</li>
+            <li>Walking through an array with a <code class="inl">for</code> loop: printing, adding up, counting, going backwards, looking at neighbours.</li>
+            <li>The crash every array programmer meets: <code class="inl">ArrayIndexOutOfBoundsException</code>.</li>
+          </ul>
+        </div>
+
+        <h3 id="ar-why">Why collections?</h3>
+
+        <p>Imagine the exam scores of a class of 30. With what we know so far, that is 30 variables: <code class="inl">int score1 = 72; int score2 = 85;</code> … and so on, 30 lines. Now find the average: one very long line with 30 names. Now the highest score: 29 <code class="inl">if</code>s. And next year the class has 32 students, so every line changes.</p>
+
+        <p>The problem is that the 30 scores are <em>the same kind of thing</em>, but the program treats them as 30 unrelated variables. What we want is one name for all of them, and a way to say “the 5th one”, or better, “the <code class="inl">i</code>th one”, so that a loop can visit them all. That is a <strong>data collection</strong>, and the first and simplest one in Java is the <strong>array</strong>.</p>
+
+        <h3 id="ar-what">What an array is</h3>
+
+        <p>An array is a row of boxes, all of the same type, kept together under one name. Each box is called an <strong>element</strong>, and each has a number, its <strong>index</strong>. Here is the first array from the file:</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">1<span class="ix">0</span></div>
+            <div class="cell">3<span class="ix">1</span></div>
+            <div class="cell">5<span class="ix">2</span></div>
+            <div class="cell">7<span class="ix">3</span></div>
+            <div class="cell">9<span class="ix">4</span></div>
+            <div class="cell">11<span class="ix">5</span></div>
+          </div>
+          <span class="strip-cap">int[] numbers = { 1,3,5,7,9, 11};  ·  values in the boxes, indexes underneath</span>
+        </div>
+
+        <p>Three facts about every array:</p>
+        <ul class="plain">
+          <li><strong>One type.</strong> An <code class="inl">int[]</code> holds only ints. There is no array with an int in one box and a String in the next.</li>
+          <li><strong>Indexes start at 0.</strong> The first box is number 0, so the last box is number <em>length − 1</em>. Six elements: indexes 0 to 5. The same as the letters of a String in Lesson 6.</li>
+          <li><strong>Fixed length.</strong> When the array is made, its number of boxes is fixed for ever. You can change what is <em>in</em> a box, but you cannot add a seventh box.</li>
+        </ul>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A pill organizer with seven boxes, one per day: one name (“my pills”), seven numbered boxes of the same kind, and you cannot add an eighth day. An array is exactly that, except that Java numbers the boxes from 0.</p>
+        </div>
+
+        <h3 id="ar-list">Way 1: a list of values</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java</span></div>
+          <pre class="code"><code>// --- Data Collections ---
+
+// 1. Arrays ---
+
+// type[]   name = {value1, value2 .. . ..   } ;
+
+int[] numbers = { 1,3,5,7,9, 11};
+//  1   3   5   7   9   11
+//  0   1   2   3   4    5</code></pre>
+        </div>
+
+        <p>Read the declaration from left to right:</p>
+
+        <div class="anat" role="img" aria-label="int[] numbers = {1,3,5,7,9,11}; is made of the element type int, the brackets that say array, the name, and the list of values in curly braces.">
+          <div class="pc"><code>int</code><small>the type of every element</small></div>
+          <div class="pc key"><code>[]</code><small>“array of”</small></div>
+          <div class="pc"><code>numbers</code><small>the name of the whole array</small></div>
+          <div class="pc"><code>=</code><small></small></div>
+          <div class="pc"><code>{ 1,3,5,7,9, 11 }</code><small>the values, in order; Java counts them: length 6</small></div>
+        </div>
+
+        <p>The type <code class="inl">int[]</code> is said “int array”. The values go between curly braces, separated by commas, and Java works out the length by counting them. Use this way when you already know the values while writing the program.</p>
+
+        <h3 id="ar-new">Way 2: new type[length]</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java</span></div>
+          <pre class="code"><code>// type[] name = new type[length];
+
+int[] nums = new int[5];   // 0,0,0,0,0</code></pre>
+        </div>
+
+        <p>Here we do not give values, only the <em>number of boxes</em>. <code class="inl">new int[5]</code> makes five int boxes. This is the way to use when the values come later: typed in by a user, read from somewhere, or worked out by a loop.</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">0<span class="ix">0</span></div>
+            <div class="cell">0<span class="ix">1</span></div>
+            <div class="cell">0<span class="ix">2</span></div>
+            <div class="cell">0<span class="ix">3</span></div>
+            <div class="cell">0<span class="ix">4</span></div>
+          </div>
+          <span class="strip-cap">int[] nums = new int[5];  ·  five boxes, all 0</span>
+        </div>
+
+        <h3 id="ar-def">Default values</h3>
+
+        <p>The boxes of a new array are never empty: Java fills them with a <strong>default value</strong>, the same defaults that instance variables got in Lesson 8.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java · the comments</span></div>
+          <pre class="code"><code>int[] nums = new int[5];   // 0,0,0,0,0
+// double --> 0.0 , 0.0 , 0.0
+// boolean -> false , false , false
+// String, object --> null, null, null ,null</code></pre>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Element type</th><th>Every box starts as</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">int</td><td class="mono">0</td><td class="mono">new int[5]</td></tr>
+              <tr><td class="mono">double</td><td class="mono">0.0</td><td class="mono">new double[3]</td></tr>
+              <tr><td class="mono">boolean</td><td class="mono">false</td><td class="mono">new boolean[3]</td></tr>
+              <tr><td>String, or any class</td><td class="mono">null</td><td class="mono">new String[3], new Height[4]</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ex">
+          <div class="ex-head"><span>Checking the defaults</span></div>
+          <pre class="code"><code>double[] d = new double[3];
+boolean[] b = new boolean[3];
+String[] s = new String[3];
+System.out.println(d[0] + " " + b[1] + " " + s[2]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0.0 false null</pre></div>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>A new <code class="inl">String[]</code> is full of <code class="inl">null</code>, not of <code class="inl">""</code>. Printing a <code class="inl">null</code> box is fine, but calling a method on it, like <code class="inl">s[0].length()</code>, crashes with a <span class="err">NullPointerException</span>, the same as with any <code class="inl">null</code> (Lesson 10).</p>
+        </div>
+
+        <h3 id="ar-read">Reading an element</h3>
+
+        <p>To get one box, write the array's name and the index in square brackets: <code class="inl">numbers[2]</code> is said “numbers at 2” or “numbers sub 2”.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java</span></div>
+          <pre class="code"><code>System.out.println(numbers[2]);
+System.out.println(numbers[5]);
+System.out.println(numbers[0]);
+
+System.out.println(nums[0]);
+System.out.println(nums[1]);
+System.out.println(nums[2]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5
+11
+1
+0
+0
+0</pre></div>
+        </div>
+
+        <p><code class="inl">numbers[2]</code> is 5, the <em>third</em> value, because counting starts at 0. <code class="inl">numbers[5]</code> is 11, the last one. <code class="inl">nums</code> has had nothing put in it yet, so every box is still the default 0.</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">1<span class="ix">0</span></div>
+            <div class="cell">3<span class="ix">1</span></div>
+            <div class="cell hit">5<span class="ix on">2</span></div>
+            <div class="cell">7<span class="ix">3</span></div>
+            <div class="cell">9<span class="ix">4</span></div>
+            <div class="cell">11<span class="ix">5</span></div>
+          </div>
+          <span class="strip-cap">numbers[2] → 5   (the third box)</span>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p><code class="inl">name[i]</code> is the element at index <code class="inl">i</code>. The first is <code class="inl">name[0]</code>; the element in position <em>n</em> (counting like a person) is at index <em>n − 1</em>.</p>
+        </div>
+
+        <h3 id="ar-write">Writing an element</h3>
+
+        <p>An element is used exactly like a variable. You can put it on the left of <code class="inl">=</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java</span></div>
+          <pre class="code"><code>nums[4] = 12 ;   // 0,0,0,0,12
+
+nums[0] = 5;     // 5,0,0,0,12</code></pre>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell hit">5<span class="ix on">0</span></div>
+            <div class="cell">0<span class="ix">1</span></div>
+            <div class="cell">0<span class="ix">2</span></div>
+            <div class="cell">0<span class="ix">3</span></div>
+            <div class="cell hit">12<span class="ix on">4</span></div>
+          </div>
+          <span class="strip-cap">nums after the two lines: only boxes 0 and 4 changed</span>
+        </div>
+
+        <p>Only the box with that index changes; the others keep what they had. And everything that works with an int variable works with an int element: <code class="inl">nums[1] += 3;</code>, <code class="inl">nums[2]++;</code>, <code class="inl">nums[3] = nums[0] * 2;</code>.</p>
+
+        <h3 id="ar-len">length</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java</span></div>
+          <pre class="code"><code>System.out.println(numbers.length);
+System.out.println(nums.length);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6
+5</pre></div>
+        </div>
+
+        <p>Every array knows how many boxes it has: <code class="inl">name.length</code>. Notice: <strong>no parentheses</strong>. For a String it was <code class="inl">word.length()</code>, a method. For an array it is <code class="inl">numbers.length</code>, a value stored in the array, like a public field you can read but not change.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">numbers.length()</code> <span class="err">will not compile</span> (<em>cannot find symbol: method length()</em>), and <code class="inl">word.length</code> without parentheses will not compile either. A memory trick: a String <em>does</em> something to count its letters (a method, with <code class="inl">()</code>); an array simply <em>has</em> its length written on it.</p>
+        </div>
+
+        <h3 id="ar-loop">Printing every element</h3>
+
+        <p>Now the reason arrays exist. Because the index is just an int, it can be a <em>variable</em>: <code class="inl">nums[i]</code>. And a <code class="inl">for</code> loop can make <code class="inl">i</code> go 0, 1, 2, … through every index:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lessoon32.java · the last lines</span></div>
+          <pre class="code"><code>for(int i=0 ; i &lt; nums.length ; i++) {
+    System.out.print(nums[i] + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 0 0 0 12 </pre></div>
+        </div>
+
+        <ul class="plain">
+          <li><code class="inl">int i=0</code>: start at the first index.</li>
+          <li><code class="inl">i &lt; nums.length</code>: stop <em>before</em> length. The last index is length − 1, so <code class="inl">&lt;</code>, never <code class="inl">&lt;=</code>.</li>
+          <li><code class="inl">i++</code>: next box.</li>
+          <li><code class="inl">print</code>, not <code class="inl">println</code>, with a space, so the values stand in one row.</li>
+        </ul>
+
+        <p>This loop is the most important pattern of the whole topic. Every array program in this lesson is this loop with something different inside it. And because it says <code class="inl">nums.length</code> and not <code class="inl">5</code>, it works for an array of any size without a change.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>To visit every element: <code class="inl">for (int i = 0; i &lt; arr.length; i++)</code>, and use <code class="inl">arr[i]</code> inside. Write <code class="inl">arr.length</code>, never the number.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>An array is a fixed number of boxes of one type under one name. Make it with a list <code class="inl">{…}</code> or with <code class="inl">new type[length]</code>, which fills it with 0, 0.0, false or null. <code class="inl">arr[i]</code> reads or writes box <code class="inl">i</code>; indexes go from 0 to <code class="inl">arr.length − 1</code>. <code class="inl">length</code> has no parentheses. A <code class="inl">for</code> loop from 0 while <code class="inl">i &lt; arr.length</code> visits every box.</p>
+        </div>
+
+        <div class="practice" id="p32">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on making and using arrays</h3>
+
+          <ol class="qs">
+            <li>
+              <p>Given <code class="inl">int[] a = {8, 6, 4, 2};</code>, what are <code class="inl">a[1]</code>, <code class="inl">a[3]</code> and <code class="inl">a.length</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6 · 2 · 4</span></p>
+                  <p>Index 1 is the second value, index 3 the fourth and last. Four values, length 4.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = new int[4];
+a[1] = 7;
+a[3] = a[1] + 2;
+a[1]++;
+for (int i = 0; i &lt; a.length; i++) {
+    System.out.print(a[i] + " ");
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>0 8 0 9 </pre></div></div>
+                  <p><code class="inl">a[3]</code> is set to 9 while <code class="inl">a[1]</code> is still 7; the <code class="inl">++</code> comes after. Boxes 0 and 2 keep the default 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">new boolean[2]</code> contain? And <code class="inl">new String[2]</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">false, false</code> and <code class="inl">null, null</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write one line that makes an array called <code class="inl">days</code> holding the numbers of days in the first three months of a normal year.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int[] days = {31, 28, 31};</code></pre></div>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these lines will not compile? <code class="inl">int[] x = {1, 2, 3};</code> · <code class="inl">int[] y = new int[3];</code> · <code class="inl">int z = x.length();</code> · <code class="inl">int[] w = {1, 2.5, 3};</code></p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>The last two. <code class="inl">length</code> has no parentheses on an array (<em>cannot find symbol</em>), and 2.5 is a double that does not fit in an <code class="inl">int[]</code> (<em>possible lossy conversion from double to int</em>).</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A theatre row has 12 seats, numbered 1 to 12 on the tickets. They are stored in <code class="inl">String[] row = new String[12];</code>. At which index is the person with ticket number 7?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">6</span></p>
+                  <p>People count from 1, Java from 0: seat <em>n</em> is <code class="inl">row[n - 1]</code>. Seat 12 is <code class="inl">row[11]</code>, the last index.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 33 · TRAVERSING ============ -->
+      <section class="lesson" id="tr">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 33 · Lesson33.java</span>
+          <h2 class="lesson-title">Walking Through an Array</h2>
+        </div>
+
+        <p>Going through the elements one by one is called <strong>traversing</strong> the array. Lesson33 does it six times, each time with a different job inside the same loop. Here is the whole file and its output:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · main</span></div>
+          <pre class="code"><code>int[] numbers = { 1,4,7,8,12, 13, 15, 18, 20, 21, 24};
+
+for(int i=0 ; i &lt; numbers.length ; i++) {
+    System.out.print(numbers[i] + " ");
+}
+System.out.println();
+// System.out.println(numbers); [I@7ea987ac
+
+int total = 0 ;
+for(int i=0 ; i &lt; numbers.length ; i++) {
+    total += numbers[i] ;
+}
+
+System.out.println(total);
+total = 0;
+int count = 0 ;
+for(int i=0 ; i &lt; numbers.length ; i++) {
+    if(numbers[i] % 2 == 0) {
+        total += numbers[i] ;
+        count++;
+    }
+}
+
+System.out.println(total);
+System.out.println(count);
+
+for(int i=numbers.length-1  ; i >= 0 ; i--) {
+    System.out.print(numbers[i] + " ");
+}
+System.out.println();
+
+// ArrayIndexOutOfBoundsException
+// index &lt; 0 , >= length
+System.out.println(numbers.length);
+//  System.out.println(numbers[11]);
+//  System.out.println(numbers[-3]);
+for(int i=numbers.length-1  ; i > 0 ; i--) {
+    System.out.println(numbers[i-1] + " " + numbers[i]);
+}
+System.out.println();
+
+// arr[0] ---> first
+
+// arr[length-1] --> last
+
+String[] arr = {"Istanbul" ,"Ankara" ,"Izmir" };
+double[] arr2 = { 4.312 , 1 , 5.2 , 3.45 }  ;
+boolean[] arr3  = { true, false, true } ;</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 4 7 8 12 13 15 18 20 21 24
+143
+86
+6
+24 21 20 18 15 13 12 8 7 4 1
+11
+21 24
+20 21
+18 20
+15 18
+13 15
+12 13
+8 12
+7 8
+4 7
+1 4
+</pre></div>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">1<span class="ix">0</span></div>
+            <div class="cell">4<span class="ix">1</span></div>
+            <div class="cell">7<span class="ix">2</span></div>
+            <div class="cell">8<span class="ix">3</span></div>
+            <div class="cell">12<span class="ix">4</span></div>
+            <div class="cell">13<span class="ix">5</span></div>
+            <div class="cell">15<span class="ix">6</span></div>
+            <div class="cell">18<span class="ix">7</span></div>
+            <div class="cell">20<span class="ix">8</span></div>
+            <div class="cell">21<span class="ix">9</span></div>
+            <div class="cell">24<span class="ix">10</span></div>
+          </div>
+          <span class="strip-cap">numbers · 11 elements, indexes 0 to 10</span>
+        </div>
+
+        <h3 id="tr-print">Printing, and [I@…</h3>
+
+        <p>The first loop is the one from Part 32. Then a <code class="inl">System.out.println();</code> with nothing in it, to end the row. The commented-out line shows what happens if you try to print the whole array at once:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Printing the array variable</span></div>
+          <pre class="code"><code>System.out.println(numbers);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>[I@2a139a55</pre></div>
+        </div>
+
+        <p>Java does not print the values of an array for you. It prints a short code for the type and a label, a bit like <code class="inl">Grup1.Height@66d3c617</code> in Lesson 11. <code class="inl">[I</code> is Java's short name for “array of int” (<code class="inl">[</code> = array, <code class="inl">I</code> = int). A <code class="inl">double[]</code> prints <code class="inl">[D@…</code>, a <code class="inl">String[]</code> <code class="inl">[Ljava.lang.String;@…</code>. The number after <code class="inl">@</code> changes from computer to computer.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>To see the values of an array, you must write the loop. <code class="inl">println(numbers)</code> never shows them.</p>
+        </div>
+
+        <h3 id="tr-sum">Adding them all up</h3>
+
+        <p>The second loop is the accumulator from Lesson 3: a variable that starts at 0 and has each element added to it.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · total</span></div>
+          <pre class="code"><code>int total = 0 ;
+for(int i=0 ; i &lt; numbers.length ; i++) {
+    total += numbers[i] ;
+}
+System.out.println(total);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>143</pre></div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">i</th><th class="mono">numbers[i]</th><th class="mono">total after</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">0</td><td class="mono">1</td><td class="mono">1</td></tr>
+              <tr><td class="mono">1</td><td class="mono">4</td><td class="mono">5</td></tr>
+              <tr><td class="mono">2</td><td class="mono">7</td><td class="mono">12</td></tr>
+              <tr><td class="mono">3</td><td class="mono">8</td><td class="mono">20</td></tr>
+              <tr><td class="mono">4</td><td class="mono">12</td><td class="mono">32</td></tr>
+              <tr><td class="mono">5</td><td class="mono">13</td><td class="mono">45</td></tr>
+              <tr><td class="mono">6</td><td class="mono">15</td><td class="mono">60</td></tr>
+              <tr><td class="mono">7</td><td class="mono">18</td><td class="mono">78</td></tr>
+              <tr><td class="mono">8</td><td class="mono">20</td><td class="mono">98</td></tr>
+              <tr><td class="mono">9</td><td class="mono">21</td><td class="mono">119</td></tr>
+              <tr><td class="mono">10</td><td class="mono">24</td><td class="mono">143</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The trace table makes clear what the loop does: <code class="inl">i</code> walks the indexes, <code class="inl">numbers[i]</code> is the value in that box, and <code class="inl">total</code> grows. Notice the difference between <code class="inl">i</code> and <code class="inl">numbers[i]</code>: adding <code class="inl">i</code> would add 0 + 1 + … + 10 = 55, the <em>positions</em>, not the values. That mistake is very common.</p>
+
+        <h3 id="tr-even">Only some of them</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · even numbers</span></div>
+          <pre class="code"><code>total = 0;
+int count = 0 ;
+for(int i=0 ; i &lt; numbers.length ; i++) {
+    if(numbers[i] % 2 == 0) {
+        total += numbers[i] ;
+        count++;
+    }
+}
+System.out.println(total);
+System.out.println(count);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>86
+6</pre></div>
+        </div>
+
+        <p>The same loop with an <code class="inl">if</code> inside: only elements that pass the test are added and counted. 4 + 8 + 12 + 18 + 20 + 24 = 86, six even numbers. Two things to notice. <code class="inl">total = 0;</code> before the loop: <code class="inl">total</code> still held 143, and without the reset the answer would be 229. And the test is on <code class="inl">numbers[i]</code>, the value. Testing <code class="inl">i % 2 == 0</code> would pick the elements at even <em>positions</em>, a different question.</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">1<span class="ix">0</span></div>
+            <div class="cell hit">4<span class="ix">1</span></div>
+            <div class="cell">7<span class="ix">2</span></div>
+            <div class="cell hit">8<span class="ix">3</span></div>
+            <div class="cell hit">12<span class="ix">4</span></div>
+            <div class="cell">13<span class="ix">5</span></div>
+            <div class="cell">15<span class="ix">6</span></div>
+            <div class="cell hit">18<span class="ix">7</span></div>
+            <div class="cell hit">20<span class="ix">8</span></div>
+            <div class="cell">21<span class="ix">9</span></div>
+            <div class="cell hit">24<span class="ix">10</span></div>
+          </div>
+          <span class="strip-cap">numbers[i] % 2 == 0 → six green boxes, total 86</span>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Sum, count, average: each is “the traversal loop + an accumulator”. Reset the accumulator before the loop. Test and add <code class="inl">arr[i]</code>, the value, not <code class="inl">i</code>, the position.</p>
+        </div>
+
+        <h3 id="tr-back">Backwards</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · reverse</span></div>
+          <pre class="code"><code>for(int i=numbers.length-1  ; i >= 0 ; i--) {
+    System.out.print(numbers[i] + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>24 21 20 18 15 13 12 8 7 4 1 </pre></div>
+        </div>
+
+        <p>Every part of the loop is turned around: start at the <em>last</em> index, <code class="inl">numbers.length-1</code> (10), keep going while <code class="inl">i >= 0</code> so that index 0 is included, and step with <code class="inl">i--</code>. The array itself is not changed; we only visit it in the other order. It is the same idea as reversing a String's letters in Lesson 7.</p>
+
+        <h3 id="tr-oob">ArrayIndexOutOfBoundsException</h3>
+
+        <p>The file prints <code class="inl">numbers.length</code>, 11, and then has two lines commented out. If you take the <code class="inl">//</code> away from the first one:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · numbers[11]</span></div>
+          <pre class="code"><code>System.out.println(numbers.length);
+System.out.println(numbers[11]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>11
+<span class="bad">Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 11 out of bounds for length 11
+	at Grup1.Lesson33.main(Lesson33.java:42)</span></pre></div>
+        </div>
+
+        <p>The length is 11, so the indexes are 0 to 10. There is no box 11. Java does not guess and does not give back 0: it stops the program with an exception, and the message says exactly what went wrong: <em>index 11, length 11</em>. <code class="inl">numbers[-3]</code> gives the same exception with <em>Index -3</em>. The comment in the file is the whole rule: an index is wrong if it is <code class="inl">&lt; 0</code> or <code class="inl">>= length</code>.</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">1<span class="ix">0</span></div>
+            <div class="cell">4<span class="ix">1</span></div>
+            <div class="cell">7<span class="ix">2</span></div>
+            <div class="cell">8<span class="ix">3</span></div>
+            <div class="cell">12<span class="ix">4</span></div>
+            <div class="cell">13<span class="ix">5</span></div>
+            <div class="cell">15<span class="ix">6</span></div>
+            <div class="cell">18<span class="ix">7</span></div>
+            <div class="cell">20<span class="ix">8</span></div>
+            <div class="cell">21<span class="ix">9</span></div>
+            <div class="cell">24<span class="ix">10</span></div>
+            <div class="cell ghost diff">?<span class="ix">11</span></div>
+          </div>
+          <span class="strip-cap">index 11 would be a 12th box, and there is none</span>
+        </div>
+
+        <p>The usual way to get this exception is not writing 11 by hand. It is one character in the loop:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>&lt;= instead of &lt;</span></div>
+          <pre class="code"><code>int[] n = {1, 2, 3};
+for (int i = 0; i &lt;= n.length; i++) {
+    System.out.print(n[i] + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 2 3 <span class="bad">Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3</span></pre></div>
+        </div>
+
+        <p>The first three rounds work and print; the fourth asks for <code class="inl">n[3]</code>. This kind of mistake, one step too far or one step too short, is so common it has a name: an <strong>off-by-one error</strong>.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Valid indexes: from <code class="inl">0</code> to <code class="inl">length - 1</code>. Anything <code class="inl">&lt; 0</code> or <code class="inl">>= length</code> throws <code class="inl">ArrayIndexOutOfBoundsException</code>. It compiles; it crashes when it runs.</p>
+        </div>
+
+        <h3 id="tr-pairs">Neighbours</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · pairs</span></div>
+          <pre class="code"><code>for(int i=numbers.length-1  ; i > 0 ; i--) {
+    System.out.println(numbers[i-1] + " " + numbers[i]);
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>21 24
+20 21
+18 20
+15 18
+13 15
+12 13
+8 12
+7 8
+4 7
+1 4</pre></div>
+        </div>
+
+        <p>Each line shows an element and the one just before it, <code class="inl">numbers[i-1]</code> and <code class="inl">numbers[i]</code>. Look carefully at the stop condition: <code class="inl">i > 0</code>, not <code class="inl">i >= 0</code>. When <code class="inl">i</code> is 0, <code class="inl">i-1</code> would be −1, and we just saw what that does. So the loop stops at <code class="inl">i = 1</code>, which prints the first pair, <code class="inl">1 4</code>. 11 elements give 10 pairs.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>Whenever you write <code class="inl">arr[i-1]</code> or <code class="inl">arr[i+1]</code>, check the loop's first and last <code class="inl">i</code>. With <code class="inl">i-1</code>, <code class="inl">i</code> must never be 0. With <code class="inl">i+1</code>, <code class="inl">i</code> must stop at <code class="inl">length - 2</code>, that is <code class="inl">i &lt; arr.length - 1</code>.</p>
+        </div>
+
+        <p>Why look at neighbours? Because many real questions are about <em>change</em>: did the temperature go up from yesterday? Is the list in order? Did a price rise? All of them compare <code class="inl">arr[i-1]</code> with <code class="inl">arr[i]</code>. The workshop has an example.</p>
+
+        <h3 id="tr-ends">First and last</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · the comments</span></div>
+          <pre class="code"><code>// arr[0] ---> first
+
+// arr[length-1] --> last</code></pre>
+        </div>
+
+        <p>Two formulas worth knowing by heart. The first element is always <code class="inl">arr[0]</code>; the last is always <code class="inl">arr[arr.length - 1]</code>, whatever the size. <code class="inl">arr[arr.length]</code> is the classic wrong answer: one step past the end.</p>
+
+        <h3 id="tr-types">Arrays of other types</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson33.java · the last lines, with prints added</span></div>
+          <pre class="code"><code>String[] arr = {"Istanbul" ,"Ankara" ,"Izmir" };
+double[] arr2 = { 4.312 , 1 , 5.2 , 3.45 }  ;
+boolean[] arr3  = { true, false, true } ;
+
+System.out.println(arr[arr.length-1]);
+System.out.println(arr2[1]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Izmir
+1.0</pre></div>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr wide">
+            <div class="cell">"Istanbul"<span class="ix">0</span></div>
+            <div class="cell">"Ankara"<span class="ix">1</span></div>
+            <div class="cell">"Izmir"<span class="ix">2</span></div>
+          </div>
+          <span class="strip-cap">String[] arr · each box holds a String</span>
+        </div>
+
+        <ul class="plain">
+          <li>A <code class="inl">String[]</code> works the same way: <code class="inl">arr[2]</code> is <code class="inl">"Izmir"</code>, and String methods work on an element: <code class="inl">arr[0].length()</code> is 8. To compare an element, use <code class="inl">equals</code>, never <code class="inl">==</code> (Lesson 6).</li>
+          <li>In <code class="inl">arr2</code>, the <code class="inl">1</code> is an int, but it is stored in a <code class="inl">double</code> box, so it becomes <code class="inl">1.0</code>: the widening from Lesson 1. The other way round, a double in an <code class="inl">int[]</code>, does not compile.</li>
+          <li>A <code class="inl">boolean[]</code> holds <code class="inl">true</code>/<code class="inl">false</code> values: who was present, which lamps are on, which questions were answered.</li>
+        </ul>
+
+        <h3 id="tr-lab">The array lab</h3>
+
+        <p>Type your own values, pick an index, and try every operation from this lesson. Try index −1 or one equal to the length, and try the traversals.</p>
+
+        <div class="lab" data-mode="array">
+          <div class="lab-head"><b>Array lab · int[] arr</b><span>Green: the boxes the code touched.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label>Values (comma separated)
+                <input type="text" data-f="vals" value="1, 4, 7, 8, 12, 13" style="width:14rem">
+              </label>
+              <label>Index i
+                <input type="number" data-f="idx" value="2">
+              </label>
+              <label>New value
+                <input type="number" data-f="nv" value="99">
+              </label>
+            </div>
+            <div class="lab-form" style="margin-top:12px">
+              <button type="button" class="lab-btn" data-act="get">arr[i]</button>
+              <button type="button" class="lab-btn" data-act="set">arr[i] = value</button>
+              <button type="button" class="lab-btn ghost" data-act="len">length</button>
+              <button type="button" class="lab-btn ghost" data-act="fwd">print all</button>
+              <button type="button" class="lab-btn ghost" data-act="back">backwards</button>
+              <button type="button" class="lab-btn ghost" data-act="sum">sum</button>
+              <button type="button" class="lab-btn ghost" data-act="even">even sum + count</button>
+              <button type="button" class="lab-btn ghost" data-act="pairs">pairs</button>
+            </div>
+            <p class="lab-why"></p>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Traversing is one loop with different jobs inside: print, add up, test and count, go backwards from <code class="inl">length-1</code> down to 0, or compare neighbours with <code class="inl">i-1</code> (stopping at <code class="inl">i > 0</code>). Printing the array variable shows <code class="inl">[I@…</code>, not the values. An index <code class="inl">&lt; 0</code> or <code class="inl">>= length</code> crashes with <code class="inl">ArrayIndexOutOfBoundsException</code>. First is <code class="inl">arr[0]</code>, last is <code class="inl">arr[arr.length-1]</code>. Arrays of String, double and boolean work the same way.</p>
+        </div>
+
+        <div class="practice" id="p33">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on traversing</h3>
+          <p class="practice-lede">Unless a question says otherwise, <code class="inl">numbers</code> is the array from Lesson33.</p>
+
+          <ol class="qs">
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int total = 0;
+for (int i = 0; i &lt; numbers.length; i++) {
+    total += i;
+}
+System.out.println(total);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>55</pre></div></div>
+                  <p>It adds the indexes 0 + 1 + … + 10, not the values. The bug from the text.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Change the even-number loop so that it counts the numbers greater than 15. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int count = 0;
+for (int i = 0; i &lt; numbers.length; i++) {
+    if (numbers[i] > 15) {
+        count++;
+    }
+}
+System.out.println(count);</code></pre><div class="out"><span class="out-label">Console</span><pre>4</pre></div></div>
+                  <p>18, 20, 21, 24.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {3, 6, 9, 12};
+for (int i = a.length - 1; i >= 0; i -= 2) {
+    System.out.print(a[i] + " ");
+}</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>12 6 </pre></div></div>
+                  <p><code class="inl">i</code> is 3, then 1, then −1, which stops the loop.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which line crashes, and with which exception?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {5, 10, 15};
+System.out.println(a[a.length - 1]);
+System.out.println(a[0]);
+System.out.println(a[a.length]);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>15
+5
+<span class="bad">Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3</span></pre></div></div>
+                  <p>The last line: <code class="inl">a.length</code> is 3, one past the last index.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>The pairs loop is changed to <code class="inl">for (int i = numbers.length - 1; i >= 0; i--)</code>. What happens?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>All ten pairs are printed as before, and then, with <code class="inl">i = 0</code>, <code class="inl">numbers[i-1]</code> is <code class="inl">numbers[-1]</code>: <span class="err">ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 11</span>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String[] arr = {"Istanbul", "Ankara", "Izmir"};
+int letters = 0;
+for (int i = 0; i &lt; arr.length; i++) {
+    letters += arr[i].length();
+}
+System.out.println(letters);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>19</pre></div></div>
+                  <p>8 + 6 + 5. <code class="inl">arr.length</code> (no parentheses) is the number of cities; <code class="inl">arr[i].length()</code> (with parentheses) is the number of letters in one city.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ IN REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">Rows of Numbered Boxes</h2>
+        </div>
+
+        <p>Once you know what an array is, you see them everywhere: a fixed number of places, all of the same kind, each with a number.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Real thing</th><th>The array</th><th>An element</th></tr></thead>
+            <tbody>
+              <tr><td>A week of weather</td><td class="mono">double[] temps = new double[7];</td><td>Wednesday's temperature, <code class="inl">temps[2]</code></td></tr>
+              <tr><td>A class list</td><td class="mono">String[] names = new String[30];</td><td>the 1st student, <code class="inl">names[0]</code></td></tr>
+              <tr><td>Exam results</td><td class="mono">int[] scores = new int[30];</td><td>one student's score</td></tr>
+              <tr><td>Attendance</td><td class="mono">boolean[] present = new boolean[30];</td><td>was student 5 here? <code class="inl">present[4]</code></td></tr>
+              <tr><td>An apartment's mailboxes</td><td class="mono">String[] mailbox = new String[24];</td><td>the letter in one box</td></tr>
+              <tr><td>A cinema row</td><td class="mono">boolean[] taken = new boolean[16];</td><td>is seat 9 sold? <code class="inl">taken[8]</code></td></tr>
+              <tr><td>A step counter</td><td class="mono">int[] steps = new int[365];</td><td>the steps on one day of the year</td></tr>
+              <tr><td>A playlist</td><td class="mono">String[] songs = {…};</td><td>the song that is playing</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Notice the cinema row: the ticket says seat 9, the program says <code class="inl">taken[8]</code>. Real programs convert all the time between “human numbers” starting at 1 and indexes starting at 0, and many real bugs, from wrong seats to wrong days, are off-by-one errors in exactly that conversion.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A phone's photo gallery is a good picture of why <code class="inl">length</code> matters. The app never knows in advance how many photos you have. It loops <code class="inl">i &lt; photos.length</code>, and the same code works for 12 photos or for 12,000.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Not every language counts from 0. FORTRAN (1957) numbered arrays from 1, like people do. C (1972) chose 0, because an index there meant “how many boxes past the start”: the first box is 0 boxes past the start. Java took the habit from C. In 1982 the computer scientist Edsger Dijkstra wrote a famous short note, <em>Why numbering should start at zero</em>, arguing that ranges like “0 ≤ i &lt; length” are the cleanest: the length is just the upper bound, and an empty array is 0 ≤ i &lt; 0. That is exactly our loop condition.</p>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · beyond the files</span>
+          <h2 class="lesson-title">Real Data in Arrays</h2>
+        </div>
+
+        <p>Six small programs with real-life data. Each one is the traversal loop from Lesson33 with a sum or a count inside, exactly what we did in class, only with real data.</p>
+
+        <h3 id="shop-temp">A week of temperatures</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Average and hot days</span></div>
+          <pre class="code"><code>double[] temps = {18.5, 21.0, 24.5, 30.5, 31.0, 27.5, 22.0};
+
+double sum = 0;
+for (int i = 0; i &lt; temps.length; i++) {
+    sum += temps[i];
+}
+System.out.println(sum / temps.length);
+
+int hot = 0;
+for (int i = 0; i &lt; temps.length; i++) {
+    if (temps[i] > 30) {
+        hot++;
+    }
+}
+System.out.println(hot);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>25.0
+2</pre></div>
+        </div>
+
+        <p>Two questions a weather app answers every day, two times the same loop: a sum divided by <code class="inl">temps.length</code> for the average, and a counter with an <code class="inl">if</code> for the hot days. The 30.5 and the 31.0 are over 30; a day of exactly 30 would not count, because the test is <code class="inl">&gt;</code>.</p>
+
+        <h3 id="shop-score">Exam scores</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>The average trap</span></div>
+          <pre class="code"><code>int[] scores = {72, 85, 90, 64, 100, 58};
+
+int total = 0;
+for (int i = 0; i &lt; scores.length; i++) {
+    total += scores[i];
+}
+System.out.println(total / scores.length);
+System.out.println((double) total / scores.length);
+
+int pass = 0;
+for (int i = 0; i &lt; scores.length; i++) {
+    if (scores[i] >= 70) {
+        pass++;
+    }
+}
+System.out.println(pass);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>78
+78.16666666666667
+4</pre></div>
+        </div>
+
+        <p>The trap from Lessons 1 and 3 is back: <code class="inl">total</code> and <code class="inl">scores.length</code> are both ints, so <code class="inl">total / scores.length</code> is integer division and drops the .1666…. The cast must come <em>before</em> the division. Then a counter: 4 students have 70 or more.</p>
+
+        <h3 id="shop-city">Counting cities</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counting in a String[]</span></div>
+          <pre class="code"><code>String[] cities = {"Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"};
+
+int aCount = 0;
+for (int i = 0; i &lt; cities.length; i++) {
+    if (cities[i].indexOf("A") == 0) {
+        aCount++;
+    }
+}
+System.out.println(aCount);
+
+int longNames = 0;
+for (int i = 0; i &lt; cities.length; i++) {
+    if (cities[i].length() > 5) {
+        longNames++;
+    }
+}
+System.out.println(longNames);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>2
+3</pre></div>
+        </div>
+
+        <p>The same counter, with a String test inside. <code class="inl">indexOf("A") == 0</code> means the A is in the first position: Ankara and Antalya. The second loop counts names longer than 5 letters: Istanbul, Ankara, Antalya. Notice the two lengths again: <code class="inl">cities.length</code> is the number of cities, <code class="inl">cities[i].length()</code> the letters of one city.</p>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>Typing a letter into your phone's contacts search runs exactly this: a loop over every contact, a test on each, and a count or list of matches. The phone is fast enough that a loop over a few thousand contacts feels instant.</p>
+        </div>
+
+        <h3 id="shop-steps">Steps and attendance</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Counting with int[] and boolean[]</span></div>
+          <pre class="code"><code>int[] steps = {12500, 8200, 10000, 4300, 15100, 9999, 11000};
+int active = 0;
+for (int i = 0; i &lt; steps.length; i++) {
+    if (steps[i] >= 10000) {
+        active++;
+    }
+}
+System.out.println(active);
+
+boolean[] present = {true, true, false, true, false, true};
+int absent = 0;
+for (int i = 0; i &lt; present.length; i++) {
+    if (!present[i]) {
+        absent++;
+    }
+}
+System.out.println(absent);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4
+2</pre></div>
+        </div>
+
+        <p>The first loop is the 2019 StepTracker question from Lesson 9 again, now with the days in an array: a day is active at 10,000 steps or more, so 10000 counts and 9999 does not. In the second, each element is already a boolean, so it can be the condition itself: <code class="inl">!present[i]</code> is “was not here”.</p>
+
+        <h3 id="shop-price">Rising prices</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Comparing neighbours</span></div>
+          <pre class="code"><code>int[] price = {120, 125, 123, 130, 135, 131, 140};
+int ups = 0;
+for (int i = 1; i &lt; price.length; i++) {
+    if (price[i - 1] &lt; price[i]) {
+        ups++;
+    }
+}
+System.out.println(ups);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>4</pre></div>
+        </div>
+
+        <p>The neighbours idea from Lesson33, going forwards this time: the loop starts at <code class="inl">i = 1</code> so that <code class="inl">i - 1</code> is never −1. 120→125 up, 125→123 down, 123→130 up, 130→135 up, 135→131 down, 131→140 up: four days up. A stock app's “up 4 of the last 6 days” is this loop.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Average: sum, then divide by <code class="inl">length</code>, with a cast if the values are ints. Count: an <code class="inl">if</code> in the loop and a counter. Change from one day to the next: compare <code class="inl">arr[i-1]</code> and <code class="inl">arr[i]</code>, starting at 1. Every one of them is the same traversal loop.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on real data</h3>
+
+          <ol class="qs">
+            <li>
+              <p>Using <code class="inl">temps</code> from the workshop, write a loop that finds the average of only the days warmer than 25 degrees. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>double sum = 0;
+int count = 0;
+for (int i = 0; i &lt; temps.length; i++) {
+    if (temps[i] > 25) {
+        sum += temps[i];
+        count++;
+    }
+}
+System.out.println(sum / count);</code></pre><div class="out"><span class="out-label">Console</span><pre>29.666666666666668</pre></div></div>
+                  <p>A sum and a count in the same <code class="inl">if</code>, like Lesson33's even numbers: 30.5 + 31.0 + 27.5 = 89.0, divided by 3.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] s = {50, 60, 75};
+int total = 0;
+for (int i = 0; i &lt; s.length; i++) {
+    total += s[i];
+}
+System.out.println(total / s.length);
+System.out.println((double) (total / s.length));</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>61
+61.0</pre></div></div>
+                  <p>185 / 3 is 61 in integer division. Casting the <em>result</em> only turns 61 into 61.0; the cast must come before the division: <code class="inl">(double) total / s.length</code> gives 61.666….</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is the total number of steps for the week in the <code class="inl">steps</code> array?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>71099</pre></div></div>
+                  <p>The sum loop: <code class="inl">total += steps[i];</code> for every index.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In the city counting loop, the test is changed to <code class="inl">cities[i].indexOf("a") != -1</code>. What does it count, and what is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>4</pre></div></div>
+                  <p>Cities with a small “a” anywhere in them: Istanbul, Ankara, Bursa, Antalya. Izmir has none. (The capital A of Ankara and Antalya does not count, but both also have small a's.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write a loop that counts how many days the price went <em>down</em> in the <code class="inl">price</code> array. What does it print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int downs = 0;
+for (int i = 1; i &lt; price.length; i++) {
+    if (price[i - 1] > price[i]) {
+        downs++;
+    }
+}
+System.out.println(downs);</code></pre><div class="out"><span class="out-label">Console</span><pre>2</pre></div></div>
+                  <p>125→123 and 135→131. Six changes in all: 4 up, 2 down.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A <code class="inl">boolean[] present</code> holds the attendance of 30 students. Write the loop that prints the <em>numbers</em> of the absent students, counting from 1 as on the class list.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>for (int i = 0; i &lt; present.length; i++) {
+    if (!present[i]) {
+        System.out.println(i + 1);
+    }
+}</code></pre></div>
+                  <p>The index is <code class="inl">i</code>; the student's number on the list is <code class="inl">i + 1</code>.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ AP-STYLE ============ -->
+      <section class="lesson" id="ap">
+        <div class="lesson-head">
+          <span class="lesson-no">AP-style · multiple choice</span>
+          <h2 class="lesson-title">Eight Exam Questions</h2>
+        </div>
+
+        <p>Choose one answer for each, then open it.</p>
+
+        <div class="practice">
+          <ol class="qs">
+            <li>
+              <p>Which correctly makes an array of 10 doubles, all 0.0?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">double[] d = new double(10);</code></li>
+                <li>(B) <code class="inl">double d = new double[10];</code></li>
+                <li>(C) <code class="inl">double[] d = new double[10];</code></li>
+                <li>(D) <code class="inl">double[10] d = new double[];</code></li>
+                <li>(E) <code class="inl">double[] d = {10};</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>(E) compiles, but makes an array of <em>one</em> element, 10.0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Given <code class="inl">int[] v = {4, 8, 15, 16, 23, 42};</code>, what is <code class="inl">v[v.length - 2]</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">16</code></li>
+                <li>(B) <code class="inl">23</code></li>
+                <li>(C) <code class="inl">42</code></li>
+                <li>(D) <code class="inl">4</code></li>
+                <li>(E) An ArrayIndexOutOfBoundsException</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>Length 6, so index 4: the second-to-last element.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {2, 4, 6, 8};
+int s = 0;
+for (int i = 1; i &lt; a.length; i += 2) {
+    s += a[i];
+}
+System.out.println(s);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">8</code></li>
+                <li>(B) <code class="inl">12</code></li>
+                <li>(C) <code class="inl">20</code></li>
+                <li>(D) <code class="inl">4</code></li>
+                <li>(E) <code class="inl">14</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>Indexes 1 and 3: 4 + 8.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which loop header visits every index of <code class="inl">arr</code> without an exception?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">for (int i = 1; i &lt;= arr.length; i++)</code></li>
+                <li>(B) <code class="inl">for (int i = 0; i &lt;= arr.length; i++)</code></li>
+                <li>(C) <code class="inl">for (int i = 0; i &lt; arr.length - 1; i++)</code></li>
+                <li>(D) <code class="inl">for (int i = arr.length - 1; i >= 0; i--)</code></li>
+                <li>(E) <code class="inl">for (int i = arr.length; i > 0; i--)</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(D)</span></p>
+                  <p>(A), (B) and (E) reach index <code class="inl">arr.length</code> and crash. (C) never visits the last element.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String[] w = new String[3];
+w[1] = "AP";
+System.out.println(w[0] + w[1]);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">AP</code></li>
+                <li>(B) <code class="inl">nullAP</code></li>
+                <li>(C) <code class="inl"> AP</code></li>
+                <li>(D) A NullPointerException</li>
+                <li>(E) The code does not compile.</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p><code class="inl">w[0]</code> is still the default <code class="inl">null</code>. Joining <code class="inl">null</code> to a String writes the word “null”; only calling a method on it would crash.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {5, 3, 8, 1};
+int c = 0;
+for (int i = 1; i &lt; a.length; i++) {
+    if (a[i] &lt; a[i - 1]) {
+        c++;
+    }
+}
+System.out.println(c);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">0</code></li>
+                <li>(B) <code class="inl">1</code></li>
+                <li>(C) <code class="inl">2</code></li>
+                <li>(D) <code class="inl">3</code></li>
+                <li>(E) An ArrayIndexOutOfBoundsException</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>3 &lt; 5 and 1 &lt; 8. 8 is not less than 3.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed by <code class="inl">double[] d = {1, 2, 3}; System.out.println(d[2] / 2);</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">1</code></li>
+                <li>(B) <code class="inl">1.5</code></li>
+                <li>(C) <code class="inl">1.0</code></li>
+                <li>(D) <code class="inl">3</code></li>
+                <li>(E) The code does not compile.</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>The 3 was stored in a double box as 3.0, so the division is a double division.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {3, 7, 2, 9, 4};
+int c = 0;
+for (int i = 0; i &lt; a.length; i++) {
+    if (a[i] % 2 == 1) {
+        c++;
+    }
+}
+System.out.println(c);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">2</code></li>
+                <li>(B) <code class="inl">3</code></li>
+                <li>(C) <code class="inl">5</code></li>
+                <li>(D) <code class="inl">19</code></li>
+                <li>(E) <code class="inl">0</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>3, 7 and 9 are odd. (D) is their sum: the loop counts, it does not add.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>data collection</strong></td><td></td><td>one variable that holds many values</td><td class="mono">// --- Data Collections ---</td></tr>
+              <tr><td><strong>array</strong></td><td></td><td>a fixed number of elements of one type, numbered from 0</td><td class="mono">int[] numbers</td></tr>
+              <tr><td><strong>element</strong></td><td></td><td>one box of an array</td><td class="mono">numbers[2]</td></tr>
+              <tr><td><strong>index</strong></td><td>subscript</td><td>the number of a box, from 0 to length − 1</td><td class="mono">i</td></tr>
+              <tr><td><strong>length</strong></td><td></td><td>the number of elements; no parentheses</td><td class="mono">numbers.length</td></tr>
+              <tr><td><strong>initializer list</strong></td><td></td><td>the values in curly braces that make an array</td><td class="mono">{ 1,3,5,7,9, 11}</td></tr>
+              <tr><td><strong>default value</strong></td><td></td><td>what <code class="inl">new type[n]</code> puts in every box: 0, 0.0, false, null</td><td class="mono">new int[5]</td></tr>
+              <tr><td><strong>traverse</strong></td><td>iterate, loop through</td><td>visit the elements one by one</td><td>every loop in Lesson33</td></tr>
+              <tr><td><strong>ArrayIndexOutOfBoundsException</strong></td><td></td><td>the crash when an index is &lt; 0 or ≥ length</td><td class="mono">numbers[11]</td></tr>
+              <tr><td><strong>off-by-one error</strong></td><td></td><td>a loop that goes one step too far or stops one step short</td><td class="mono">i &lt;= n.length</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Eleven traps to remember</h2>
+        <p>Three will not compile, four crash, and the rest run and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">numbers.length()</td><td class="mono">11</td><td><span class="err">will not compile</span></td><td>arrays: length without ()</td></tr>
+              <tr><td class="mono">int[] w = {1, 2.5, 3};</td><td>an array</td><td><span class="err">will not compile</span></td><td>a double does not fit in an int box</td></tr>
+              <tr><td class="mono">double d = new double[10];</td><td>an array</td><td><span class="err">will not compile</span></td><td>the variable needs the type double[]</td></tr>
+              <tr><td class="mono">numbers[11] (length 11)</td><td>the last</td><td><span class="err">ArrayIndexOutOfBoundsException</span></td><td>the last is numbers[10]</td></tr>
+              <tr><td class="mono">numbers[-3]</td><td>something</td><td><span class="err">ArrayIndexOutOfBoundsException</span></td><td>indexes start at 0</td></tr>
+              <tr><td class="mono">i &lt;= arr.length</td><td>every element</td><td><span class="err">ArrayIndexOutOfBoundsException</span></td><td>one step too far: use &lt;</td></tr>
+              <tr><td class="mono">new String[3], then s[0].length()</td><td class="mono">0</td><td><span class="err">NullPointerException</span></td><td>the boxes start as null, not ""</td></tr>
+              <tr><td class="mono">System.out.println(numbers);</td><td>the values</td><td class="mono"><span class="fv">[I@2a139a55</span></td><td>Java does not list the values: write the loop</td></tr>
+              <tr><td class="mono">total += i;</td><td>sum of values</td><td><span class="fv">sum of indexes</span></td><td>add arr[i], not i</td></tr>
+              <tr><td class="mono">no total = 0 before the 2nd loop</td><td class="mono">86</td><td class="mono"><span class="fv">229</span></td><td>the old 143 is still there</td></tr>
+              <tr><td class="mono">total / scores.length (ints)</td><td class="mono">78.16…</td><td class="mono"><span class="fv">78</span></td><td>cast before dividing</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 12, parts 32–33: arrays. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson11.html">← Lesson 11</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>

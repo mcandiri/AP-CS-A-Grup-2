@@ -886,3 +886,97 @@
     render();
   })(labs[z]);
 })();
+
+/* ---------- Lesson 12: the array lab (int[] arr, get / set / length / traversals) ---------- */
+(function(){
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  var labs = document.querySelectorAll('.lab[data-mode="array"]');
+  for (var z = 0; z < labs.length; z++) (function(lab){
+    function f(id){ return lab.querySelector('[data-f="' + id + '"]'); }
+    var view = lab.querySelector('.lab-view'), code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out'), why = lab.querySelector('.lab-why');
+    var arr = null, src = '';
+
+    function parse(){
+      var raw = f('vals').value.trim();
+      if (raw === src && arr) return true;
+      var parts = raw === '' ? [] : raw.split(',');
+      var a = [];
+      for (var i = 0; i < parts.length; i++){
+        var p = parts[i].trim();
+        if (!/^-?\d+$/.test(p)) { why.textContent = '"' + p + '" is not an int. An int[] holds only whole numbers.'; return false; }
+        a.push(parseInt(p, 10));
+      }
+      if (a.length > 16){ why.textContent = 'Keep it to 16 values or fewer for the picture.'; return false; }
+      arr = a; src = raw; return true;
+    }
+    function decl(){ return 'int[] arr = {' + arr.join(', ') + '};'; }
+    function draw(hits, ghostAt){
+      view.textContent = '';
+      var w = el('div', 'strip-wrap'), s = el('div', 'strip arr');
+      arr.forEach(function(v, i){
+        var c = el('div', 'cell' + (hits.indexOf(i) !== -1 ? ' hit' : ''), String(v));
+        var ix = el('span', 'ix' + (hits.indexOf(i) !== -1 ? ' on' : ''), String(i));
+        c.appendChild(ix); s.appendChild(c);
+      });
+      if (ghostAt !== undefined){
+        var g = el('div', 'cell ghost diff', '?'); g.appendChild(el('span', 'ix on', String(ghostAt))); s.appendChild(g);
+      }
+      if (!arr.length) s.appendChild(el('div', 'cell ghost', ' '));
+      w.appendChild(s); view.appendChild(w);
+    }
+    function oob(i){
+      return 'Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index ' + i + ' out of bounds for length ' + arr.length;
+    }
+    function show(lines, text, note, hits, bad, ghostAt){
+      code.textContent = decl() + '\n' + lines.join('\n');
+      out.textContent = '';
+      if (text) out.appendChild(document.createTextNode(text));
+      if (bad){ var b = el('span', 'bad', bad); if (text) out.appendChild(document.createTextNode(text.slice(-1) === '\n' || text.slice(-1) === ' ' ? '' : '\n')); out.appendChild(b); }
+      why.textContent = note;
+      draw(hits || [], ghostAt);
+    }
+    function run(act){
+      if (!parse()) return;
+      var i = parseInt(f('idx').value, 10); if (isNaN(i)) i = 0;
+      var nv = parseInt(f('nv').value, 10); if (isNaN(nv)) nv = 0;
+      var n = arr.length, k, o = '', hits = [];
+      var bad = i < 0 || i >= n;
+      var ghost = (i === n) ? n : undefined;
+      if (act === 'get'){
+        if (bad) show(['System.out.println(arr[' + i + ']);'], '', 'Index ' + i + ' is ' + (i < 0 ? 'below 0' : 'not below the length ' + n) + '. Valid indexes: 0 to ' + (n - 1) + '. It compiles, then crashes.', [], oob(i), ghost);
+        else show(['System.out.println(arr[' + i + ']);'], String(arr[i]), 'Box ' + i + ' holds ' + arr[i] + '. (Box ' + i + ' is element number ' + (i + 1) + ' if you count like a person.)', [i]);
+      } else if (act === 'set'){
+        if (bad) show(['arr[' + i + '] = ' + nv + ';'], '', 'There is no box ' + i + ' to write into. An array cannot grow.', [], oob(i), ghost);
+        else { arr[i] = nv; src = arr.join(', '); f('vals').value = src; show(['arr[' + i + '] = ' + nv + ';'], '', 'Only box ' + i + ' changed. The values box above shows the array now.', [i]); }
+      } else if (act === 'len'){
+        show(['System.out.println(arr.length);'], String(n), 'length: no parentheses. The last index is length - 1 = ' + (n - 1) + '.', []);
+      } else if (act === 'fwd'){
+        for (k = 0; k < n; k++){ o += arr[k] + ' '; hits.push(k); }
+        show(['for (int i = 0; i < arr.length; i++) {', '    System.out.print(arr[i] + " ");', '}'], o, 'i went 0, 1, … ' + (n - 1) + ', and stopped when i reached ' + n + ', the length.', hits);
+      } else if (act === 'back'){
+        for (k = n - 1; k >= 0; k--){ o += arr[k] + ' '; hits.push(k); }
+        show(['for (int i = arr.length - 1; i >= 0; i--) {', '    System.out.print(arr[i] + " ");', '}'], o, 'Started at index ' + (n - 1) + ' and went down to 0. The array itself did not change.', hits);
+      } else if (act === 'sum'){
+        var t = 0; for (k = 0; k < n; k++){ t += arr[k]; hits.push(k); }
+        show(['int total = 0;', 'for (int i = 0; i < arr.length; i++) {', '    total += arr[i];', '}', 'System.out.println(total);'], String(t), 'Every element added once. (Adding i instead of arr[i] would give ' + (n * (n - 1) / 2) + ', the sum of the indexes.)', hits);
+      } else if (act === 'even'){
+        var et = 0, ec = 0; for (k = 0; k < n; k++){ if (arr[k] % 2 === 0){ et += arr[k]; ec++; hits.push(k); } }
+        show(['int total = 0;', 'int count = 0;', 'for (int i = 0; i < arr.length; i++) {', '    if (arr[i] % 2 == 0) {', '        total += arr[i];', '        count++;', '    }', '}', 'System.out.println(total);', 'System.out.println(count);'], et + '\n' + ec, 'Green: the elements that passed the test arr[i] % 2 == 0.', hits);
+      } else if (act === 'pairs'){
+        var lines = [];
+        for (k = n - 1; k > 0; k--){ lines.push(arr[k - 1] + ' ' + arr[k]); }
+        for (k = 0; k < n; k++) hits.push(k);
+        show(['for (int i = arr.length - 1; i > 0; i--) {', '    System.out.println(arr[i-1] + " " + arr[i]);', '}'], lines.join('\n'), n + ' elements give ' + Math.max(n - 1, 0) + ' pairs. The loop stops at i = 1, so arr[i-1] is never arr[-1].', hits);
+      }
+    }
+    lab.querySelectorAll('[data-act]').forEach(function(b){ b.addEventListener('click', function(){ run(b.dataset.act); }); });
+    f('vals').addEventListener('change', function(){ src = ''; if (parse()) { code.textContent = decl(); out.textContent = ''; why.textContent = 'New array, length ' + arr.length + '.'; draw([]); } });
+    if (parse()){ code.textContent = decl(); why.textContent = 'Pick an operation. Try index -1, or an index equal to the length.'; draw([]); }
+  })(labs[z]);
+})();
