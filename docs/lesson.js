@@ -980,3 +980,108 @@
     if (parse()){ code.textContent = decl(); why.textContent = 'Pick an operation. Try index -1, or an index equal to the length.'; draw([]); }
   })(labs[z]);
 })();
+
+/* ---------- Lesson 13: the algorithm lab (printArr, reverse, max/min, isIncreasing, for-each) ---------- */
+(function(){
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  var labs = document.querySelectorAll('.lab[data-mode="algo"]');
+  for (var z = 0; z < labs.length; z++) (function(lab){
+    var inp = lab.querySelector('[data-f="vals"]');
+    var view = lab.querySelector('.lab-view'), code = lab.querySelector('.lab-code');
+    var out = lab.querySelector('.lab-out'), why = lab.querySelector('.lab-why');
+
+    function parse(){
+      var raw = inp.value.trim(), parts = raw === '' ? [] : raw.split(','), a = [];
+      for (var i = 0; i < parts.length; i++){
+        var p = parts[i].trim();
+        if (!/^-?\d+$/.test(p)) { why.textContent = '"' + p + '" is not an int. An int[] holds only whole numbers.'; return null; }
+        a.push(parseInt(p, 10));
+      }
+      if (a.length > 12){ why.textContent = 'Keep it to 12 values or fewer for the pictures.'; return null; }
+      return a;
+    }
+    function fmt(a){ return '{' + a.join(', ') + '}'; }
+    function row(label, a, hits, diffs, note){
+      var r = el('div', 'row');
+      r.appendChild(el('span', 'who', label));
+      var s = el('div', 'strip arr');
+      a.forEach(function(v, i){
+        var cls = 'cell' + (hits.indexOf(i) !== -1 ? ' hit' : '') + (diffs.indexOf(i) !== -1 ? ' diff' : '');
+        var c = el('div', cls, String(v));
+        c.appendChild(el('span', 'ix' + (hits.indexOf(i) !== -1 || diffs.indexOf(i) !== -1 ? ' on' : ''), String(i)));
+        s.appendChild(c);
+      });
+      if (!a.length) s.appendChild(el('div', 'cell ghost', ' '));
+      r.appendChild(s);
+      if (note) r.appendChild(el('span', 'got', note));
+      return r;
+    }
+    function show(lines, text, note, rows){
+      code.textContent = lines.join('\n');
+      out.textContent = text;
+      why.textContent = note;
+      view.textContent = '';
+      var w = el('div', 'steps ixs');
+      rows.forEach(function(r){ w.appendChild(r); });
+      view.appendChild(w);
+    }
+    function swapLoop(a, cond){
+      var rows = [row('start', a.slice(), [], [], 'length ' + a.length + (cond === 'half' ? ', length/2 = ' + Math.floor(a.length / 2) : ''))];
+      var n = a.length, stop = cond === 'half' ? Math.floor(n / 2) : n;
+      for (var i = 0; i < stop; i++){
+        var j = n - 1 - i, t = a[i]; a[i] = a[j]; a[j] = t;
+        rows.push(row('i = ' + i, a.slice(), [i, j], [], i === j ? 'swap ' + i + ' with itself' : 'swap ' + i + ' and ' + j));
+      }
+      return rows;
+    }
+    function decl(a){ return 'int[] arr = {' + a.join(', ') + '};'; }
+
+    function run(act){
+      var a = parse(); if (!a) return;
+      var n = a.length, i, rows = [];
+      if (act === 'print'){
+        var marks = [];
+        for (i = 0; i < n - 1; i++) marks.push(i);
+        show([decl(a), 'printArr(arr);'], fmt(a), n ? n + ' values, ' + Math.max(n - 1, 0) + ' commas. Green: i < arr.length-1 gets ", ". Amber: the last, printed alone.' : 'Empty array: the loop never runs, only the braces.', [row('commas', a, marks, n ? [n - 1] : [], '')]);
+      } else if (act === 'rev' || act === 'revfull'){
+        var half = act === 'rev';
+        rows = swapLoop(a, half ? 'half' : 'full');
+        show([decl(a.slice()), 'for (int i = 0; i < arr.length' + (half ? '/2' : '') + '; i++) {', '    int temp = arr[i];', '    arr[i] = arr[arr.length-1-i];', '    arr[arr.length-1-i] = temp;', '}', 'printArr(arr);'].map(function(l, k){ return k === 0 ? decl(parse()) : l; }),
+          fmt(a), half ? Math.floor(n / 2) + ' swaps. ' + (n % 2 ? 'The middle box, index ' + Math.floor(n / 2) + ', has no partner and stays.' : 'Even length: no middle box.') : 'After the middle, every pair is swapped back. Each pair was swapped twice: the array is as it started.', rows);
+      } else if (act === 'max'){
+        if (!n){ show([decl(a)], '', 'max/min need at least one element.', []); return; }
+        var max = -2147483648, min = 2147483647, mi = 0, ni = 0;
+        for (i = 0; i < n; i++){
+          var note = [];
+          if (a[i] > max){ max = a[i]; mi = i; note.push('new max'); }
+          if (a[i] < min){ min = a[i]; ni = i; note.push('new min'); }
+          rows.push(row('i = ' + i, a, [i], [], 'max ' + max + ' · min ' + min + (note.length ? ' · ' + note.join(', ') : '')));
+        }
+        rows.push(row('answer', a, [mi], [ni], 'maxIndex ' + mi + ' (green) · min at ' + ni + ' (amber)'));
+        show([decl(a), 'int maxIndex = 0;', 'int max = Integer.MIN_VALUE;', 'int min = Integer.MAX_VALUE;', 'for (int i = 0; i < arr.length; i++) {', '    if (arr[i] > max) {', '        max = arr[i];', '        maxIndex = i;', '    }', '    if (arr[i] < min) {', '        min = arr[i];', '    }', '}', 'System.out.println(max + " " + min);', 'System.out.println(maxIndex);'],
+          max + ' ' + min + '\n' + mi, 'Two separate ifs: one element can change both. With ties, > keeps the first.', rows);
+      } else if (act === 'inc'){
+        var res = true;
+        for (i = 0; i < n - 1; i++){
+          if (a[i] >= a[i + 1]){ rows.push(row('i = ' + i, a, [], [i, i + 1], a[i] + ' >= ' + a[i + 1] + '? yes · return false')); res = false; break; }
+          rows.push(row('i = ' + i, a, [i, i + 1], [], a[i] + ' >= ' + a[i + 1] + '? no'));
+        }
+        if (res) rows.push(row('after', a, [], [], n < 2 ? 'loop ran 0 times · return true' : 'no problem found · return true'));
+        show([decl(a), 'System.out.println(isIncreasing(arr));'], String(res), res ? 'Every pair checked, so true is only decided after the loop.' : 'Stopped at the first problem. The pairs after it were never checked.', rows);
+      } else if (act === 'each'){
+        var fixed = a.map(function(){ return 99; });
+        rows.push(row('for-each', a, [], [], 'item = 99 changes only the copy'));
+        rows.push(row('index loop', fixed, fixed.map(function(v, k){ return k; }), [], 'arr[i] = 99 writes the boxes'));
+        show([decl(a), 'for (int item : arr) {', '    item = 99;', '}', 'printArr(arr);', '', 'for (int i = 0; i < arr.length; i++) {', '    arr[i] = 99;', '}', 'printArr(arr);'], fmt(a) + '\n' + fmt(fixed), 'for-each is read only: its variable is a copy of each element.', rows);
+      }
+    }
+    lab.querySelectorAll('[data-act]').forEach(function(b){ b.addEventListener('click', function(){ run(b.dataset.act); }); });
+    inp.addEventListener('change', function(){ var a = parse(); if (a){ code.textContent = decl(a); out.textContent = ''; why.textContent = 'New array, length ' + a.length + '. Pick an algorithm.'; view.textContent = ''; } });
+    run('rev');
+  })(labs[z]);
+})();

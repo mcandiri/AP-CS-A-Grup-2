@@ -925,3 +925,23 @@ ol.plain li{margin-bottom:6px;}
 .strip.arr.wide .cell{font-size:.86rem;}
 .strip .cell.diff.ghost{color:var(--crimson);}
 .lab .strip-wrap{margin:6px 0 14px;}
+
+/* ---------- Lesson 13: step rows, variable boxes, reverse arcs ---------- */
+.steps{display:grid;gap:8px;margin:20px 0 24px;overflow-x:auto;padding:2px;}
+.steps .row{display:flex;align-items:center;gap:14px;}
+.steps .who{
+  flex:0 0 6.6rem;text-align:right;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.78rem;color:var(--ink-soft);white-space:nowrap;
+}
+.steps .strip{margin-bottom:0;flex:0 0 auto;}
+.steps .strip .ix{display:none;}
+.steps.ixs .strip{margin-bottom:1.5rem;}
+.steps.ixs .strip .ix,.steps .strip.vars .ix{display:block;}
+.steps .got{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;color:var(--ink-soft);white-space:nowrap;}
+.steps .got b{color:var(--moss);}
+.strip.vars{gap:10px;border:none;background:none;margin-bottom:1.5rem;}
+.strip.vars .cell{border:1px solid var(--line);border-radius:4px;box-shadow:none;}
+.strip.vars .cell:not(.hit):not(.diff):not(.ghost){background:var(--surface);}
+.strip.arr.narrow{--cw:1.9rem;margin-bottom:.4rem;}
+.strip.arr.narrow + .strip-cap{margin-top:0;}
+.fig-arc{fill:none;stroke:var(--accent);stroke-width:1.6;}

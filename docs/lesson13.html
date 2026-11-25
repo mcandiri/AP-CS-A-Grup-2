@@ -1,0 +1,1595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AP CS-A Grup 2 — Lesson 13: array algorithms. A method that prints an array, the swap algorithm, reversing an array in place, finding the max and the min and where they are, the longest word in a String array, the enhanced for loop and why it is read only, and checking whether an array is increasing.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">%E2%98%95</text></svg>'>
+<title>Lesson 13 · Array Algorithms — AP CS-A Grup 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="wrap">
+
+  <a class="backlink" href="./">← All lessons</a>
+
+  <header class="masthead">
+    <p class="eyebrow">AP CS-A · Grup 2 · Lesson 13</p>
+    <h1>Array Algorithms</h1>
+    <p class="deck">In Lesson 12 we learned to walk through an array: print it, add it up, count. Now we make the walk do real work. We will print an array the way people write lists, swap two values, turn a whole array around, find the biggest and the smallest value and <em>where</em> they are, find the longest word, meet a shorter loop that only reads, and write a method that answers “is this array in order?”. Each of these is a small <strong>algorithm</strong>: a fixed recipe of steps that works for an array of any size.</p>
+    <ul class="facts">
+      <li>3 files</li>
+      <li>Java</li>
+      <li>32 questions</li>
+      <li>Every output verified</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#pa">34 · Print, swap, reverse, max</a></li>
+        <li><a class="sub" href="#pa-algo">What an algorithm is</a></li>
+        <li><a class="sub" href="#pa-print">printArr: commas between</a></li>
+        <li><a class="sub" href="#pa-method">An array as a parameter</a></li>
+        <li><a class="sub" href="#pa-swap">The swap algorithm</a></li>
+        <li><a class="sub" href="#pa-rev">Reversing in place</a></li>
+        <li><a class="sub" href="#pa-half">Why length / 2</a></li>
+        <li><a class="sub" href="#pa-max">Max and min</a></li>
+        <li><a class="sub" href="#pa-start">Where to start max</a></li>
+        <li><a class="sub" href="#pa-where">maxIndex: where it is</a></li>
+        <li><a class="sub" href="#p34">Practice</a></li>
+        <li><a href="#lw">35 · The longest word</a></li>
+        <li><a class="sub" href="#lw-two">Two loops, two ideas</a></li>
+        <li><a class="sub" href="#lw-ties">Ties: &gt; or &gt;=</a></li>
+        <li><a class="sub" href="#p35">Practice</a></li>
+        <li><a href="#fe">36 · for-each and isIncreasing</a></li>
+        <li><a class="sub" href="#fe-loop">The enhanced for loop</a></li>
+        <li><a class="sub" href="#fe-ro">Why it is read only</a></li>
+        <li><a class="sub" href="#fe-which">Which loop when?</a></li>
+        <li><a class="sub" href="#fe-inc">isIncreasing</a></li>
+        <li><a class="sub" href="#fe-early">return false early, true at the end</a></li>
+        <li><a class="sub" href="#fe-lab">The algorithm lab</a></li>
+        <li><a class="sub" href="#p36">Practice</a></li>
+        <li><a href="#life">In real life</a></li>
+        <li><a href="#shop">Workshop · real data</a></li>
+        <li><a class="sub" href="#shop-temp">Hottest and coldest day</a></li>
+        <li><a class="sub" href="#shop-price">Cheapest shop</a></li>
+        <li><a class="sub" href="#shop-play">Reversing a playlist</a></li>
+        <li><a class="sub" href="#shop-abc">In alphabetical order?</a></li>
+        <li><a class="sub" href="#shop-lead">Behind the leader</a></li>
+        <li><a class="sub" href="#pshop">Practice</a></li>
+        <li><a href="#ap">AP-style questions</a></li>
+        <li><a href="#words">Words</a></li>
+        <li><a href="#recap">Recap</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ============ PART 34 ============ -->
+      <section class="lesson" id="pa">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 34 · Lesson34.java</span>
+          <h2 class="lesson-title">Print, Swap, Reverse, Max</h2>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In this lesson</span>
+          <ul class="plain">
+            <li><strong>printArr</strong>: a method that prints <code class="inl">{9, 7, 5, 3, 1}</code>, with commas only <em>between</em> the values.</li>
+            <li><strong>Swap</strong>: exchanging two values with a third variable, <code class="inl">temp</code>.</li>
+            <li><strong>Reverse</strong>: turning the array itself around by swapping from both ends, and why the loop stops at <code class="inl">length / 2</code>.</li>
+            <li><strong>Max and min</strong>: the biggest and smallest value, where to start them, and <code class="inl">maxIndex</code>, the place of the biggest.</li>
+            <li><strong>Longest word</strong> in a <code class="inl">String[]</code> (Part 35), the <strong>enhanced for loop</strong> and <strong>isIncreasing</strong> (Part 36).</li>
+          </ul>
+        </div>
+
+        <h3 id="pa-algo">What an algorithm is</h3>
+
+        <p>An <strong>algorithm</strong> is a recipe: a list of exact steps that solves a problem, every time, for any input of the right kind. “Find the biggest number in this list” is a problem. “Remember the first number; go through the rest; whenever you see a bigger one, remember that one instead; at the end, say what you remember” is an algorithm. It does not care whether the list has 9 numbers or 9 million.</p>
+
+        <p>The word comes from the name of al-Khwārizmī, a mathematician who worked in Baghdad in the 9th century and wrote a book on step-by-step methods of calculation. Every algorithm in this lesson is built from things you already know: a <code class="inl">for</code> loop over the indexes, an <code class="inl">if</code>, and one or two extra variables that <em>remember</em> something while the loop runs. Learning algorithms is mostly learning which thing to remember.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · the array</span></div>
+          <pre class="code"><code>int[] arr = new int[5]; // 0,0,0,0,0
+
+arr[0] = 9 ;
+arr[1] = 7 ;
+arr[2] = 5 ;
+arr[3] = 3 ;
+arr[4] = 1 ;
+// 9,7,5,3,1</code></pre>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">9<span class="ix">0</span></div>
+            <div class="cell">7<span class="ix">1</span></div>
+            <div class="cell">5<span class="ix">2</span></div>
+            <div class="cell">3<span class="ix">3</span></div>
+            <div class="cell">1<span class="ix">4</span></div>
+          </div>
+          <span class="strip-cap">new int[5], then one value written into each box (Lesson 12)</span>
+        </div>
+
+        <h3 id="pa-print">printArr: commas between</h3>
+
+        <p>In Lesson 12 we printed <code class="inl">9 7 5 3 1 </code> with a space after each value. People write lists differently: <code class="inl">{9, 7, 5, 3, 1}</code>, in braces, with a comma and a space <em>between</em> values. Between means: after every value except the last.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · in main</span></div>
+          <pre class="code"><code>// {9, 7, 5, 3, 1}
+System.out.print("{");
+for(int i=0 ; i &lt; arr.length ; i++) {
+    if(i &lt; arr.length-1)
+        System.out.print(arr[i] + ", ") ;
+    else
+        System.out.print(arr[i]);
+}
+System.out.println("}");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{9, 7, 5, 3, 1}</pre></div>
+        </div>
+
+        <p>Read it in three pieces. Print <code class="inl">{</code> once, before the loop. Inside the loop, ask “is this <em>not</em> the last index?”: the last index is <code class="inl">arr.length-1</code>, so <code class="inl">i &lt; arr.length-1</code> is true for every element but the last, and those get <code class="inl">", "</code> after them. The last one is printed alone. Then <code class="inl">}</code> with <code class="inl">println</code>, once, after the loop, to close the list and end the line.</p>
+
+        <div class="strip-wrap">
+          <div class="strip arr narrow">
+            <div class="cell sp">{</div>
+            <div class="cell">9</div><div class="cell diff">,</div>
+            <div class="cell">7</div><div class="cell diff">,</div>
+            <div class="cell">5</div><div class="cell diff">,</div>
+            <div class="cell">3</div><div class="cell diff">,</div>
+            <div class="cell hit">1</div>
+            <div class="cell sp">}</div>
+          </div>
+          <span class="strip-cap">5 values, 4 commas · the green one (i = 4 = length-1) gets no comma</span>
+        </div>
+
+        <p>Five values but four commas: there is always one separator fewer than values. Forget the <code class="inl">if</code> and you get the classic ugly list:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Without the if</span></div>
+          <pre class="code"><code>System.out.print("{");
+for (int i = 0; i &lt; arr.length; i++) {
+    System.out.print(arr[i] + ", ");
+}
+System.out.println("}");</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{9, 7, 5, 3, 1, }</pre></div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>This puzzle is much older than computers. A fence 100 metres long with a post every 10 metres needs 11 posts, not 10: one more post than gaps. Programmers call “one too many or one too few” a <strong>fencepost error</strong>, another name for the off-by-one error of Lesson 12. Commas are the gaps; values are the posts.</p>
+        </div>
+
+        <h3 id="pa-method">An array as a parameter</h3>
+
+        <p>Printing <code class="inl">{…}</code> takes seven lines, and we want to print the array again after we change it. So the file puts the same seven lines into a method, at the top of the class:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · the method</span></div>
+          <pre class="code"><code>public static void printArr(int[] arr) {
+    System.out.print("{");
+    for(int i=0 ; i &lt; arr.length ; i++) {
+        if(i &lt; arr.length-1)
+            System.out.print(arr[i] + ", ") ;
+        else
+            System.out.print(arr[i]);
+    }
+    System.out.println("}");
+}</code></pre>
+        </div>
+
+        <div class="anat" role="img" aria-label="public static void printArr(int[] arr): static, so main can call it; void, it returns nothing; the parameter type is int[], an int array.">
+          <div class="pc"><code>public static</code><small>main can call it directly (Lesson 5)</small></div>
+          <div class="pc"><code>void</code><small>it prints, returns nothing</small></div>
+          <div class="pc"><code>printArr</code><small>the name</small></div>
+          <div class="pc key"><code>(int[] arr)</code><small>the parameter is an int <em>array</em></small></div>
+        </div>
+
+        <p>Nothing here is new except the parameter's type. A method can take an <code class="inl">int</code>, a <code class="inl">String</code>, a <code class="inl">Height</code>… and also an <code class="inl">int[]</code>. Inside, <code class="inl">arr</code> is used exactly like an array in <code class="inl">main</code>: <code class="inl">arr.length</code>, <code class="inl">arr[i]</code>. The call passes the array by its name, with no brackets: <code class="inl">printArr(arr);</code>. And because the loop says <code class="inl">arr.length</code>, the one method prints an array of any size: <code class="inl">{}</code> for an empty one, <code class="inl">{42}</code> for one value.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The call is <code class="inl">printArr(arr)</code>, not <code class="inl">printArr(arr[])</code> and not <code class="inl">printArr(int[] arr)</code>. The brackets and the type belong to the method's header; the call only names the array. <code class="inl">printArr(arr[0])</code> would pass one int, which does not match <code class="inl">int[]</code>, so it does not compile.</p>
+        </div>
+
+        <h3 id="pa-swap">The swap algorithm</h3>
+
+        <p>Before turning an array around, the file shows (as a comment) the smallest algorithm there is: exchanging the values of two variables.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · the commented lines</span></div>
+          <pre class="code"><code>// SWAP ALGORITHM
+int a = 3 ;
+int b = 5 ;
+
+int temp = a ; // temp = 3
+a= b ; // a = 5
+b = temp ; // b = 3</code></pre>
+        </div>
+
+        <p>Why three lines and a third variable? Try it with two. <code class="inl">a = b;</code> puts 5 in <code class="inl">a</code>, and the 3 that was in <code class="inl">a</code> is gone for ever: a variable holds one value, and writing a new one erases the old one. Then <code class="inl">b = a;</code> copies that 5 back. Both are 5.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The swap that does not work</span></div>
+          <pre class="code"><code>int a = 3;
+int b = 5;
+a = b;
+b = a;
+System.out.println(a + " " + b);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>5 5</pre></div>
+        </div>
+
+        <p>The fix is to put the old value of <code class="inl">a</code> somewhere safe <em>before</em> it is overwritten. That safe place is <code class="inl">temp</code> (short for temporary):</p>
+
+        <div class="steps" role="img" aria-label="Swap in three steps. Start: a 3, b 5. temp = a: temp 3. a = b: a 5. b = temp: b 3.">
+          <div class="row"><span class="who">start</span><div class="strip arr vars"><div class="cell">3<span class="ix">a</span></div><div class="cell">5<span class="ix">b</span></div><div class="cell ghost"> <span class="ix">temp</span></div></div><span class="got">two values, an empty glass</span></div>
+          <div class="row"><span class="who">temp = a;</span><div class="strip arr vars"><div class="cell">3<span class="ix">a</span></div><div class="cell">5<span class="ix">b</span></div><div class="cell hit">3<span class="ix">temp</span></div></div><span class="got">a copy of 3 is safe</span></div>
+          <div class="row"><span class="who">a = b;</span><div class="strip arr vars"><div class="cell hit">5<span class="ix">a</span></div><div class="cell">5<span class="ix">b</span></div><div class="cell">3<span class="ix">temp</span></div></div><span class="got">a's 3 is erased, but temp has it</span></div>
+          <div class="row"><span class="who">b = temp;</span><div class="strip arr vars"><div class="cell">5<span class="ix">a</span></div><div class="cell hit">3<span class="ix">b</span></div><div class="cell">3<span class="ix">temp</span></div></div><span class="got"><b>a = 5, b = 3</b></span></div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>You have orange juice in one glass and milk in another, and you want them the other way round. You cannot pour one into the other. You need a third, empty glass: pour the juice into it, pour the milk into the juice glass, pour the juice into the milk glass. Three pours, one extra glass: that is <code class="inl">temp</code>.</p>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Swap = three lines, in a chain: <code class="inl">temp = a; a = b; b = temp;</code>. Each line starts with what the line before ended with. <code class="inl">temp</code> has the same type as the values (an <code class="inl">int</code> for ints, a <code class="inl">String</code> for Strings).</p>
+        </div>
+
+        <h3 id="pa-rev">Reversing in place</h3>
+
+        <p>In Lesson 12, and again at the start of this file, we <em>printed</em> an array backwards:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · printing backwards</span></div>
+          <pre class="code"><code>// 9 7 5 3 1   -----&gt;   1 3 5 7 9
+for(int i= arr.length-1 ; i &gt;= 0 ; i--) {
+    System.out.print(arr[i] + " ");
+}
+System.out.println();</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>1 3 5 7 9 </pre></div>
+        </div>
+
+        <p>That only <em>visits</em> the boxes in the other order; the array is still 9, 7, 5, 3, 1. Now we want to change the array itself, so that <code class="inl">arr[0]</code> really is 1. Changing an array without making a second one is called reversing <strong>in place</strong>. The comments in the file show the idea:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · the plan in comments</span></div>
+          <pre class="code"><code>// 9 7 5 3 1
+// 0 1 2 3 4
+
+// 0 -4   1- 3 .. . .    i  -  length-1-i
+// 9 &lt;=&gt; 1
+// 7 &lt;=&gt; 3</code></pre>
+        </div>
+
+        <p>The first box swaps with the last, the second with the second-to-last, and so on toward the middle. For index <code class="inl">i</code>, its partner from the other end is <code class="inl">length-1-i</code>: when <code class="inl">i</code> is 0 the partner is 4, when <code class="inl">i</code> is 1 the partner is 3. Each step in, both sides move one box toward the middle.</p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 420 150" role="img" aria-label="Five boxes 9 7 5 3 1 with indexes 0 to 4. An arc joins index 0 and index 4, labelled i = 0. A smaller arc joins 1 and 3, labelled i = 1. The middle box, index 2, stays where it is.">
+            <path class="fig-arc" d="M 75 64 C 75 8, 345 8, 345 64"/>
+            <path class="fig-arc" d="M 145 64 C 145 30, 275 30, 275 64"/>
+            <text class="fig-run" x="210" y="20" text-anchor="middle">i = 0 · 0 ⇄ 4</text>
+            <text class="fig-run" x="210" y="44" text-anchor="middle">i = 1 · 1 ⇄ 3</text>
+            <rect class="fig-box" x="50" y="64" width="50" height="44"/>
+            <rect class="fig-box" x="120" y="64" width="50" height="44"/>
+            <rect class="fig-miss" x="190" y="64" width="50" height="44"/>
+            <rect class="fig-box" x="260" y="64" width="50" height="44"/>
+            <rect class="fig-box" x="330" y="64" width="50" height="44"/>
+            <text class="fig-m" x="75" y="91" text-anchor="middle">9</text>
+            <text class="fig-m" x="145" y="91" text-anchor="middle">7</text>
+            <text class="fig-m" x="215" y="91" text-anchor="middle">5</text>
+            <text class="fig-m" x="285" y="91" text-anchor="middle">3</text>
+            <text class="fig-m" x="355" y="91" text-anchor="middle">1</text>
+            <text class="fig-lbl" x="75" y="126" text-anchor="middle">0</text>
+            <text class="fig-lbl" x="145" y="126" text-anchor="middle">1</text>
+            <text class="fig-lbl" x="215" y="126" text-anchor="middle">2 · stays</text>
+            <text class="fig-lbl" x="285" y="126" text-anchor="middle">3</text>
+            <text class="fig-lbl" x="355" y="126" text-anchor="middle">4</text>
+          </svg>
+          <figcaption>Partners from both ends: i and length-1-i. With 5 boxes, the middle one has no partner.</figcaption>
+        </figure>
+
+        <p>Each pair is exchanged with the swap algorithm, with <code class="inl">arr[i]</code> as <code class="inl">a</code> and <code class="inl">arr[arr.length-1-i]</code> as <code class="inl">b</code>:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · reverse in place</span></div>
+          <pre class="code"><code>printArr(arr);
+for(int i=0 ; i &lt; arr.length/2; i++) {
+    int temp = arr[i];
+    arr[i] = arr[arr.length-1-i];
+    arr[arr.length-1-i] = temp;
+}
+
+printArr(arr);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{9, 7, 5, 3, 1}
+{1, 3, 5, 7, 9}</pre></div>
+        </div>
+
+        <div class="steps ixs" role="img" aria-label="Reverse step by step. Start 9 7 5 3 1. After i = 0, boxes 0 and 4 swapped: 1 7 5 3 9. After i = 1, boxes 1 and 3 swapped: 1 3 5 7 9. i = 2 is not less than 5 / 2 = 2, so the loop stops.">
+          <div class="row"><span class="who">start</span><div class="strip arr"><div class="cell">9<span class="ix">0</span></div><div class="cell">7<span class="ix">1</span></div><div class="cell">5<span class="ix">2</span></div><div class="cell">3<span class="ix">3</span></div><div class="cell">1<span class="ix">4</span></div></div><span class="got">length 5, length/2 = 2</span></div>
+          <div class="row"><span class="who">i = 0</span><div class="strip arr"><div class="cell hit">1<span class="ix on">0</span></div><div class="cell">7<span class="ix">1</span></div><div class="cell">5<span class="ix">2</span></div><div class="cell">3<span class="ix">3</span></div><div class="cell hit">9<span class="ix on">4</span></div></div><span class="got">swap 0 and 5-1-0 = 4</span></div>
+          <div class="row"><span class="who">i = 1</span><div class="strip arr"><div class="cell">1<span class="ix">0</span></div><div class="cell hit">3<span class="ix on">1</span></div><div class="cell">5<span class="ix">2</span></div><div class="cell hit">7<span class="ix on">3</span></div><div class="cell">9<span class="ix">4</span></div></div><span class="got">swap 1 and 5-1-1 = 3</span></div>
+          <div class="row"><span class="who">i = 2</span><div class="strip arr"><div class="cell">1<span class="ix">0</span></div><div class="cell">3<span class="ix">1</span></div><div class="cell diff">5<span class="ix">2</span></div><div class="cell">7<span class="ix">3</span></div><div class="cell">9<span class="ix">4</span></div></div><span class="got">2 &lt; 2 is false: <b>done</b></span></div>
+        </div>
+
+        <p>Only two swaps for five boxes. The middle box, index 2, would be its own partner (5-1-2 = 2), so there is nothing to do there.</p>
+
+        <h3 id="pa-half">Why length / 2</h3>
+
+        <p>It is tempting to write the usual <code class="inl">i &lt; arr.length</code>. Try it:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The whole length</span></div>
+          <pre class="code"><code>int[] x = {9, 7, 5, 3, 1};
+for (int i = 0; i &lt; x.length; i++) {
+    int temp = x[i];
+    x[i] = x[x.length-1-i];
+    x[x.length-1-i] = temp;
+}
+printArr(x);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{9, 7, 5, 3, 1}</pre></div>
+        </div>
+
+        <p>No error, no crash, and the array is exactly as it was. The first half of the loop reverses the array. Then <code class="inl">i</code> keeps going: at <code class="inl">i = 3</code> it swaps boxes 3 and 1 <em>again</em>, at <code class="inl">i = 4</code> boxes 4 and 0 again, undoing every swap. Each pair was swapped twice, and two swaps cancel out. Going only to the middle means each pair is swapped exactly once.</p>
+
+        <p>The comment line <code class="inl">// 1 2 3 4 5 6 7 8 9 10</code> in the file is the even case: ten boxes, <code class="inl">10 / 2 = 5</code> swaps (0⇄9, 1⇄8, 2⇄7, 3⇄6, 4⇄5), and no middle box. For an odd length, integer division drops the half: <code class="inl">5 / 2</code> is 2, and the middle box is left alone, which is just right. One condition works for both.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Ten boxes</span></div>
+          <pre class="code"><code>int[] x = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+for (int i = 0; i &lt; x.length/2; i++) {
+    int temp = x[i];
+    x[i] = x[x.length-1-i];
+    x[x.length-1-i] = temp;
+}
+printArr(x);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}</pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Reverse in place: <code class="inl">for (int i = 0; i &lt; arr.length / 2; i++)</code>, swap <code class="inl">arr[i]</code> with <code class="inl">arr[arr.length - 1 - i]</code>. Going to <code class="inl">arr.length</code> swaps everything twice and gives back the original.</p>
+        </div>
+
+        <h3 id="pa-max">Max and min</h3>
+
+        <p>The last job of the file: find the biggest and the smallest value in a new array.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · max and min</span></div>
+          <pre class="code"><code>int[] nums = { 6, 2, 9, 23, 5, 18, -7, 1, 4 };
+//      int max = nums[0];
+//      int min = nums[0];
+int maxIndex=  0;
+int max = Integer.MIN_VALUE;
+int min = Integer.MAX_VALUE;
+for(int i=0; i &lt; nums.length ; i++) {
+    if(nums[i] &gt; max) {
+        max = nums[i];
+        maxIndex = i ;
+    }
+    if(nums[i] &lt; min) {
+        min = nums[i];
+    }
+}
+
+System.out.println(max + " " + min);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>23 -7</pre></div>
+        </div>
+
+        <p>This is how a person finds the tallest student in a line without measuring everyone at once. Walk along the line. Keep in your head “the tallest so far”. Each new student: taller than the one in your head? Then they become the tallest so far. When you reach the end, the one in your head is the tallest of all. <code class="inl">max</code> is “the biggest so far”, <code class="inl">min</code> “the smallest so far”, and each <code class="inl">if</code> asks one question about the new element.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">i</th><th class="mono">nums[i]</th><th class="mono">max after</th><th class="mono">min after</th><th>What happened</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">start</td><td></td><td class="mono">-2147483648</td><td class="mono">2147483647</td><td>the extreme ints</td></tr>
+              <tr><td class="mono">0</td><td class="mono">6</td><td class="mono"><b>6</b></td><td class="mono"><b>6</b></td><td>the first value beats both</td></tr>
+              <tr><td class="mono">1</td><td class="mono">2</td><td class="mono">6</td><td class="mono"><b>2</b></td><td>new smallest</td></tr>
+              <tr><td class="mono">2</td><td class="mono">9</td><td class="mono"><b>9</b></td><td class="mono">2</td><td>new biggest</td></tr>
+              <tr><td class="mono">3</td><td class="mono">23</td><td class="mono"><b>23</b></td><td class="mono">2</td><td>new biggest</td></tr>
+              <tr><td class="mono">4</td><td class="mono">5</td><td class="mono">23</td><td class="mono">2</td><td></td></tr>
+              <tr><td class="mono">5</td><td class="mono">18</td><td class="mono">23</td><td class="mono">2</td><td></td></tr>
+              <tr><td class="mono">6</td><td class="mono">-7</td><td class="mono">23</td><td class="mono"><b>-7</b></td><td>new smallest</td></tr>
+              <tr><td class="mono">7</td><td class="mono">1</td><td class="mono">23</td><td class="mono">-7</td><td></td></tr>
+              <tr><td class="mono">8</td><td class="mono">4</td><td class="mono">23</td><td class="mono">-7</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>The two tests are two separate <code class="inl">if</code>s, not <code class="inl">if … else if</code>. One element can change both: the very first one, 6, becomes the max <em>and</em> the min. With <code class="inl">else if</code>, the min test is skipped whenever the max test is true. On <code class="inl">{1, 5, 3}</code>, starting from MIN_VALUE/MAX_VALUE, the 1 becomes the max, the min test is skipped, and the program prints <code class="inl">5 3</code>: the min 1 was never seen.</p>
+        </div>
+
+        <h3 id="pa-start">Where to start max</h3>
+
+        <p>Before the loop, <code class="inl">max</code> needs some value. The file shows two good choices, one of them commented out.</p>
+
+        <ul class="plain">
+          <li><strong>Start at the first element:</strong> <code class="inl">int max = nums[0];</code>. The first value really is the biggest <em>so far</em>, when you have seen only one. (The loop can then start at <code class="inl">i = 1</code>; starting at 0 only compares <code class="inl">nums[0]</code> with itself, which does no harm.)</li>
+          <li><strong>Start at the most extreme int:</strong> <code class="inl">int max = Integer.MIN_VALUE;</code>, the smallest number an <code class="inl">int</code> can hold, −2147483648. Every element is at least that big, so the first element always replaces it. For <code class="inl">min</code> it is the other end, <code class="inl">Integer.MAX_VALUE</code>, 2147483647, which we met in Lesson 5.</li>
+        </ul>
+
+        <div class="ex">
+          <div class="ex-head"><span>The two extremes</span></div>
+          <pre class="code"><code>System.out.println(Integer.MIN_VALUE + " " + Integer.MAX_VALUE);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>-2147483648 2147483647</pre></div>
+        </div>
+
+        <p>The tempting third choice, <code class="inl">int max = 0;</code>, is wrong. It works on this array only by luck, because 23 is bigger than 0. Give it a winter week of temperatures that are all below zero:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Starting max at 0</span></div>
+          <pre class="code"><code>int[] t = {-4, -9, -2, -7};
+int max = 0;
+for (int i = 0; i &lt; t.length; i++) {
+    if (t[i] &gt; max) {
+        max = t[i];
+    }
+}
+System.out.println(max);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>0</pre></div>
+        </div>
+
+        <p>No temperature is bigger than 0, so <code class="inl">max</code> never changes, and the program reports a 0 that is not in the array at all. With <code class="inl">int max = t[0];</code> the answer is −2, the right one. The same bug happens to <code class="inl">min</code> starting at 0 on an array of positive numbers.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>Start <code class="inl">max</code> and <code class="inl">min</code> at <code class="inl">arr[0]</code>, or at <code class="inl">Integer.MIN_VALUE</code> (for max) and <code class="inl">Integer.MAX_VALUE</code> (for min). Never at 0: the answer must be a value that is actually in the array.</p>
+        </div>
+
+        <h3 id="pa-where">maxIndex: where it is</h3>
+
+        <p>Look again at the first <code class="inl">if</code>: when a new max is found, the file also writes <code class="inl">maxIndex = i;</code>. Now we know not only <em>what</em> the biggest value is but <em>where</em> it is. The file does not print it; with one more line:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson34.java · with one line added</span></div>
+          <pre class="code"><code>System.out.println(max + " " + min);
+System.out.println(maxIndex);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>23 -7
+3</pre></div>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr">
+            <div class="cell">6<span class="ix">0</span></div>
+            <div class="cell">2<span class="ix">1</span></div>
+            <div class="cell">9<span class="ix">2</span></div>
+            <div class="cell hit">23<span class="ix on">3</span></div>
+            <div class="cell">5<span class="ix">4</span></div>
+            <div class="cell">18<span class="ix">5</span></div>
+            <div class="cell diff">-7<span class="ix">6</span></div>
+            <div class="cell">1<span class="ix">7</span></div>
+            <div class="cell">4<span class="ix">8</span></div>
+          </div>
+          <span class="strip-cap">max 23 at index 3 (green) · min -7 at index 6 (amber)</span>
+        </div>
+
+        <p>Why does the place matter? Because the index lets you reach everything about that element. “The highest score is 100” is less useful than “the highest score is at index 4”, because index 4 also tells you whose score it is (in another array, or in the same position of a class list). Part 35 makes this the main idea.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>printArr prints a comma after every element except the last (<code class="inl">i &lt; arr.length-1</code>); a method can take an <code class="inl">int[]</code> and is called with the array's name. Swap needs a third variable: <code class="inl">temp = a; a = b; b = temp;</code>. Reverse in place swaps <code class="inl">arr[i]</code> with <code class="inl">arr[arr.length-1-i]</code> while <code class="inl">i &lt; arr.length/2</code>; the full length undoes it. Max/min keep “the best so far”, start at <code class="inl">arr[0]</code> or the extreme ints (never 0), use two separate <code class="inl">if</code>s, and <code class="inl">maxIndex</code> remembers where.</p>
+        </div>
+
+        <div class="practice" id="p34">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 34</h3>
+
+          <ol class="qs">
+            <li>
+              <p>What do <code class="inl">printArr(new int[0])</code> and <code class="inl">printArr(new int[1])</code> print?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>{}
+{0}</pre></div></div>
+                  <p>The empty array: the loop never runs, so only the braces. One element: it is the last, so no comma. <code class="inl">new int[1]</code> holds the default 0.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed? Then fix it so the values are exchanged.</p>
+              <div class="ex"><pre class="code"><code>int x = 8;
+int y = 2;
+x = y;
+y = x;
+System.out.println(x + " " + y);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>2 2</pre></div></div>
+                  <p>The 8 is erased by <code class="inl">x = y;</code>. The fix: <code class="inl">int temp = x; x = y; y = temp;</code>, which prints <code class="inl">2 8</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A student writes the reverse loop with <code class="inl">i &lt; arr.length</code> instead of <code class="inl">i &lt; arr.length/2</code>, on <code class="inl">{9, 7, 5, 3, 1}</code>. Does it crash? What does <code class="inl">printArr</code> show afterwards?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>{9, 7, 5, 3, 1}</pre></div></div>
+                  <p>No crash: every index is valid. But every pair is swapped twice, so the array ends exactly as it started.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>The array <code class="inl">{2, 4, 6, 8, 10, 12}</code> is reversed in place. How many swaps are made, which index pairs are swapped, and what is the result?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>6 / 2 = <span class="outline">3 swaps</span>: 0⇄5, 1⇄4, 2⇄3.</p>
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>{12, 10, 8, 6, 4, 2}</pre></div></div>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>A program finds the max of <code class="inl">{-4, -9, -2, -7}</code> starting with <code class="inl">int max = 0;</code>. What does it print, and what one change fixes it?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>It prints <code class="inl">0</code>, a value that is not in the array. Start with <code class="inl">int max = t[0];</code> (or <code class="inl">Integer.MIN_VALUE</code>) and it prints <code class="inl">-2</code>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write a loop that finds <code class="inl">minIndex</code>, the index of the smallest value in <code class="inl">nums</code>, without a separate <code class="inl">min</code> variable. What is <code class="inl">minIndex</code> at the end?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int minIndex = 0;
+for (int i = 0; i &lt; nums.length; i++) {
+    if (nums[i] &lt; nums[minIndex]) {
+        minIndex = i;
+    }
+}
+System.out.println(minIndex + " " + nums[minIndex]);</code></pre><div class="out"><span class="out-label">Console</span><pre>6 -7</pre></div></div>
+                  <p>Compare with <code class="inl">nums[minIndex]</code>, the smallest so far. The index is enough: the value is always <code class="inl">nums[minIndex]</code>. Part 35 does exactly this.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 35 ============ -->
+      <section class="lesson" id="lw">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 35 · Lesson35.java</span>
+          <h2 class="lesson-title">The Longest Word</h2>
+        </div>
+
+        <p>The max algorithm does not care what kind of thing it compares, as long as it can ask “bigger?”. Here it runs on a <code class="inl">String[]</code> of cities, and “bigger” means “more letters”.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson35.java · main</span></div>
+          <pre class="code"><code>String[] arr = {"Ankara","Istanbul","Kahramanmaraş","Antalya","Van","Bolu","Samsun"};
+int maxLength = arr[0].length();
+int maxIndex = 0 ;
+for(int i=0 ; i &lt; arr.length ; i++) {
+    if(arr[i].length() &gt; maxLength) {
+        maxLength = arr[i].length();
+    }
+
+}
+for(int i=0 ; i &lt; arr.length ; i++) {
+    if(arr[i].length() &gt; arr[maxIndex].length()) {
+        maxIndex = i;
+    }
+
+}
+System.out.println(maxLength);
+System.out.println(arr[maxIndex]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>13
+Kahramanmaraş</pre></div>
+        </div>
+
+        <div class="strip-wrap">
+          <div class="strip arr wide">
+            <div class="cell">Ankara<span class="ix">0 · 6</span></div>
+            <div class="cell">Istanbul<span class="ix">1 · 8</span></div>
+            <div class="cell hit">Kahramanmaraş<span class="ix on">2 · 13</span></div>
+            <div class="cell">Antalya<span class="ix">3 · 7</span></div>
+            <div class="cell">Van<span class="ix">4 · 3</span></div>
+            <div class="cell">Bolu<span class="ix">5 · 4</span></div>
+            <div class="cell">Samsun<span class="ix">6 · 6</span></div>
+          </div>
+          <span class="strip-cap">index · length() under each city · Kahramanmaraş has 13 letters (ş is one letter)</span>
+        </div>
+
+        <p>Two lengths again, as in Lesson 12: <code class="inl">arr.length</code> is 7, the number of cities; <code class="inl">arr[i].length()</code>, with parentheses, is the number of letters in one city. The comparison is on the second.</p>
+
+        <h3 id="lw-two">Two loops, two ideas</h3>
+
+        <p>The file solves the problem twice, and the difference between the two loops is the lesson.</p>
+
+        <p><strong>Loop 1 remembers the value.</strong> <code class="inl">maxLength</code> starts at the first city's length, 6, and becomes the length of every longer city: 8, then 13. At the end it is 13. That answers “how long is the longest name?”, but not “which city is it?”. The number 13 has forgotten where it came from. (Notice that this loop never touches <code class="inl">maxIndex</code>; it stays 0.)</p>
+
+        <p><strong>Loop 2 remembers the place.</strong> <code class="inl">maxIndex</code> starts at 0, and each city is compared with <code class="inl">arr[maxIndex]</code>, the longest city <em>so far</em>. When one is longer, only its index is saved.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th class="mono">i</th><th class="mono">arr[i]</th><th class="mono">length()</th><th class="mono">arr[maxIndex] before</th><th>longer?</th><th class="mono">maxIndex after</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">0</td><td>Ankara</td><td class="mono">6</td><td>Ankara (6)</td><td>6 &gt; 6? no</td><td class="mono">0</td></tr>
+              <tr><td class="mono">1</td><td>Istanbul</td><td class="mono">8</td><td>Ankara (6)</td><td>yes</td><td class="mono"><b>1</b></td></tr>
+              <tr><td class="mono">2</td><td>Kahramanmaraş</td><td class="mono">13</td><td>Istanbul (8)</td><td>yes</td><td class="mono"><b>2</b></td></tr>
+              <tr><td class="mono">3</td><td>Antalya</td><td class="mono">7</td><td>Kahramanmaraş (13)</td><td>no</td><td class="mono">2</td></tr>
+              <tr><td class="mono">4</td><td>Van</td><td class="mono">3</td><td>Kahramanmaraş (13)</td><td>no</td><td class="mono">2</td></tr>
+              <tr><td class="mono">5</td><td>Bolu</td><td class="mono">4</td><td>Kahramanmaraş (13)</td><td>no</td><td class="mono">2</td></tr>
+              <tr><td class="mono">6</td><td>Samsun</td><td class="mono">6</td><td>Kahramanmaraş (13)</td><td>no</td><td class="mono">2</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>With <code class="inl">maxIndex = 2</code> we can get <em>everything</em>: the city <code class="inl">arr[maxIndex]</code>, its length <code class="inl">arr[maxIndex].length()</code> (13, the same as loop 1), and its position. The index carries more information than the value. That is why the second loop is the one to learn.</p>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>To find <em>which</em> element is the biggest, remember its index and compare with <code class="inl">arr[maxIndex]</code>. The value is always <code class="inl">arr[maxIndex]</code>; the value alone cannot give back the index.</p>
+        </div>
+
+        <h3 id="lw-ties">Ties: &gt; or &gt;=</h3>
+
+        <p>What if two cities are equally long? In our array Ankara and Samsun both have 6 letters, but neither is the longest. Take a list where the longest is shared:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>&gt; keeps the first, &gt;= the last</span></div>
+          <pre class="code"><code>String[] t = {"Ankara", "Izmir", "Samsun", "Bolu"};
+int mi = 0;
+for (int i = 0; i &lt; t.length; i++) {
+    if (t[i].length() &gt; t[mi].length()) {
+        mi = i;
+    }
+}
+System.out.println(t[mi]);
+
+mi = 0;
+for (int i = 0; i &lt; t.length; i++) {
+    if (t[i].length() &gt;= t[mi].length()) {
+        mi = i;
+    }
+}
+System.out.println(t[mi]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Ankara
+Samsun</pre></div>
+        </div>
+
+        <p>With <code class="inl">&gt;</code>, Samsun (6) is not longer than Ankara (6), so the first one found stays. With <code class="inl">&gt;=</code>, an equal one also takes over, so the last one found wins. Neither is wrong; they answer slightly different questions. When an exam asks “which index is returned”, look at this one character.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>To find the <em>shortest</em> word, turn the comparison around: <code class="inl">arr[i].length() &lt; arr[minIndex].length()</code>. On the cities that gives Van, index 4. Only the comparison changes; the shape of the algorithm stays the same.</p>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>The max algorithm works on Strings too, comparing <code class="inl">arr[i].length()</code>. Remembering the value (<code class="inl">maxLength</code>) answers “how long?”; remembering the index (<code class="inl">maxIndex</code>, compared with <code class="inl">arr[maxIndex]</code>) answers “which one?” and also “how long?”. With ties, <code class="inl">&gt;</code> keeps the first, <code class="inl">&gt;=</code> the last.</p>
+        </div>
+
+        <div class="practice" id="p35">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on the longest word</h3>
+          <p class="practice-lede">Unless a question says otherwise, <code class="inl">arr</code> is the cities array from Lesson35.</p>
+
+          <ol class="qs">
+            <li>
+              <p>After the second loop, what are <code class="inl">arr[maxIndex].length()</code> and <code class="inl">arr.length</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">13 · 7</span></p>
+                  <p>The letters of the longest city, and the number of cities.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Why can't the program print the city name using only <code class="inl">maxLength</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>13 is just a number; it does not remember which box it came from. You would need another loop to search for a city with 13 letters. The index leads straight to the element.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write the loop that finds the shortest city. What does it print with <code class="inl">System.out.println(arr[minIndex] + " " + minIndex);</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int minIndex = 0;
+for (int i = 0; i &lt; arr.length; i++) {
+    if (arr[i].length() &lt; arr[minIndex].length()) {
+        minIndex = i;
+    }
+}
+System.out.println(arr[minIndex] + " " + minIndex);</code></pre><div class="out"><span class="out-label">Console</span><pre>Van 4</pre></div></div>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In the second loop, <code class="inl">i</code> starts at 0, so the first round compares Ankara with itself. Is that a bug? What changes if the loop starts at <code class="inl">i = 1</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>Not a bug: 6 &gt; 6 is false, so nothing happens. Starting at 1 saves one useless comparison; the answer is still Kahramanmaraş.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In the second loop, <code class="inl">&gt;</code> is changed to <code class="inl">&gt;=</code>. Does the answer for the cities array change? Why?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>No, still Kahramanmaraş. No other city has 13 letters, so there is no tie for the longest. (Ankara and Samsun tie at 6, but they never hold the lead at the same time.)</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>String[] w = {"cat", "horse", "ox", "zebra"};
+int mi = 0;
+for (int i = 0; i &lt; w.length; i++) {
+    if (w[i].length() &gt; w[mi].length()) {
+        mi = i;
+    }
+}
+System.out.println(w[mi] + " " + mi);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>horse 1</pre></div></div>
+                  <p>zebra also has 5 letters, but with <code class="inl">&gt;</code> a tie does not take over: the first one stays.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ PART 36 ============ -->
+      <section class="lesson" id="fe">
+        <div class="lesson-head">
+          <span class="lesson-no">Part 36 · Lesson36.java</span>
+          <h2 class="lesson-title">for-each and isIncreasing</h2>
+        </div>
+
+        <p>The last file brings a new kind of loop, made only for walking through collections, and a method that checks a whole array and answers with a <code class="inl">boolean</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson36.java</span></div>
+          <pre class="code"><code>public static boolean isIncreasing(int[] arr) {
+    for(int i=0 ; i &lt; arr.length-1 ; i++) {
+        if(arr[i] &gt;= arr[i+1] ) {
+            return false;
+        }
+    }
+    return true ;
+}
+// 5 9 11 13 15   i+1
+public static void main(String[] args) {
+    int[] nums = { 6, 2, 9, 23, 5, 18, -7, 1, 4 };
+
+
+    // for each - enhanced for loop  (READ ONLY)
+    for(int value : nums) {
+        System.out.print(value + " ");
+    }
+    System.out.println();
+    for(int i=0 ; i &lt; nums.length ; i++) {
+        System.out.print(nums[i] + " ");
+    }
+    System.out.println();
+
+    int[]arr = new int[4];
+    Lesson34.printArr(arr);
+
+//  for(int i = 0 ; i &lt; arr.length ; i++) {
+//      arr[i] = 99 ;
+//  }
+    for(int item : arr) {
+        item = 99 ;
+    }
+    System.out.println();
+
+    Lesson34.printArr(arr);
+    // 99,99,99,99
+
+    arr[0] = 5;
+    arr[1] = 9 ;
+    arr[2] = 11;
+    arr[3] = 14 ;
+
+    System.out.println(isIncreasing(arr));
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>6 2 9 23 5 18 -7 1 4
+6 2 9 23 5 18 -7 1 4
+{0, 0, 0, 0}
+
+{0, 0, 0, 0}
+true</pre></div>
+        </div>
+
+        <h3 id="fe-loop">The enhanced for loop</h3>
+
+        <p>The first two loops print the same line. The second is our usual loop. The first is the <strong>enhanced for loop</strong>, also called the <strong>for-each loop</strong>:</p>
+
+        <div class="anat" role="img" aria-label="for (int value : nums): int is the type of each element, value is a new variable that holds one element each round, the colon is read 'in', nums is the array.">
+          <div class="pc"><code>for (</code><small></small></div>
+          <div class="pc"><code>int</code><small>the element type</small></div>
+          <div class="pc key"><code>value</code><small>a new variable: one element per round</small></div>
+          <div class="pc key"><code>:</code><small>read “in”</small></div>
+          <div class="pc"><code>nums</code><small>the array</small></div>
+          <div class="pc"><code>)</code><small></small></div>
+        </div>
+
+        <p>Read it aloud as “for each int <em>value</em> in <em>nums</em>”. There is no <code class="inl">i</code>, no condition, no <code class="inl">i++</code>, and no <code class="inl">nums[i]</code>. Java does the walking: in the first round <code class="inl">value</code> is 6, then 2, then 9, and so on to the last element, always from first to last. You only say what to do with each value.</p>
+
+        <div class="steps" role="img" aria-label="Each round, the next element of nums is copied into value: round 1 value is 6, round 2 value is 2, round 3 value is 9.">
+          <div class="row"><span class="who">round 1</span><div class="strip arr"><div class="cell hit">6</div><div class="cell">2</div><div class="cell">9</div><div class="cell">23</div><div class="cell">5</div><div class="cell">…</div></div><span class="got">value = <b>6</b></span></div>
+          <div class="row"><span class="who">round 2</span><div class="strip arr"><div class="cell">6</div><div class="cell hit">2</div><div class="cell">9</div><div class="cell">23</div><div class="cell">5</div><div class="cell">…</div></div><span class="got">value = <b>2</b></span></div>
+          <div class="row"><span class="who">round 3</span><div class="strip arr"><div class="cell">6</div><div class="cell">2</div><div class="cell hit">9</div><div class="cell">23</div><div class="cell">5</div><div class="cell">…</div></div><span class="got">value = <b>9</b></span></div>
+        </div>
+
+        <p>The variable's type must match the elements: <code class="inl">int</code> for an <code class="inl">int[]</code>, <code class="inl">String</code> for a <code class="inl">String[]</code> (<code class="inl">for (String city : cities)</code>). And after the colon comes the array itself. <code class="inl">for (int i : nums.length)</code> <span class="err">will not compile</span> (<em>for-each not applicable to expression type</em>): <code class="inl">nums.length</code> is one number, not a collection.</p>
+
+        <p>Sums and counts become shorter too:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>A sum with for-each</span></div>
+          <pre class="code"><code>int total = 0;
+for (int v : nums) {
+    total += v;
+}
+System.out.println(total);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>61</pre></div>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">History</span>
+          <p>Java did not have this loop at first. It was added in Java 5, in 2004, because programmers wrote the “<code class="inl">for (int i = 0; i &lt; a.length; i++)</code> just to read <code class="inl">a[i]</code>” loop so often, and made the <code class="inl">&lt;=</code> mistake so often, that a loop with no index at all seemed safer. The designers chose the colon so as not to add a new keyword like <code class="inl">in</code> to the language.</p>
+        </div>
+
+        <h3 id="fe-ro">Why it is read only</h3>
+
+        <p>The comment in the file says <strong>READ ONLY</strong>, and the next lines prove it. The plan is to fill a new array with 99s:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson36.java · item = 99</span></div>
+          <pre class="code"><code>int[]arr = new int[4];
+Lesson34.printArr(arr);
+
+for(int item : arr) {
+    item = 99 ;
+}
+System.out.println();
+
+Lesson34.printArr(arr);
+// 99,99,99,99</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{0, 0, 0, 0}
+
+{0, 0, 0, 0}</pre></div>
+        </div>
+
+        <p>The comment hoped for 99, 99, 99, 99. The array is still all zeros. (The empty line in the output is the <code class="inl">System.out.println();</code> after the loop.) Why?</p>
+
+        <p>Because <code class="inl">item</code> is not a box of the array. It is a separate <code class="inl">int</code> variable, and each round Java <em>copies</em> the next element into it. <code class="inl">item = 99;</code> changes the copy. The array's box never hears about it. It is the same thing we saw with <code class="inl">increment(int number)</code> in Lesson 11: changing a copy of an int does not change the original.</p>
+
+        <div class="steps" role="img" aria-label="Round 1: the 0 in box 0 is copied into item, then item becomes 99. The array still shows 0 in every box.">
+          <div class="row"><span class="who">copy</span><div class="strip arr vars"><div class="cell hit">0<span class="ix">arr[0]</span></div><div class="cell">0<span class="ix">item</span></div></div><span class="got">item gets a copy of arr[0]</span></div>
+          <div class="row"><span class="who">item = 99;</span><div class="strip arr vars"><div class="cell">0<span class="ix">arr[0]</span></div><div class="cell diff">99<span class="ix">item</span></div></div><span class="got">only the copy changes</span></div>
+          <div class="row"><span class="who">after loop</span><div class="strip arr"><div class="cell">0</div><div class="cell">0</div><div class="cell">0</div><div class="cell">0</div></div><span class="got"><b>{0, 0, 0, 0}</b></span></div>
+        </div>
+
+        <p>To write into the array you need the index, which is exactly what the commented-out loop in the file has:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson36.java · the commented loop</span></div>
+          <pre class="code"><code>for(int i = 0 ; i &lt; arr.length ; i++) {
+    arr[i] = 99 ;
+}
+Lesson34.printArr(arr);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>{99, 99, 99, 99}</pre></div>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>A for-each loop can read every element but cannot change the array: its variable holds a copy. To write into the boxes, use the index loop and <code class="inl">arr[i] = …</code>.</p>
+        </div>
+
+        <p>One more new thing in this file: <code class="inl">Lesson34.printArr(arr)</code>. The method lives in another class, Lesson34, so it is called with the class name and a dot, like <code class="inl">Math.sqrt</code> in Lesson 5 and the static methods of Lesson 10. Writing a useful method once and calling it from other classes is exactly what <code class="inl">static</code> methods are for.</p>
+
+        <h3 id="fe-which">Which loop when?</h3>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>The job</th><th>for-each</th><th>index loop</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>print every element</td><td>✓</td><td>✓</td><td>reading only</td></tr>
+              <tr><td>sum, count, max value</td><td>✓</td><td>✓</td><td>reading only</td></tr>
+              <tr><td>change the elements (<code class="inl">= 99</code>)</td><td>✗</td><td>✓</td><td>needs <code class="inl">arr[i] =</code></td></tr>
+              <tr><td>know <em>where</em> (maxIndex)</td><td>✗</td><td>✓</td><td>for-each has no index</td></tr>
+              <tr><td>go backwards</td><td>✗</td><td>✓</td><td>for-each goes first to last</td></tr>
+              <tr><td>compare neighbours (<code class="inl">i+1</code>)</td><td>✗</td><td>✓</td><td>needs two positions at once</td></tr>
+              <tr><td>commas except after the last</td><td>✗</td><td>✓</td><td>needs to know which is last</td></tr>
+              <tr><td>reverse, swap</td><td>✗</td><td>✓</td><td>changes boxes</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The index loop can do everything; for-each can do less but is shorter and cannot go out of bounds. A good habit: use for-each when you only need the values, and the index loop when you need the <em>position</em> or want to <em>change</em> something.</p>
+
+        <h3 id="fe-inc">isIncreasing</h3>
+
+        <p>The method at the top of Lesson36 answers a yes/no question about a whole array: is every element bigger than the one before it? The comment <code class="inl">// 5 9 11 13 15   i+1</code> shows the idea: look at each element and the next one, <code class="inl">arr[i]</code> and <code class="inl">arr[i+1]</code>.</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>Lesson36.java · the method</span></div>
+          <pre class="code"><code>public static boolean isIncreasing(int[] arr) {
+    for(int i=0 ; i &lt; arr.length-1 ; i++) {
+        if(arr[i] &gt;= arr[i+1] ) {
+            return false;
+        }
+    }
+    return true ;
+}</code></pre>
+        </div>
+
+        <ul class="plain">
+          <li><strong><code class="inl">i &lt; arr.length-1</code></strong>: because of <code class="inl">arr[i+1]</code>, the last <code class="inl">i</code> must be <code class="inl">length-2</code>, so that <code class="inl">i+1</code> is the last index. This is the neighbour rule from Lesson 12. With <code class="inl">i &lt; arr.length</code>, the last round asks for <code class="inl">arr[length]</code>.</li>
+          <li><strong><code class="inl">arr[i] &gt;= arr[i+1]</code></strong>: the test looks for a <em>problem</em>, a place where the next one is not bigger. “Equal” counts as a problem too, so <code class="inl">{5, 9, 9, 11}</code> is not increasing. (To allow equal neighbours, the test would be <code class="inl">&gt;</code>.)</li>
+          <li><strong><code class="inl">return false;</code></strong> inside the loop: one problem is enough. The method stops right there.</li>
+          <li><strong><code class="inl">return true;</code></strong> after the loop: reached only if the loop finished without finding any problem.</li>
+        </ul>
+
+        <div class="steps ixs" role="img" aria-label="isIncreasing on 5 9 11 14: pairs 5 and 9, 9 and 11, 11 and 14 are all fine, so the loop ends and the method returns true.">
+          <div class="row"><span class="who">i = 0</span><div class="strip arr"><div class="cell hit">5<span class="ix on">0</span></div><div class="cell hit">9<span class="ix on">1</span></div><div class="cell">11<span class="ix">2</span></div><div class="cell">14<span class="ix">3</span></div></div><span class="got">5 &gt;= 9? no</span></div>
+          <div class="row"><span class="who">i = 1</span><div class="strip arr"><div class="cell">5<span class="ix">0</span></div><div class="cell hit">9<span class="ix on">1</span></div><div class="cell hit">11<span class="ix on">2</span></div><div class="cell">14<span class="ix">3</span></div></div><span class="got">9 &gt;= 11? no</span></div>
+          <div class="row"><span class="who">i = 2</span><div class="strip arr"><div class="cell">5<span class="ix">0</span></div><div class="cell">9<span class="ix">1</span></div><div class="cell hit">11<span class="ix on">2</span></div><div class="cell hit">14<span class="ix on">3</span></div></div><span class="got">11 &gt;= 14? no · loop ends · <b>true</b></span></div>
+        </div>
+
+        <p>Four elements, three pairs, three checks. On <code class="inl">nums</code> = <code class="inl">{6, 2, 9, …}</code> the very first check, <code class="inl">6 &gt;= 2</code>, is true, so the method returns <code class="inl">false</code> at once and never looks at the other seven elements.</p>
+
+        <div class="steps ixs" role="img" aria-label="isIncreasing on nums: the first pair 6 and 2 is a problem, so the method returns false at i = 0.">
+          <div class="row"><span class="who">i = 0</span><div class="strip arr"><div class="cell diff">6<span class="ix on">0</span></div><div class="cell diff">2<span class="ix on">1</span></div><div class="cell">9<span class="ix">2</span></div><div class="cell">23<span class="ix">3</span></div><div class="cell">5<span class="ix">4</span></div><div class="cell">…</div></div><span class="got">6 &gt;= 2? yes · <b>return false</b></span></div>
+        </div>
+
+        <h3 id="fe-early">return false early, true at the end</h3>
+
+        <p>The shape of this method is a pattern you will use for every “are <em>all</em> of them …?” question. One bad element is enough to say no, so “no” can be answered inside the loop. But “yes” needs every element checked, so “yes” can only be answered after the loop. The most common mistake is to answer “yes” too early:</p>
+
+        <div class="ex">
+          <div class="ex-head"><span>The wrong shape</span></div>
+          <pre class="code"><code>for (int i = 0; i &lt; arr.length - 1; i++) {
+    if (arr[i] &gt;= arr[i + 1]) {
+        return false;
+    } else {
+        return true;     // decides after the first pair!
+    }
+}
+return true;</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>isIncreasing({1, 2, 0}) → true</pre></div>
+        </div>
+
+        <p>Either branch returns, so the loop never gets past <code class="inl">i = 0</code>. It sees 1 &lt; 2, says “increasing”, and never notices the 0. The correct method says <code class="inl">false</code> for <code class="inl">{1, 2, 0}</code>.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p>An array with one element, or none, is increasing: the loop runs zero times, so nothing can go wrong and the method reaches <code class="inl">return true;</code>. <code class="inl">isIncreasing(new int[]{7})</code> is <code class="inl">true</code>.</p>
+        </div>
+
+        <div class="note note--rule">
+          <span class="tag">Rule</span>
+          <p>“Is every element …?”: loop; on the first element that fails, <code class="inl">return false;</code>; after the loop, <code class="inl">return true;</code>. Never <code class="inl">return true</code> inside the loop. With <code class="inl">arr[i+1]</code>, the loop stops at <code class="inl">i &lt; arr.length - 1</code>.</p>
+        </div>
+
+        <h3 id="fe-lab">The algorithm lab</h3>
+
+        <p>Type your own values and run each algorithm of this lesson. The pictures show every step.</p>
+
+        <div class="lab" data-mode="algo">
+          <div class="lab-head"><b>Algorithm lab · int[] arr</b><span>Green: what the step touched. Amber: the answer, or the problem.</span></div>
+          <div class="lab-body">
+            <div class="lab-form">
+              <label>Values (comma separated)
+                <input type="text" id="algo-vals" data-f="vals" value="6, 2, 9, 23, 5, 18, -7" style="width:15rem">
+              </label>
+            </div>
+            <div class="lab-form" style="margin-top:12px">
+              <button type="button" class="lab-btn" data-act="print">printArr</button>
+              <button type="button" class="lab-btn" data-act="rev">reverse in place</button>
+              <button type="button" class="lab-btn ghost" data-act="revfull">reverse with i &lt; length</button>
+              <button type="button" class="lab-btn" data-act="max">max, min, maxIndex</button>
+              <button type="button" class="lab-btn" data-act="inc">isIncreasing</button>
+              <button type="button" class="lab-btn ghost" data-act="each">for-each item = 99</button>
+            </div>
+            <p class="lab-why"></p>
+            <div class="lab-view"></div>
+            <div class="ex">
+              <pre class="code"><code class="lab-code"></code></pre>
+              <div class="out"><span class="out-label">Console</span><pre class="lab-out"></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p><code class="inl">for (int value : nums)</code> gives each element in turn, first to last, with no index. It is read only: the variable is a copy, so <code class="inl">item = 99</code> changes nothing; use <code class="inl">arr[i] = 99</code>. Use the index loop when you need the position, the neighbours, the other direction or a change. A method in another class is called <code class="inl">Lesson34.printArr(arr)</code>. <code class="inl">isIncreasing</code> compares <code class="inl">arr[i]</code> with <code class="inl">arr[i+1]</code> while <code class="inl">i &lt; arr.length-1</code>, returns <code class="inl">false</code> at the first problem and <code class="inl">true</code> only after the loop.</p>
+        </div>
+
+        <div class="practice" id="p36">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on Part 36</h3>
+
+          <ol class="qs">
+            <li>
+              <p>Rewrite this loop as a for-each loop: <code class="inl">for (int i = 0; i &lt; cities.length; i++) { System.out.println(cities[i]); }</code>, where <code class="inl">cities</code> is a <code class="inl">String[]</code>.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>for (String city : cities) {
+    System.out.println(city);
+}</code></pre></div>
+                  <p>The variable's type is <code class="inl">String</code>, the type of the elements.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {1, 2, 3};
+for (int v : a) {
+    v = v * 10;
+}
+Lesson34.printArr(a);</code></pre></div>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><div class="out"><span class="out-label">Console</span><pre>{1, 2, 3}</pre></div></div>
+                  <p><code class="inl">v</code> is a copy; the array is unchanged.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which of these jobs need the index loop? (a) count the negative numbers, (b) set every element to 0, (c) print the array backwards, (d) find the largest value.</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(b) and (c)</span></p>
+                  <p>(b) changes the boxes, (c) goes the other way. (a) and (d) only read the values, so either loop works.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">isIncreasing(new int[]{3, 3, 4})</code> return, and why?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">false</span></p>
+                  <p>At <code class="inl">i = 0</code>, <code class="inl">3 &gt;= 3</code> is true: equal neighbours count as a problem.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>The loop in <code class="inl">isIncreasing</code> is changed to <code class="inl">i &lt; arr.length</code>. What happens for <code class="inl">{1, 2, 3}</code>? And for <code class="inl">{3, 2, 1}</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>For <code class="inl">{1, 2, 3}</code> no problem is found, so <code class="inl">i</code> reaches 2 and <code class="inl">arr[3]</code> is asked for: <span class="err">ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3</span>. For <code class="inl">{3, 2, 1}</code> it returns <code class="inl">false</code> at <code class="inl">i = 0</code>, before the bad index is reached. A bug that only shows on some inputs.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Write <code class="inl">isDecreasing(int[] arr)</code>, true when every element is smaller than the one before. What does it return for <code class="inl">{9, 7, 5, 3, 1}</code> and for <code class="inl">{9, 7, 7, 1}</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>public static boolean isDecreasing(int[] arr) {
+    for (int i = 0; i &lt; arr.length - 1; i++) {
+        if (arr[i] &lt;= arr[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}</code></pre></div>
+                  <p><code class="inl">true</code>, then <code class="inl">false</code> (7 &lt;= 7). Only the comparison changed.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ IN REAL LIFE ============ -->
+      <section class="lesson" id="life">
+        <div class="lesson-head">
+          <span class="lesson-no">In real life</span>
+          <h2 class="lesson-title">These Algorithms in the Apps You Use</h2>
+        </div>
+
+        <p>None of these algorithms is a classroom toy. Each of them runs, in some form, many times a day on your phone.</p>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Where you meet it</th></tr></thead>
+            <tbody>
+              <tr><td>commas between (printArr)</td><td>“Liked by Ali, Ece, Can” under a photo; tags on a post; a list of authors. No app wants a comma after the last name.</td></tr>
+              <tr><td>swap</td><td>dragging one photo onto another in an album to exchange their places; moving a song up one place in a playlist.</td></tr>
+              <tr><td>reverse</td><td>“newest first” and “oldest first” buttons on messages, comments and bank statements: the same list, turned around.</td></tr>
+              <tr><td>max with index</td><td>the top score on a leaderboard <em>and whose it is</em>; the hottest hour in a weather app; the busiest day in a step counter.</td></tr>
+              <tr><td>min with index</td><td>the cheapest flight or the cheapest shop: the price matters, but you need the index to know <em>which</em> one to buy.</td></tr>
+              <tr><td>longest String</td><td>a spreadsheet's “fit column width”: find the longest text in the column and make the column that wide.</td></tr>
+              <tr><td>is it in order? (isIncreasing)</td><td>checking that the times in a chat really go forward, that version numbers only grow, that a password does not use “1234”.</td></tr>
+              <tr><td>for-each</td><td>every “show all” screen: all contacts, all photos, all songs, each one drawn once, read only.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>A fitness watch measures your heart rate many times a minute and keeps the numbers in an array. At the end of a run it shows “max 172, min 88”. That is our max/min loop, with two separate <code class="inl">if</code>s. And the moment it reports for the max is found with <code class="inl">maxIndex</code>: if the readings are one per minute, index 23 means minute 24 of the run.</p>
+        </div>
+
+        <div class="note note--life">
+          <span class="tag">In real life</span>
+          <p>The early return of <code class="inl">isIncreasing</code> is why checks can be fast. A form that checks “is every field filled?” stops at the first empty field and shows you that one. It does not need to look at the rest to know the answer is no.</p>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP ============ -->
+      <section class="lesson" id="shop">
+        <div class="lesson-head">
+          <span class="lesson-no">Workshop · beyond the files</span>
+          <h2 class="lesson-title">Algorithms on Real Data</h2>
+        </div>
+
+        <p>Five small programs that use only the algorithms from Lesson34, 35 and 36: max/min with an index, reverse with swap, for-each, and an “is every …” check.</p>
+
+        <h3 id="shop-temp">Hottest and coldest day</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Two arrays, one index</span></div>
+          <pre class="code"><code>String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+double[] temps = {18.5, 21.0, 24.5, 30.5, 31.0, 27.5, 22.0};
+
+int hot = 0;
+for (int i = 0; i &lt; temps.length; i++) {
+    if (temps[i] &gt; temps[hot]) {
+        hot = i;
+    }
+}
+System.out.println(days[hot] + " " + temps[hot]);
+
+int cold = 0;
+for (int i = 0; i &lt; temps.length; i++) {
+    if (temps[i] &lt; temps[cold]) {
+        cold = i;
+    }
+}
+System.out.println(days[cold] + " " + temps[cold]);
+System.out.println(temps[hot] - temps[cold]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Fri 31.0
+Mon 18.5
+12.5</pre></div>
+        </div>
+
+        <p>This is where <code class="inl">maxIndex</code> shows its power. The name of the day is in one array and the temperature in another, at the <em>same index</em>. Knowing only “the max is 31.0” we could not say which day; knowing “the max is at index 4” we can read <code class="inl">days[4]</code>. The difference between the hottest and coldest, 12.5 degrees, is what weather reports call the range.</p>
+
+        <h3 id="shop-price">Cheapest shop</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>min and max with an index</span></div>
+          <pre class="code"><code>String[] shops = {"Kiosk", "Market", "Bakery", "Online"};
+int[] price = {42, 38, 45, 39};
+
+int best = 0;
+for (int i = 0; i &lt; price.length; i++) {
+    if (price[i] &lt; price[best]) {
+        best = i;
+    }
+}
+System.out.println(shops[best] + " " + price[best]);</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Market 38</pre></div>
+        </div>
+
+        <p>The same loop as the shortest city, with prices. A price-comparison site does exactly this, over thousands of shops.</p>
+
+        <h3 id="shop-play">Reversing a playlist</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Swap with Strings, print with for-each</span></div>
+          <pre class="code"><code>String[] songs = {"Intro", "Rain", "Ocean", "Stars", "Outro"};
+
+for (int i = 0; i &lt; songs.length / 2; i++) {
+    String temp = songs[i];
+    songs[i] = songs[songs.length - 1 - i];
+    songs[songs.length - 1 - i] = temp;
+}
+
+for (String s : songs) {
+    System.out.print(s + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>Outro Stars Ocean Rain Intro </pre></div>
+        </div>
+
+        <p>Lesson34's reverse, word for word, with one change: <code class="inl">temp</code> is a <code class="inl">String</code>, because it holds a song. <code class="inl">int temp = songs[i];</code> <span class="err">will not compile</span> (<em>incompatible types: String cannot be converted to int</em>). Changing the array needs the index loop; printing it afterwards only reads, so for-each is enough.</p>
+
+        <h3 id="shop-abc">In alphabetical order?</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>isIncreasing for Strings, with compareTo</span></div>
+          <pre class="code"><code>public static boolean isAlphabetical(String[] w) {
+    for (int i = 0; i &lt; w.length - 1; i++) {
+        if (w[i].compareTo(w[i + 1]) &gt; 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+System.out.println(isAlphabetical(new String[]{"Ankara", "Bolu", "Istanbul", "Izmir", "Van"}));
+System.out.println(isAlphabetical(new String[]{"Ankara", "Van", "Bolu"}));</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>true
+false</pre></div>
+        </div>
+
+        <p>The shape of <code class="inl">isIncreasing</code>, with <code class="inl">compareTo</code> from Lesson 6 instead of <code class="inl">&gt;=</code>: a positive result means <code class="inl">w[i]</code> comes after <code class="inl">w[i+1]</code> in the dictionary, which is a problem. Istanbul before Izmir is fine, because s comes before z. Van before Bolu is not.</p>
+
+        <div class="note note--trap">
+          <span class="tag">Watch out</span>
+          <p><code class="inl">compareTo</code> compares character codes, and every capital letter comes before every small letter. So <code class="inl">{"ankara", "Bolu"}</code> is <em>not</em> in order: small a comes after capital B.</p>
+        </div>
+
+        <h3 id="shop-lead">Behind the leader</h3>
+
+        <div class="ex">
+          <div class="ex-head"><span>Find the max, then use it</span></div>
+          <pre class="code"><code>int[] scores = {72, 85, 90, 64, 100, 58};
+
+int max = scores[0];
+for (int i = 0; i &lt; scores.length; i++) {
+    if (scores[i] &gt; max) {
+        max = scores[i];
+    }
+}
+
+for (int s : scores) {
+    System.out.print((max - s) + " ");
+}</code></pre>
+          <div class="out"><span class="out-label">Console</span><pre>28 15 10 36 0 42 </pre></div>
+        </div>
+
+        <p>Two loops, one after the other. The first finds the max (100). Only then can the second say how far each student is from it: the leader shows 0. You cannot do both in one loop, because the max is not known until the first loop has seen every score.</p>
+
+        <div class="note note--sum">
+          <span class="tag">In short</span>
+          <p>Keep the index, and a second array at the same index tells you the name. Swap and reverse work on any type; <code class="inl">temp</code> has the elements' type. <code class="inl">isIncreasing</code>'s shape works for any “every pair in order?” question. When a later step needs the max, find it first in a loop of its own.</p>
+        </div>
+
+        <div class="practice" id="pshop">
+          <h3 class="practice-title"><span class="practice-eyebrow">Practice</span>Six questions on real data</h3>
+
+          <ol class="qs">
+            <li>
+              <p>In the cheapest shop program, change the loop to find the most expensive shop, and also print how much more it costs than the cheapest. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int worst = 0;
+for (int i = 0; i &lt; price.length; i++) {
+    if (price[i] &gt; price[worst]) {
+        worst = i;
+    }
+}
+System.out.println(shops[worst] + " " + price[worst] + " " + (price[worst] - price[best]));</code></pre><div class="out"><span class="out-label">Console</span><pre>Bakery 45 7</pre></div></div>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>In the temperature program, why can't the day be found if the loop keeps only <code class="inl">double max</code> and no index?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>31.0 does not remember its position. Only the index connects the two arrays: <code class="inl">days[hot]</code> and <code class="inl">temps[hot]</code> are the same day.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What happens if the playlist reverse uses <code class="inl">int temp</code> instead of <code class="inl">String temp</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p>It <span class="err">will not compile</span>: <em>incompatible types: String cannot be converted to int</em>.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What does <code class="inl">isAlphabetical(new String[]{"Bolu", "Ankara"})</code> return? And for <code class="inl">{"Izmir"}</code>?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">false</code>: “Bolu”.compareTo(“Ankara”) is positive. <code class="inl">true</code> for one city: the loop never runs.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Using <code class="inl">scores</code>, write two loops: the first finds the average (as a double), the second counts the students above it. What is printed?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <div class="ex"><pre class="code"><code>int total = 0;
+for (int s : scores) {
+    total += s;
+}
+double avg = (double) total / scores.length;
+int above = 0;
+for (int s : scores) {
+    if (s &gt; avg) {
+        above++;
+    }
+}
+System.out.println(avg + " " + above);</code></pre><div class="out"><span class="out-label">Console</span><pre>78.16666666666667 3</pre></div></div>
+                  <p>85, 90 and 100. Both loops only read, so for-each is fine. The cast comes before the division (Lesson 12).</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is the coldest day and its temperature? Which single character of the hottest-day loop had to change?</p>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><code class="inl">Mon 18.5</code>. Only <code class="inl">&gt;</code> became <code class="inl">&lt;</code> (and the variable got a new name).</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ AP-STYLE ============ -->
+      <section class="lesson" id="ap">
+        <div class="lesson-head">
+          <span class="lesson-no">AP-style · multiple choice</span>
+          <h2 class="lesson-title">Eight Exam Questions</h2>
+        </div>
+
+        <p>Choose one answer for each, then open it.</p>
+
+        <div class="practice">
+          <ol class="qs">
+            <li>
+              <p>An array <code class="inl">a</code> holds <code class="inl">{1, 2, 3, 4, 5, 6, 7}</code>. After the reverse-in-place loop with <code class="inl">i &lt; a.length / 2</code>, what is <code class="inl">a[3]</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">3</code></li>
+                <li>(B) <code class="inl">4</code></li>
+                <li>(C) <code class="inl">5</code></li>
+                <li>(D) <code class="inl">7</code></li>
+                <li>(E) An ArrayIndexOutOfBoundsException</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>7 / 2 = 3 swaps (0⇄6, 1⇄5, 2⇄4). Index 3 is the middle and is never touched.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which starting value for <code class="inl">max</code> gives the correct maximum for <em>every</em> non-empty <code class="inl">int[] arr</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">0</code></li>
+                <li>(B) <code class="inl">arr[0]</code></li>
+                <li>(C) <code class="inl">Integer.MAX_VALUE</code></li>
+                <li>(D) <code class="inl">arr.length</code></li>
+                <li>(E) <code class="inl">-1</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>(A) and (E) fail when all values are smaller. (C) is never beaten, so max stays MAX_VALUE. (D) is a size, not a value.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {7, 3, 9, 3, 5};
+int m = 0;
+for (int i = 1; i &lt; a.length; i++) {
+    if (a[i] &lt; a[m]) {
+        m = i;
+    }
+}
+System.out.println(m);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">3</code></li>
+                <li>(B) <code class="inl">1</code></li>
+                <li>(C) <code class="inl">0</code></li>
+                <li>(D) <code class="inl">4</code></li>
+                <li>(E) <code class="inl">2</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>It prints the index, not the value. The second 3, at index 3, is not <em>less</em> than the first, so index 1 stays. (A) is the trap: 3 is the value.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {2, 4, 6};
+for (int x : a) {
+    x += 1;
+}
+System.out.println(a[0] + a[1] + a[2]);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">15</code></li>
+                <li>(B) <code class="inl">12</code></li>
+                <li>(C) <code class="inl">246</code></li>
+                <li>(D) <code class="inl">357</code></li>
+                <li>(E) The code does not compile.</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p><code class="inl">x</code> is a copy, so the array stays 2, 4, 6. The three are ints, so <code class="inl">+</code> adds them: 12.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which method body correctly returns <code class="inl">true</code> exactly when every element of <code class="inl">arr</code> is positive?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">for (int v : arr) { if (v &gt; 0) return true; } return false;</code></li>
+                <li>(B) <code class="inl">for (int v : arr) { if (v &lt;= 0) return false; else return true; } return true;</code></li>
+                <li>(C) <code class="inl">for (int v : arr) { if (v &lt;= 0) return false; } return true;</code></li>
+                <li>(D) <code class="inl">for (int v : arr) { if (v &gt; 0) return false; } return true;</code></li>
+                <li>(E) <code class="inl">for (int v : arr) { if (v &lt;= 0) return true; } return false;</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>False at the first problem, true after the loop. (A) and (B) decide after the first element only.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>What is printed?</p>
+              <div class="ex"><pre class="code"><code>int[] a = {1, 2, 3, 4};
+for (int i = 0; i &lt; a.length; i++) {
+    int temp = a[i];
+    a[i] = a[a.length - 1 - i];
+    a[a.length - 1 - i] = temp;
+}
+Lesson34.printArr(a);</code></pre></div>
+              <ul class="plain">
+                <li>(A) <code class="inl">{4, 3, 2, 1}</code></li>
+                <li>(B) <code class="inl">{1, 2, 3, 4}</code></li>
+                <li>(C) <code class="inl">{4, 2, 3, 1}</code></li>
+                <li>(D) <code class="inl">{1, 3, 2, 4}</code></li>
+                <li>(E) An ArrayIndexOutOfBoundsException</li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>The loop goes the full length, so every pair is swapped twice.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p><code class="inl">isIncreasing</code> from Lesson36 is called with <code class="inl">{1, 3, 2, 4}</code>. How many times is <code class="inl">arr[i] &gt;= arr[i+1]</code> evaluated?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">1</code></li>
+                <li>(B) <code class="inl">2</code></li>
+                <li>(C) <code class="inl">3</code></li>
+                <li>(D) <code class="inl">4</code></li>
+                <li>(E) <code class="inl">0</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(B)</span></p>
+                  <p>i = 0: 1 &gt;= 3, no. i = 1: 3 &gt;= 2, yes, and <code class="inl">return false</code> ends the method. The pair 2, 4 is never checked.</p>
+                </div>
+              </details>
+            </li>
+            <li>
+              <p>Which call prints <code class="inl">{5}</code>?</p>
+              <ul class="plain">
+                <li>(A) <code class="inl">printArr(5);</code></li>
+                <li>(B) <code class="inl">printArr(new int[5]);</code></li>
+                <li>(C) <code class="inl">printArr(new int[]{5});</code></li>
+                <li>(D) <code class="inl">printArr(int[] {5});</code></li>
+                <li>(E) <code class="inl">printArr(arr[5]);</code></li>
+              </ul>
+              <details class="ans">
+                <summary>Show answer</summary>
+                <div class="ans-body">
+                  <p><span class="outline">(C)</span></p>
+                  <p>(B) makes five zeros: <code class="inl">{0, 0, 0, 0, 0}</code>. (A) and (E) pass one int, not an array, and (D) is not valid Java: neither compiles.</p>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ WORDS ============ -->
+      <section class="recap" id="words">
+        <h2>Words of this lesson</h2>
+
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Word</th><th>Also called</th><th>Means</th><th>In the files</th></tr></thead>
+            <tbody>
+              <tr><td><strong>algorithm</strong></td><td></td><td>an exact list of steps that solves a problem for any input</td><td>every loop in this lesson</td></tr>
+              <tr><td><strong>swap</strong></td><td></td><td>exchange the values of two variables or two boxes</td><td class="mono">// SWAP ALGORITHM</td></tr>
+              <tr><td><strong>temp</strong></td><td>temporary variable</td><td>a third variable that keeps a value safe during a swap</td><td class="mono">int temp = a ;</td></tr>
+              <tr><td><strong>in place</strong></td><td></td><td>changing an array without making a second one</td><td class="mono">arr[i] = arr[arr.length-1-i]</td></tr>
+              <tr><td><strong>max / min</strong></td><td>maximum / minimum</td><td>the biggest / smallest value, kept “so far” during the loop</td><td class="mono">max = nums[i];</td></tr>
+              <tr><td><strong>Integer.MIN_VALUE</strong></td><td></td><td>the smallest int, −2147483648; a safe start for max</td><td class="mono">int max = Integer.MIN_VALUE;</td></tr>
+              <tr><td><strong>index of the max</strong></td><td>maxIndex</td><td>where the biggest element is; gives its value too</td><td class="mono">maxIndex = i ;</td></tr>
+              <tr><td><strong>fencepost error</strong></td><td>off-by-one</td><td>one too many or one too few, like a comma after the last value</td><td class="mono">i &lt; arr.length-1</td></tr>
+              <tr><td><strong>enhanced for loop</strong></td><td>for-each loop</td><td>a loop that gives each element in turn, with no index</td><td class="mono">for(int value : nums)</td></tr>
+              <tr><td><strong>read only</strong></td><td></td><td>can look but cannot change; the for-each variable is a copy</td><td class="mono">// (READ ONLY)</td></tr>
+              <tr><td><strong>early return</strong></td><td></td><td>leaving a method from inside a loop as soon as the answer is known</td><td class="mono">return false;</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="recap" id="recap">
+        <h2>Thirteen traps to remember</h2>
+        <p>Three will not compile, one crashes, and the rest run and give the wrong answer.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th class="mono">Code</th><th>You expect</th><th>You get</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">for (int i : nums.length)</td><td>a loop</td><td><span class="err">will not compile</span></td><td>for-each needs the array, not a number</td></tr>
+              <tr><td class="mono">int temp = songs[i]; (String[])</td><td>a swap</td><td><span class="err">will not compile</span></td><td>temp needs the elements' type</td></tr>
+              <tr><td class="mono">printArr(arr[0])</td><td>the array</td><td><span class="err">will not compile</span></td><td>one int is not an int[]; call printArr(arr)</td></tr>
+              <tr><td class="mono">arr[i+1] with i &lt; arr.length</td><td>every pair</td><td><span class="err">ArrayIndexOutOfBoundsException</span></td><td>stop at i &lt; arr.length - 1</td></tr>
+              <tr><td class="mono">print(arr[i] + ", ") for all</td><td class="mono">{9, 7, 5, 3, 1}</td><td class="mono"><span class="fv">{9, 7, 5, 3, 1, }</span></td><td>no comma after the last: i &lt; length-1</td></tr>
+              <tr><td class="mono">a = b; b = a;</td><td class="mono">5 3</td><td class="mono"><span class="fv">5 5</span></td><td>the old a is erased: use temp</td></tr>
+              <tr><td class="mono">reverse with i &lt; arr.length</td><td>reversed</td><td><span class="fv">unchanged</span></td><td>each pair swapped twice: use length / 2</td></tr>
+              <tr><td class="mono">int max = 0; on {-4,-9,-2,-7}</td><td class="mono">-2</td><td class="mono"><span class="fv">0</span></td><td>start at arr[0] or MIN_VALUE</td></tr>
+              <tr><td class="mono">else if for min, on {1,5,3}</td><td class="mono">5 1</td><td class="mono"><span class="fv">5 3</span></td><td>use two separate ifs</td></tr>
+              <tr><td class="mono">for (int item : arr) item = 99;</td><td class="mono">{99, 99, 99, 99}</td><td class="mono"><span class="fv">{0, 0, 0, 0}</span></td><td>item is a copy: use arr[i] = 99</td></tr>
+              <tr><td class="mono">else return true; inside the loop</td><td class="mono">false for {1,2,0}</td><td class="mono"><span class="fv">true</span></td><td>true only after the loop</td></tr>
+              <tr><td class="mono">&gt; vs &gt;= with ties</td><td>“the” longest</td><td><span class="fv">first or last</span></td><td>&gt; keeps the first, &gt;= the last</td></tr>
+              <tr><td class="mono">isIncreasing({5, 9, 9, 11})</td><td class="mono">true</td><td class="mono"><span class="fv">false</span></td><td>&gt;= makes equal neighbours a problem</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        AP CS-A · Grup 2 — Lesson 13, parts 34–36: array algorithms. Every console output on this page was compiled and run. &nbsp;·&nbsp; <a href="lesson12.html">← Lesson 12</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script src="lesson.js"></script>
+
+</body>
+</html>
